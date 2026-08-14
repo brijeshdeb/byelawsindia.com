@@ -22,10 +22,20 @@ const statusColor: Record<string, { bg: string; text: string; border: string }> 
 };
 const FALLBACK = { bg: "rgba(107,114,128,0.1)", text: "#6B7280", border: "rgba(107,114,128,0.2)" };
 
+const DEMO_RFQS: Rfq[] = [
+  { id: "demo-r1", rfq_number: "RFQ-2024-001", title: "Terrace waterproofing works",       category: "CIVIL",       status: "EVALUATION", estimated_budget: 150000, submission_deadline: "2024-08-20T18:00:00Z", created_at: "2024-08-01T09:00:00Z" },
+  { id: "demo-r2", rfq_number: "RFQ-2024-002", title: "Lift annual maintenance contract",   category: "ELECTRICAL", status: "AWARDED",    estimated_budget: 72000,  submission_deadline: "2024-07-15T18:00:00Z", created_at: "2024-07-01T09:00:00Z" },
+  { id: "demo-r3", rfq_number: "RFQ-2024-003", title: "CCTV upgrade – all wings",           category: "SECURITY",   status: "PUBLISHED",  estimated_budget: 85000,  submission_deadline: "2024-09-05T18:00:00Z", created_at: "2024-08-10T09:00:00Z" },
+  { id: "demo-r4", rfq_number: "RFQ-2024-004", title: "Garden landscaping – annual",        category: "GARDENING",  status: "DRAFT",      estimated_budget: 30000,  submission_deadline: null,                   created_at: "2024-08-12T09:00:00Z" },
+  { id: "demo-r5", rfq_number: "RFQ-2023-005", title: "Compound wall painting",             category: "CIVIL",       status: "CANCELLED",  estimated_budget: 45000,  submission_deadline: "2023-11-30T18:00:00Z", created_at: "2023-11-01T09:00:00Z" },
+];
+
 function label(s: string) { return s.charAt(0) + s.slice(1).toLowerCase(); }
 
 export function RfqsClient({ rfqs }: { rfqs: Rfq[] }) {
   const [modalOpen, setModalOpen] = useState(false);
+  const isDemo = rfqs.length === 0;
+  const displayRfqs = isDemo ? DEMO_RFQS : rfqs;
 
   return (
     <>
@@ -50,7 +60,7 @@ export function RfqsClient({ rfqs }: { rfqs: Rfq[] }) {
         </div>
 
         <div className="queue-section">
-          {rfqs.length === 0 ? (
+          {displayRfqs.length === 0 ? (
             <div className="flex flex-col items-center py-16" style={{ color: "#6B7280" }}>
               <span className="material-symbols-outlined mb-3" style={{ fontSize: "40px" }}>request_quote</span>
               <p className="text-sm">No RFQs yet.</p>
@@ -65,10 +75,10 @@ export function RfqsClient({ rfqs }: { rfqs: Rfq[] }) {
                 </tr>
               </thead>
               <tbody>
-                {rfqs.map((row, i) => {
+                {displayRfqs.map((row, i) => {
                   const sc = statusColor[row.status] ?? FALLBACK;
                   return (
-                    <tr key={row.id} style={{ borderBottom: i < rfqs.length - 1 ? "1px solid #2a2a2a" : "none" }}>
+                    <tr key={row.id} style={{ borderBottom: i < displayRfqs.length - 1 ? "1px solid #2a2a2a" : "none" }}>
                       <td className="px-4 py-3 font-mono" style={{ fontSize: "13px", color: "#10B981" }}>{row.rfq_number}</td>
                       <td className="px-4 py-3 font-body-sm text-body-sm text-text-primary">{row.title}</td>
                       <td className="px-4 py-3 font-body-sm text-body-sm" style={{ color: "#9CA3AF" }}>{label(row.category)}</td>
@@ -89,6 +99,13 @@ export function RfqsClient({ rfqs }: { rfqs: Rfq[] }) {
               </tbody>
             </table>
           )}
+          <div className="px-4 py-3" style={{ borderTop: "1px solid #333333", backgroundColor: "#1c1b1b" }}>
+            <p className="font-body-sm text-body-sm italic" style={{ color: "#6B7280" }}>
+              {isDemo
+                ? "Illustrative data. Live RFQs appear here once created."
+                : `Showing ${displayRfqs.length} RFQ${displayRfqs.length !== 1 ? "s" : ""}.`}
+            </p>
+          </div>
         </div>
       </div>
 

@@ -35,6 +35,17 @@ const statusColor: Record<string, { bg: string; text: string; border: string }> 
 };
 const FALLBACK = { bg: "rgba(107,114,128,0.1)", text: "#6B7280", border: "rgba(107,114,128,0.2)" };
 
+const DEMO_MEMBERS: Member[] = [
+  { id: "demo-m1", member_number: "MBR-2024-001", full_name: "Ramesh Iyer",      email: "ramesh.iyer@email.com",    phone: "9820011122", member_type: "OWNER",  status: "ACTIVE",   effective_from: "2019-04-01", unit_number: "4B", wing_name: "Wing A" },
+  { id: "demo-m2", member_number: "MBR-2024-002", full_name: "Priya Menon",      email: "priya.menon@email.com",    phone: "9821033344", member_type: "OWNER",  status: "ACTIVE",   effective_from: "2020-08-15", unit_number: "7C", wing_name: "Wing B" },
+  { id: "demo-m3", member_number: "MBR-2024-003", full_name: "Suresh Nair",      email: "suresh.nair@email.com",    phone: "9822055566", member_type: "TENANT", status: "ACTIVE",   effective_from: "2022-03-10", unit_number: "2A", wing_name: "Wing A" },
+  { id: "demo-m4", member_number: "MBR-2024-004", full_name: "Kavitha Sharma",   email: "kavitha.s@email.com",      phone: "9823077788", member_type: "OWNER",  status: "ACTIVE",   effective_from: "2018-11-20", unit_number: "9D", wing_name: "Wing B" },
+  { id: "demo-m5", member_number: "MBR-2024-005", full_name: "Ajay Kulkarni",    email: "ajay.kulkarni@email.com",  phone: "9824099900", member_type: "OWNER",  status: "ACTIVE",   effective_from: "2021-06-05", unit_number: "6B", wing_name: "Wing A" },
+  { id: "demo-m6", member_number: "MBR-2024-006", full_name: "Sneha Desai",      email: "sneha.desai@email.com",    phone: "9825011111", member_type: "TENANT", status: "ACTIVE",   effective_from: "2023-01-15", unit_number: "3C", wing_name: "Wing B" },
+  { id: "demo-m7", member_number: "MBR-2023-007", full_name: "Mohan Pillai",     email: "mohan.pillai@email.com",   phone: "9826033333", member_type: "OWNER",  status: "INACTIVE", effective_from: "2016-07-22", unit_number: "1A", wing_name: "Wing A" },
+  { id: "demo-m8", member_number: "MBR-2024-008", full_name: "Deepa Krishnan",   email: "deepa.k@email.com",        phone: "9827055555", member_type: "OWNER",  status: "ACTIVE",   effective_from: "2022-09-30", unit_number: "8D", wing_name: "Wing B" },
+];
+
 function label(s: string) {
   return s.charAt(0) + s.slice(1).toLowerCase().replace("_", " ");
 }
@@ -44,8 +55,10 @@ export function MembersClient({ members, units }: { members: Member[]; units: Un
   const [filter, setFilter] = useState("All");
 
   const FILTERS = ["All", "Owner", "Tenant", "Active", "Inactive"];
+  const isDemo = members.length === 0;
+  const displayMembers = isDemo ? DEMO_MEMBERS : members;
 
-  const filtered = members.filter((m) => {
+  const filtered = displayMembers.filter((m) => {
     if (filter === "All") return true;
     if (filter === "Owner") return m.member_type === "OWNER";
     if (filter === "Tenant") return m.member_type === "TENANT";
@@ -63,7 +76,7 @@ export function MembersClient({ members, units }: { members: Member[]; units: Un
               Members
             </h1>
             <p className="font-body-sm text-body-sm mt-1" style={{ color: "#9CA3AF" }}>
-              {members.length} registered member{members.length !== 1 ? "s" : ""} across all wings
+              {isDemo ? "Illustrative members — add real members via Register Member" : `${members.length} registered member${members.length !== 1 ? "s" : ""} across all wings`}
             </p>
           </div>
           <button
@@ -141,6 +154,13 @@ export function MembersClient({ members, units }: { members: Member[]; units: Un
               </tbody>
             </table>
           )}
+          <div className="px-4 py-3" style={{ borderTop: "1px solid #333333", backgroundColor: "#1c1b1b" }}>
+            <p className="font-body-sm text-body-sm italic" style={{ color: "#6B7280" }}>
+              {isDemo
+                ? "Illustrative data. Live members appear here once registered."
+                : `Showing ${filtered.length} member${filtered.length !== 1 ? "s" : ""}.`}
+            </p>
+          </div>
         </div>
       </div>
 
