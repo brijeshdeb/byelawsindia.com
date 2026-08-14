@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design System — Byelawsindia.com</title>
+<link rel="stylesheet" href="assets/byelawsindia.css">
+<style>
+body { background: var(--c-bg); }
+.ds-layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+.ds-nav {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--c-surface);
+  border-right: 1px solid var(--c-border);
+  padding: var(--sp-5) 0;
+}
+.ds-nav-brand {
+  padding: 0 var(--sp-5) var(--sp-5);
+  border-bottom: 1px solid var(--c-border);
+  margin-bottom: var(--sp-4);
+}
+.ds-nav-title   { font-size: 14px; font-weight: var(--w-bold); color: var(--c-primary); letter-spacing: 0.03em; text-transform: uppercase; }
+.ds-nav-sub     { font-size: 12px; color: var(--c-text-muted); margin-top: 2px; }
+.ds-nav a {
+  display: block;
+  padding: 7px var(--sp-5);
+  font-size: 13px;
+  color: var(--c-text-secondary);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: color var(--t-fast), background var(--t-fast);
+}
+.ds-nav a:hover { color: var(--c-text); background: var(--c-surface-secondary); }
+.ds-nav a.active { color: var(--c-primary); border-left-color: var(--c-primary); font-weight: var(--w-semibold); background: var(--c-info-bg); }
+.ds-nav-section { font-size: 10px; font-weight: var(--w-bold); text-transform: uppercase; letter-spacing: 0.08em; color: var(--c-text-muted); padding: var(--sp-4) var(--sp-5) var(--sp-1); }
+.ds-main { padding: var(--sp-8); }
+.ds-section { max-width: 960px; margin-bottom: var(--sp-12); }
+.ds-section-title {
+  font-size: 22px;
+  font-weight: var(--w-semibold);
+  color: var(--c-text);
+  padding-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--c-border);
+  margin-bottom: var(--sp-6);
+}
+.ds-block { margin-bottom: var(--sp-8); }
+.ds-label {
+  font-size: 11px;
+  font-weight: var(--w-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--c-text-muted);
+  margin-bottom: var(--sp-3);
+}
+.ds-sample { padding: var(--sp-5); background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-md); }
+.ds-sample.bg-dark { background: #F0F2F4; }
+.ds-sample.bg-navy { background: var(--c-primary); }
+.color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--sp-3); }
+.color-swatch {
+  border-radius: var(--r-md);
+  overflow: hidden;
+  border: 1px solid var(--c-border);
+}
+.swatch-block { height: 52px; }
+.swatch-info { padding: 8px 10px; background: var(--c-surface); border-top: 1px solid var(--c-border); }
+.swatch-name { font-size: 12px; font-weight: var(--w-semibold); color: var(--c-text); }
+.swatch-hex  { font-size: 11px; color: var(--c-text-muted); font-family: var(--font-mono); }
+.type-row { display: flex; align-items: baseline; gap: var(--sp-6); margin-bottom: var(--sp-4); padding-bottom: var(--sp-4); border-bottom: 1px solid var(--c-border); }
+.type-spec { font-size: 11px; color: var(--c-text-muted); font-family: var(--font-mono); min-width: 180px; flex-shrink: 0; }
+.spacing-row { display: flex; align-items: center; gap: var(--sp-4); margin-bottom: var(--sp-2); }
+.spacing-bar { background: var(--c-info); border-radius: 2px; height: 20px; flex-shrink: 0; }
+.spacing-label { font-size: 12px; color: var(--c-text-muted); font-family: var(--font-mono); min-width: 60px; }
+.component-row { display: flex; align-items: flex-start; gap: var(--sp-3); flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<div class="ds-layout">
+
+<!-- Design System Navigation -->
+<nav class="ds-nav">
+  <div class="ds-nav-brand">
+    <div class="ds-nav-title">BYELAWSINDIA</div>
+    <div class="ds-nav-sub">Design system v1.0</div>
+  </div>
+  <div class="ds-nav-section">Foundation</div>
+  <a href="#typography" class="active">Typography</a>
+  <a href="#color">Colours</a>
+  <a href="#spacing">Spacing &amp; radius</a>
+  <div class="ds-nav-section">Components</div>
+  <a href="#buttons">Buttons</a>
+  <a href="#forms">Forms</a>
+  <a href="#badges">Status badges</a>
+  <a href="#alerts">Alerts</a>
+  <a href="#tabs">Tabs &amp; breadcrumbs</a>
+  <a href="#tables">Tables</a>
+  <a href="#modals">Modal</a>
+  <a href="#fileupload">File upload</a>
+  <a href="#feedback">Feedback</a>
+  <div class="ds-nav-section">Patterns</div>
+  <a href="#pageheader">Page header</a>
+  <a href="#metrics">Metric blocks</a>
+  <a href="#timeline">Workflow timeline</a>
+  <a href="#kvinfo">Key-value information</a>
+  <a href="#doclist">Document list</a>
+  <a href="#expiry">Expiry alert</a>
+  <a href="#comparison">Quotation comparison</a>
+  <a href="#approval">Approval panel</a>
+</nav>
+
+<main class="ds-main">
+
+<!-- ============================================================ TYPOGRAPHY -->
+<section id="typography" class="ds-section">
+  <div class="ds-section-title">Typography</div>
+  <div class="ds-block">
+    <div class="ds-label">Type scale — Source Sans 3</div>
+    <div class="ds-sample">
+      <div class="type-row">
+        <div class="type-spec">28px / 600 / lh 1.2<br>Page title</div>
+        <div style="font-size:28px;font-weight:600;line-height:1.2;color:var(--c-text)">Member applications</div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec">20px / 600 / lh 1.3<br>Section heading</div>
+        <div style="font-size:20px;font-weight:600;line-height:1.3;color:var(--c-text)">Pending approvals</div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec">16px / 600 / lh 1.3<br>Panel heading</div>
+        <div style="font-size:16px;font-weight:600;line-height:1.3;color:var(--c-text)">Application documents</div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec">15px / 400 / lh 1.5<br>Body text</div>
+        <div style="font-size:15px;font-weight:400;line-height:1.5;color:var(--c-text)">This application has been reviewed by Authority 1 and is awaiting final approval from the Secretary.</div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec">14px / 400 / lh 1.4<br>Table body / form labels</div>
+        <div style="font-size:14px;font-weight:400;line-height:1.4;color:var(--c-text)">Rajesh Sharma &nbsp;·&nbsp; Wing A &nbsp;·&nbsp; Flat 502</div>
+      </div>
+      <div class="type-row">
+        <div class="type-spec">13px / 400 / lh 1.4<br>Helper / secondary text</div>
+        <div style="font-size:13px;color:var(--c-text-secondary)">Upload the signed nomination form in PDF format. Maximum 10 MB.</div>
+      </div>
+      <div class="type-row" style="border-bottom:none;margin-bottom:0;padding-bottom:0">
+        <div class="type-spec">12px / 400<br>Metadata / identifiers</div>
+        <div>
+          <div style="font-size:12px;color:var(--c-text-muted)">Submitted 13 Aug 2026, 4:35 PM</div>
+          <div style="font-size:13px;font-family:var(--font-mono);color:var(--c-text-secondary);margin-top:4px">CHS/2026/A/MEM/000123</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ds-block">
+    <div class="ds-label">Source Serif 4 — institutional use only</div>
+    <div class="ds-sample">
+      <div style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--c-text);margin-bottom:6px">Society letter / statutory document heading</div>
+      <div style="font-family:var(--font-serif);font-size:15px;color:var(--c-text);line-height:1.6">This letter is issued in accordance with the provisions of the Maharashtra Co-operative Societies Act, 1960, and the bye-laws registered under the said Act.</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--c-warning-text);font-style:italic">Use Source Serif 4 for formal document previews and letter templates only — not for application screens.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ COLOURS -->
+<section id="color" class="ds-section">
+  <div class="ds-section-title">Colours</div>
+
+  <div class="ds-block">
+    <div class="ds-label">Brand palette</div>
+    <div class="color-grid">
+      <div class="color-swatch"><div class="swatch-block" style="background:#17324D"></div><div class="swatch-info"><div class="swatch-name">Primary navy</div><div class="swatch-hex">#17324D</div></div></div>
+      <div class="color-swatch"><div class="swatch-block" style="background:#415B76"></div><div class="swatch-info"><div class="swatch-name">Secondary slate</div><div class="swatch-hex">#415B76</div></div></div>
+      <div class="color-swatch"><div class="swatch-block" style="background:#C6862C"></div><div class="swatch-info"><div class="swatch-name">Accent amber</div><div class="swatch-hex">#C6862C</div></div></div>
+      <div class="color-swatch"><div class="swatch-block" style="background:#FDF3E3"></div><div class="swatch-info"><div class="swatch-name">Accent subtle</div><div class="swatch-hex">#FDF3E3</div></div></div>
+    </div>
+  </div>
+
+  <div class="ds-block">
+    <div class="ds-label">Neutral — backgrounds, surfaces, borders, text</div>
+    <div class="color-grid">
+      <div class="color-swatch"><div class="swatch-block" style="background:#F6F7F8;border:1px solid #E4E8EC"></div><div class="swatch-info"><div class="swatch-name">Background</div><div class="swatch-hex">#F6F7F8</div></div></div>
+      <div class="color-swatch"><div class="swatch-block" style="background:#FFFFFF;border:1px solid #E4E8EC"></div><div class="swatch-info"><div class="swatch-name">Surface</div><div class="swatch-hex">#FFFFFF</div></div></div>
+      <div class="color-swatch"><div class="swatch-block" style="background:#F0F2F4"></div><div class="swatch-info"><div class="swatch-name">Surface secondary</div><div class="swatch-hex">#F0F2F4</div></div></div>
+      <div class="color-swatch"><div class="swatch-block" style="background:#D9DEE3"></div><div class="swatch-info"><div class="swatch-name">Border</div><div class="swatch-hex">#D9DEE3</div></div></div>
+      <div class="color-swatch"><div class="swatch-block" style="background:#1E2933"></div><div class="swatch-info"><div class="swatch-name">Text primary</div><div class="swatch-hex">#1E2933</div></div></div>
+      <div class="color-swatch"><div class="swatch-block" style="background:#596773"></div><div class="swatch-info"><div class="swatch-name">Text secondary</div><div class="swatch-hex">#596773</div></div></div>
+      <div class="color-swatch"><div class="swatch-block" style="background:#7A8792"></div><div class="swatch-info"><div class="swatch-name">Text muted</div><div class="swatch-hex">#7A8792</div></div></div>
+    </div>
+  </div>
+
+  <div class="ds-block">
+    <div class="ds-label">Semantic status colours</div>
+    <div class="color-grid">
+      <div class="color-swatch"><div class="swatch-block" style="background:#327A55"></div><div class="swatch-info"><div class="swatch-name">Success</div><div class="swatch-hex">#327A55</div></div></div>
+      <div class="color-swatch"><div class="swatch-block" style="background:#EBF5EE"></div><div class="swatch-info"><div class="swatch-name">Success background</div><div class="swatch-hex">#EBF5EE</div></div></div>
+      <div class="color-swatch"><div class="swatch-block" style="background:#B97820"></div><div class="swatch-info"><div class="swatch-name">Warning</div><div class="swatch-hex">#B97820</div></div></div>
+      <div class="color-swatch"><div class="swatch-block" style="background:#FDF3E3"></div><div class="swatch-info"><div class="swatch-name">Warning background</div><div class="swatch-hex">#FDF3E3</div></div></div>
+      <div class="color-swatch"><div class="swatch-block" style="background:#B54747"></div><div class="swatch-info"><div class="swatch-name">Danger</div><div class="swatch-hex">#B54747</div></div></div>
+      <div class="color-swatch"><div class="swatch-block" style="background:#FAEAEA"></div><div class="swatch-info"><div class="swatch-name">Danger background</div><div class="swatch-hex">#FAEAEA</div></div></div>
+      <div class="color-swatch"><div class="swatch-block" style="background:#3D6F91"></div><div class="swatch-info"><div class="swatch-name">Info</div><div class="swatch-hex">#3D6F91</div></div></div>
+      <div class="color-swatch"><div class="swatch-block" style="background:#EBF3F9"></div><div class="swatch-info"><div class="swatch-name">Info background</div><div class="swatch-hex">#EBF3F9</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ SPACING -->
+<section id="spacing" class="ds-section">
+  <div class="ds-section-title">Spacing &amp; border radius</div>
+  <div class="ds-block">
+    <div class="ds-label">Spacing scale (4px base)</div>
+    <div class="ds-sample">
+      <div class="spacing-row"><div class="spacing-bar" style="width:4px"></div><div class="spacing-label">--sp-1</div><div class="text-sm text-muted">4px</div></div>
+      <div class="spacing-row"><div class="spacing-bar" style="width:8px"></div><div class="spacing-label">--sp-2</div><div class="text-sm text-muted">8px</div></div>
+      <div class="spacing-row"><div class="spacing-bar" style="width:12px"></div><div class="spacing-label">--sp-3</div><div class="text-sm text-muted">12px</div></div>
+      <div class="spacing-row"><div class="spacing-bar" style="width:16px"></div><div class="spacing-label">--sp-4</div><div class="text-sm text-muted">16px</div></div>
+      <div class="spacing-row"><div class="spacing-bar" style="width:20px"></div><div class="spacing-label">--sp-5</div><div class="text-sm text-muted">20px</div></div>
+      <div class="spacing-row"><div class="spacing-bar" style="width:24px"></div><div class="spacing-label">--sp-6</div><div class="text-sm text-muted">24px</div></div>
+      <div class="spacing-row"><div class="spacing-bar" style="width:32px"></div><div class="spacing-label">--sp-8</div><div class="text-sm text-muted">32px</div></div>
+      <div class="spacing-row"><div class="spacing-bar" style="width:48px"></div><div class="spacing-label">--sp-12</div><div class="text-sm text-muted">48px</div></div>
+    </div>
+  </div>
+  <div class="ds-block">
+    <div class="ds-label">Border radius — restrained, no floating bubbles</div>
+    <div class="ds-sample" style="display:flex;gap:24px;align-items:flex-end">
+      <div style="text-align:center">
+        <div style="width:48px;height:48px;background:var(--c-info-bg);border:1px solid var(--c-info-border);border-radius:4px;margin:0 auto var(--sp-2)"></div>
+        <div class="text-sm text-muted font-mono">4px<br>--r-xs</div>
+        <div class="text-sm text-secondary">badges</div>
+      </div>
+      <div style="text-align:center">
+        <div style="width:64px;height:48px;background:var(--c-info-bg);border:1px solid var(--c-info-border);border-radius:6px;margin:0 auto var(--sp-2)"></div>
+        <div class="text-sm text-muted font-mono">6px<br>--r-sm</div>
+        <div class="text-sm text-secondary">inputs, buttons</div>
+      </div>
+      <div style="text-align:center">
+        <div style="width:80px;height:56px;background:var(--c-info-bg);border:1px solid var(--c-info-border);border-radius:8px;margin:0 auto var(--sp-2)"></div>
+        <div class="text-sm text-muted font-mono">8px<br>--r-md</div>
+        <div class="text-sm text-secondary">panels, dialogs</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ BUTTONS -->
+<section id="buttons" class="ds-section">
+  <div class="ds-section-title">Buttons</div>
+  <div class="ds-block">
+    <div class="ds-label">Button hierarchy — one primary action per context</div>
+    <div class="ds-sample">
+      <div class="component-row mb-4">
+        <button class="btn btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Approve application
+        </button>
+        <button class="btn btn-secondary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </button>
+        <button class="btn btn-ghost">Cancel</button>
+        <button class="btn btn-danger">Reject application</button>
+      </div>
+      <div class="component-row mb-4">
+        <button class="btn btn-primary btn-sm">Save draft</button>
+        <button class="btn btn-secondary btn-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          Filter
+        </button>
+        <button class="btn btn-ghost btn-sm">View history</button>
+      </div>
+      <div class="component-row">
+        <button class="btn btn-primary" disabled>Submit application</button>
+        <button class="btn btn-secondary" disabled>Export</button>
+        <span class="text-sm text-muted" style="align-self:center">Disabled state</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ FORMS -->
+<section id="forms" class="ds-section">
+  <div class="ds-section-title">Forms</div>
+  <div class="ds-block">
+    <div class="ds-label">Form fields — persistent labels, no placeholder-only labels</div>
+    <div class="ds-sample">
+      <div class="grid-2 mb-4">
+        <div class="form-group">
+          <label class="form-label">First name <span class="req">*</span></label>
+          <input type="text" class="input" value="Rajesh">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last name <span class="req">*</span></label>
+          <input type="text" class="input" value="Sharma">
+        </div>
+      </div>
+      <div class="form-group mb-4">
+        <label class="form-label">Email address <span class="req">*</span></label>
+        <input type="email" class="input" value="rajesh.sharma@email.com">
+        <div class="form-helper">This address will be used for all official society correspondence.</div>
+      </div>
+      <div class="grid-2 mb-4">
+        <div class="form-group">
+          <label class="form-label">Mobile number <span class="req">*</span></label>
+          <input type="tel" class="input" value="+91 98765 43210">
+        </div>
+        <div class="form-group">
+          <label class="form-label">PAN</label>
+          <input type="text" class="input" value="ABCDE1234F" style="font-family:var(--font-mono)">
+          <div class="form-helper">10-character alphanumeric PAN.</div>
+        </div>
+      </div>
+      <div class="form-group mb-4">
+        <label class="form-label">Wing</label>
+        <select class="input select">
+          <option>Wing A</option>
+          <option>Wing B</option>
+          <option>Wing C</option>
+        </select>
+      </div>
+      <div class="form-group mb-4">
+        <label class="form-label">Remarks</label>
+        <textarea class="input textarea" rows="3">Documents verified. Nomination form duly signed and attached.</textarea>
+      </div>
+      <div class="form-group mb-4">
+        <label class="form-label">Error state example</label>
+        <input type="text" class="input has-error" value="INVALID">
+        <div class="form-error">PAN must contain exactly 10 characters in the format AAAAA9999A.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <label class="checkbox-row">
+          <input type="checkbox" checked>
+          <span class="checkbox-label">I confirm that all documents submitted are accurate and genuine.</span>
+        </label>
+        <label class="checkbox-row">
+          <input type="checkbox">
+          <span class="checkbox-label">I agree to abide by the society bye-laws and rules.</span>
+        </label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ BADGES -->
+<section id="badges" class="ds-section">
+  <div class="ds-section-title">Status badges</div>
+  <div class="ds-block">
+    <div class="ds-label">Status states — subdued semantic colours</div>
+    <div class="ds-sample">
+      <div class="component-row mb-4">
+        <span class="badge badge-success"><span class="badge-dot"></span>Approved</span>
+        <span class="badge badge-warning"><span class="badge-dot"></span>Pending approval</span>
+        <span class="badge badge-danger"><span class="badge-dot"></span>Rejected</span>
+        <span class="badge badge-info"><span class="badge-dot"></span>Under review</span>
+        <span class="badge badge-neutral"><span class="badge-dot"></span>Draft</span>
+      </div>
+      <div class="component-row">
+        <span class="badge badge-warning"><span class="badge-dot"></span>Contract expiring</span>
+        <span class="badge badge-danger"><span class="badge-dot"></span>Overdue</span>
+        <span class="badge badge-info"><span class="badge-dot"></span>Quotation submitted</span>
+        <span class="badge badge-success"><span class="badge-dot"></span>Active</span>
+        <span class="badge badge-neutral"><span class="badge-dot"></span>Inactive</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ ALERTS -->
+<section id="alerts" class="ds-section">
+  <div class="ds-section-title">Alerts</div>
+  <div class="ds-block">
+    <div class="ds-sample" style="display:flex;flex-direction:column;gap:var(--sp-3)">
+      <div class="alert alert-success">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div><div class="alert-title">Application approved</div>Membership application CHS/2026/A/MEM/000123 has been approved. The member will be notified.</div>
+      </div>
+      <div class="alert alert-warning">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div><div class="alert-title">Contract expiring soon</div>The lift AMC contract with SecureGuard Services expires in 18 days (30 Sep 2026). Initiate renewal or raise a new RFQ.</div>
+      </div>
+      <div class="alert alert-danger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <div><div class="alert-title">Document missing</div>The signed transfer deed has not been uploaded. The application cannot proceed to final approval without this document.</div>
+      </div>
+      <div class="alert alert-info">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div><div class="alert-title">Pending secondary approval</div>This application is awaiting review by Authority 2 (Secretary). You will be notified when a decision is made.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ TABS & BREADCRUMBS -->
+<section id="tabs" class="ds-section">
+  <div class="ds-section-title">Tabs &amp; breadcrumbs</div>
+  <div class="ds-block">
+    <div class="ds-label">Breadcrumb</div>
+    <div class="ds-sample">
+      <nav class="breadcrumb">
+        <a href="#">Members</a>
+        <span class="breadcrumb-sep">/</span>
+        <a href="#">Applications</a>
+        <span class="breadcrumb-sep">/</span>
+        <span>CHS/2026/A/MEM/000123</span>
+      </nav>
+    </div>
+  </div>
+  <div class="ds-block">
+    <div class="ds-label">Tabs — entity-level navigation</div>
+    <div class="ds-sample" style="padding-bottom:0">
+      <div class="tabs" style="margin-bottom:0">
+        <a href="#" class="tab active">Overview</a>
+        <a href="#" class="tab">Documents <span class="tab-count">4</span></a>
+        <a href="#" class="tab">Workflow <span class="tab-count">3</span></a>
+        <a href="#" class="tab">Communication</a>
+        <a href="#" class="tab">Audit log</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ TABLES -->
+<section id="tables" class="ds-section">
+  <div class="ds-section-title">Tables</div>
+  <div class="ds-block">
+    <div class="ds-label">Standard administrative table — first-class component</div>
+    <div class="ds-sample" style="padding:0">
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Application no.</th>
+              <th class="sortable">Applicant</th>
+              <th>Wing / flat</th>
+              <th>Submitted</th>
+              <th>Status</th>
+              <th>Pending at</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="clickable">
+              <td class="cell-mono">CHS/2026/A/MEM/000123</td>
+              <td><div class="cell-primary">Rajesh Sharma</div><div class="cell-secondary">Primary member</div></td>
+              <td>Wing A, Flat 502</td>
+              <td><div>12 Aug 2026</div><div class="cell-muted">4:35 PM</div></td>
+              <td><span class="badge badge-warning"><span class="badge-dot"></span>Pending approval</span></td>
+              <td class="text-secondary">Authority 2</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn btn-ghost btn-sm btn-icon" title="View">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                  <button class="btn btn-ghost btn-sm btn-icon" title="More">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr class="clickable">
+              <td class="cell-mono">CHS/2026/B/MEM/000119</td>
+              <td><div class="cell-primary">Priya Mehta</div><div class="cell-secondary">Primary member</div></td>
+              <td>Wing B, Flat 304</td>
+              <td><div>10 Aug 2026</div><div class="cell-muted">11:20 AM</div></td>
+              <td><span class="badge badge-info"><span class="badge-dot"></span>Under review</span></td>
+              <td class="text-secondary">Authority 1</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn btn-ghost btn-sm btn-icon" title="View">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                  <button class="btn btn-ghost btn-sm btn-icon" title="More">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr class="clickable">
+              <td class="cell-mono">CHS/2026/A/MEM/000112</td>
+              <td><div class="cell-primary">Anil Kulkarni</div><div class="cell-secondary">Associate member</div></td>
+              <td>Wing A, Flat 1201</td>
+              <td><div>5 Aug 2026</div><div class="cell-muted">2:15 PM</div></td>
+              <td><span class="badge badge-success"><span class="badge-dot"></span>Approved</span></td>
+              <td class="cell-muted">Completed</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn btn-ghost btn-sm btn-icon" title="View">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                  <button class="btn btn-ghost btn-sm btn-icon" title="More">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr class="clickable">
+              <td class="cell-mono">CHS/2026/C/MEM/000107</td>
+              <td><div class="cell-primary">Sunita Desai</div><div class="cell-secondary">Primary member</div></td>
+              <td>Wing C, Flat 701</td>
+              <td><div>2 Aug 2026</div><div class="cell-muted">9:40 AM</div></td>
+              <td><span class="badge badge-danger"><span class="badge-dot"></span>Correction required</span></td>
+              <td class="text-secondary">Applicant</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn btn-ghost btn-sm btn-icon" title="View">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                  <button class="btn btn-ghost btn-sm btn-icon" title="More">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination-bar">
+        <div class="pagination-info">Showing 1–4 of 47 applications</div>
+        <div class="pagination-pages">
+          <button class="page-btn" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">…</button>
+          <button class="page-btn">12</button>
+          <button class="page-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ MODAL -->
+<section id="modals" class="ds-section">
+  <div class="ds-section-title">Modal dialog</div>
+  <div class="ds-block">
+    <div class="ds-label">Confirmation dialog — destructive action with consequence description</div>
+    <div class="ds-sample bg-dark" style="padding:var(--sp-6);display:flex;align-items:center;justify-content:center">
+      <div class="dialog" style="position:relative;box-shadow:var(--shadow-dialog)">
+        <div class="dialog-header">
+          <div>
+            <div class="dialog-title">Reject membership application?</div>
+            <div class="dialog-desc">The applicant will be notified by email. The application will move to Rejected status and cannot be resubmitted for 30 days.</div>
+          </div>
+          <button class="btn btn-ghost btn-sm btn-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="dialog-body">
+          <div class="form-group">
+            <label class="form-label">Reason for rejection <span class="req">*</span></label>
+            <textarea class="input textarea" rows="3" placeholder="State the specific reason so the applicant can take corrective action."></textarea>
+            <div class="form-helper">This reason will be included in the rejection notice sent to the applicant.</div>
+          </div>
+        </div>
+        <div class="dialog-footer">
+          <button class="btn btn-ghost">Cancel</button>
+          <button class="btn btn-danger">Reject application</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ FILE UPLOAD -->
+<section id="fileupload" class="ds-section">
+  <div class="ds-section-title">File upload</div>
+  <div class="ds-block">
+    <div class="ds-sample" style="display:flex;flex-direction:column;gap:var(--sp-4)">
+      <div>
+        <div class="ds-label" style="margin-bottom:var(--sp-2)">Upload zone</div>
+        <div class="file-upload-zone">
+          <svg style="width:28px;height:28px;margin:0 auto var(--sp-2);color:var(--c-text-muted)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div class="file-upload-title">Upload signed membership application</div>
+          <div class="file-upload-hint">PDF, JPG or PNG &nbsp;·&nbsp; Maximum 10 MB</div>
+        </div>
+      </div>
+      <div>
+        <div class="ds-label" style="margin-bottom:var(--sp-2)">Uploaded file</div>
+        <div class="uploaded-file">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <div>
+            <div class="uploaded-file-name">membership-application-signed.pdf</div>
+            <div class="uploaded-file-size">2.1 MB</div>
+          </div>
+          <div class="uploaded-file-ok">Uploaded successfully</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm">View</button>
+            <button class="btn btn-ghost btn-sm">Replace</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ FEEDBACK -->
+<section id="feedback" class="ds-section">
+  <div class="ds-section-title">Loading &amp; feedback states</div>
+  <div class="ds-block">
+    <div class="ds-label">Skeleton loaders — for page content, not spinners</div>
+    <div class="ds-sample" style="display:flex;flex-direction:column;gap:var(--sp-3)">
+      <div style="display:flex;gap:var(--sp-3);align-items:center">
+        <div class="skeleton skeleton-avatar"></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+          <div class="skeleton skeleton-title" style="width:45%"></div>
+          <div class="skeleton skeleton-text" style="width:30%"></div>
+        </div>
+        <div class="skeleton skeleton-badge"></div>
+      </div>
+      <div style="display:flex;gap:var(--sp-3);align-items:center">
+        <div class="skeleton skeleton-avatar"></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+          <div class="skeleton skeleton-title" style="width:55%"></div>
+          <div class="skeleton skeleton-text" style="width:35%"></div>
+        </div>
+        <div class="skeleton skeleton-badge"></div>
+      </div>
+    </div>
+  </div>
+  <div class="ds-block">
+    <div class="ds-label">Toast — restrained administrative confirmation</div>
+    <div class="ds-sample" style="display:flex;flex-direction:column;gap:var(--sp-2)">
+      <div class="toast" style="position:relative;bottom:auto;right:auto">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div>Application submitted successfully.</div>
+        <button class="toast-close"><svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="toast" style="position:relative;bottom:auto;right:auto">
+        <svg style="color:#F2C94C" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div>Contract updated. Renewal date set to 30 Sep 2027.</div>
+        <button class="toast-close"><svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+    </div>
+  </div>
+  <div class="ds-block">
+    <div class="ds-label">Empty state — calm and helpful</div>
+    <div class="ds-sample">
+      <div class="empty-state" style="padding:var(--sp-8) var(--sp-6)">
+        <div class="empty-state-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div class="empty-state-title">No contracts found</div>
+        <div class="empty-state-desc">There are no active contracts matching these filters. Try adjusting the date range or status filter.</div>
+        <button class="btn btn-secondary">Clear filters</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ PAGE HEADER PATTERN -->
+<section id="pageheader" class="ds-section">
+  <div class="ds-section-title">Application patterns</div>
+  <div class="ds-block">
+    <div class="ds-label">Page header — consistent across all screens</div>
+    <div class="ds-sample" style="background:var(--c-bg);padding:0">
+      <div style="padding:var(--sp-5) var(--sp-6);background:var(--c-bg)">
+        <nav class="breadcrumb">
+          <a href="#">Members</a>
+          <span class="breadcrumb-sep">/</span>
+          <span>Applications</span>
+        </nav>
+        <div class="page-header" style="margin-bottom:0">
+          <div>
+            <div class="page-title">Member applications</div>
+            <div class="page-description">Manage and review society membership applications.</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-secondary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export
+            </button>
+            <button class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              New application
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ METRICS -->
+<section id="metrics" class="ds-section">
+  <div class="ds-block">
+    <div class="ds-label">Metric blocks — compact, no giant icons or gradient backgrounds</div>
+    <div class="metrics-row" style="grid-template-columns:repeat(5,1fr)">
+      <div class="metric-card accent-warn">
+        <div class="metric-label">Pending approvals</div>
+        <div class="metric-value">18</div>
+        <div class="metric-sub warn">6 overdue</div>
+      </div>
+      <div class="metric-card accent-ok">
+        <div class="metric-label">Active members</div>
+        <div class="metric-value">342</div>
+        <div class="metric-sub ok">4 new this month</div>
+      </div>
+      <div class="metric-card accent-err">
+        <div class="metric-label">Contracts expiring</div>
+        <div class="metric-value">4</div>
+        <div class="metric-sub err">Within 30 days</div>
+      </div>
+      <div class="metric-card accent-info">
+        <div class="metric-label">Open RFQs</div>
+        <div class="metric-value">7</div>
+        <div class="metric-sub">2 closing this week</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Registered vendors</div>
+        <div class="metric-value">61</div>
+        <div class="metric-sub">Across 9 categories</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ TIMELINE -->
+<section id="timeline" class="ds-section">
+  <div class="ds-block">
+    <div class="ds-label">Workflow timeline — approvals and history</div>
+    <div class="ds-sample" style="max-width:540px">
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-icon success">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-event">Authority 1 approved</div>
+            <div class="timeline-by">Reviewed by Anita Joshi, Assistant Secretary</div>
+            <div class="timeline-remark">Documents verified. Nomination form complete.</div>
+            <div class="timeline-time">13 Aug 2026, 10:42 AM</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-icon info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-event">Application submitted</div>
+            <div class="timeline-by">Submitted by Rajesh Sharma</div>
+            <div class="timeline-time">12 Aug 2026, 4:35 PM</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-icon warning">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-event">Correction requested</div>
+            <div class="timeline-by">Flagged by Anita Joshi</div>
+            <div class="timeline-remark">Nomination form signature missing. Please re-upload.</div>
+            <div class="timeline-time">8 Aug 2026, 2:10 PM</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-icon neutral">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-event">Initial application submitted</div>
+            <div class="timeline-by">Submitted by Rajesh Sharma</div>
+            <div class="timeline-time">5 Aug 2026, 11:00 AM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ KV INFO -->
+<section id="kvinfo" class="ds-section">
+  <div class="ds-block">
+    <div class="ds-label">Key-value information — member record summary</div>
+    <div class="ds-sample" style="max-width:560px">
+      <div class="kv-grid">
+        <div class="kv-label">Membership number</div><div class="kv-value cell-mono">M-00231</div>
+        <div class="kv-label">Wing</div><div class="kv-value">A</div>
+        <div class="kv-label">Flat number</div><div class="kv-value">502</div>
+        <div class="kv-label">Floor area</div><div class="kv-value">1,240 sq ft</div>
+        <div class="kv-label">Member since</div><div class="kv-value">12 Mar 2018</div>
+        <div class="kv-label">Membership type</div><div class="kv-value">Primary member</div>
+        <div class="kv-label">PAN</div><div class="kv-value cell-mono">ABCDE1234F</div>
+        <div class="kv-label">Status</div><div class="kv-value"><span class="badge badge-success"><span class="badge-dot"></span>Active</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ DOCUMENT LIST -->
+<section id="doclist" class="ds-section">
+  <div class="ds-block">
+    <div class="ds-label">Document list</div>
+    <div class="ds-sample" style="padding:0">
+      <div class="document-row">
+        <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <div style="flex:1">
+          <div class="doc-name">Membership application form</div>
+          <div class="doc-meta">PDF · 2.1 MB · Uploaded by Rajesh Sharma · 12 Aug 2026</div>
+        </div>
+        <span class="badge badge-success"><span class="badge-dot"></span>Verified</span>
+        <button class="btn btn-ghost btn-sm">View</button>
+      </div>
+      <div class="document-row">
+        <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <div style="flex:1">
+          <div class="doc-name">Nomination form (signed)</div>
+          <div class="doc-meta">PDF · 0.8 MB · Uploaded by Rajesh Sharma · 12 Aug 2026</div>
+        </div>
+        <span class="badge badge-success"><span class="badge-dot"></span>Verified</span>
+        <button class="btn btn-ghost btn-sm">View</button>
+      </div>
+      <div class="document-row">
+        <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <div style="flex:1">
+          <div class="doc-name">Share certificate copy</div>
+          <div class="doc-meta">PDF · 1.3 MB · Uploaded by Rajesh Sharma · 12 Aug 2026</div>
+        </div>
+        <span class="badge badge-warning"><span class="badge-dot"></span>Pending review</span>
+        <button class="btn btn-ghost btn-sm">View</button>
+      </div>
+      <div class="document-row">
+        <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+        <div style="flex:1">
+          <div class="doc-name">Passport photo</div>
+          <div class="doc-meta">JPG · 0.2 MB · Uploaded by Rajesh Sharma · 12 Aug 2026</div>
+        </div>
+        <span class="badge badge-success"><span class="badge-dot"></span>Verified</span>
+        <button class="btn btn-ghost btn-sm">View</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ EXPIRY ALERT -->
+<section id="expiry" class="ds-section">
+  <div class="ds-block">
+    <div class="ds-label">Expiry alert — visible without making active contracts look alarming</div>
+    <div class="ds-sample" style="padding:0;overflow:hidden">
+      <div class="expiry-alert">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div class="expiry-alert-text">
+          <strong>Expires in 18 days</strong> — Lift AMC contract with SecureGuard Services (CON-2025-0098) expires on 30 Sep 2026.
+          <a href="#" style="color:var(--c-warning-text);text-decoration:underline;margin-left:8px">Initiate renewal</a>
+        </div>
+      </div>
+      <div style="padding:var(--sp-4) var(--sp-5);font-size:14px;color:var(--c-text-secondary)">
+        Contract is otherwise active and performing normally.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ QUOTATION COMPARISON -->
+<section id="comparison" class="ds-section">
+  <div class="ds-block">
+    <div class="ds-label">Quotation comparison — structured table, not cards</div>
+    <div class="ds-sample" style="padding:0;overflow:auto">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th style="min-width:160px">Criteria</th>
+            <th class="vendor-col">Allied Facilities<br><span style="font-weight:400;font-size:12px">VEN-00034</span></th>
+            <th class="vendor-col recommended">SecureGuard Services<br><span style="font-weight:400;font-size:12px">VEN-00018 ★ Recommended</span></th>
+            <th class="vendor-col">Apex Maintenance<br><span style="font-weight:400;font-size:12px">VEN-00051</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="section-row"><td colspan="4">Technical qualification</td></tr>
+          <tr>
+            <td class="row-label">Technical score</td>
+            <td class="val-right">Qualified</td>
+            <td class="val-right">Qualified</td>
+            <td class="val-right">Partial</td>
+          </tr>
+          <tr class="section-row"><td colspan="4">Commercial terms</td></tr>
+          <tr>
+            <td class="row-label">Basic price</td>
+            <td class="val-right">₹80,000</td>
+            <td class="val-right">₹84,000</td>
+            <td class="val-right">₹78,000</td>
+          </tr>
+          <tr>
+            <td class="row-label">GST (18%)</td>
+            <td class="val-right">₹14,400</td>
+            <td class="val-right">₹15,120</td>
+            <td class="val-right">₹14,040</td>
+          </tr>
+          <tr>
+            <td class="row-label total-row">Total (incl. GST)</td>
+            <td class="val-right total-row">₹94,400</td>
+            <td class="val-right total-row" style="background:var(--c-info-bg)">₹99,120</td>
+            <td class="val-right total-row">₹92,040</td>
+          </tr>
+          <tr>
+            <td class="row-label">Payment terms</td>
+            <td class="val-right">30 days net</td>
+            <td class="val-right">30 days net</td>
+            <td class="val-right">Advance required</td>
+          </tr>
+          <tr>
+            <td class="row-label">Warranty</td>
+            <td class="val-right">12 months</td>
+            <td class="val-right">18 months</td>
+            <td class="val-right">12 months</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ APPROVAL PANEL -->
+<section id="approval" class="ds-section">
+  <div class="ds-block">
+    <div class="ds-label">Approval panel — current step always visible</div>
+    <div class="ds-sample" style="padding:0">
+      <div style="padding:var(--sp-4) var(--sp-5);background:var(--c-info-bg);border-bottom:1px solid var(--c-info-border);display:flex;align-items:center;gap:var(--sp-3)">
+        <svg style="width:15px;height:15px;color:var(--c-info);flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div style="font-size:13px;color:var(--c-info-text)">
+          <strong>Current step — Authority 2 (Secretary).</strong> This application has been approved by Authority 1. Your decision is required.
+        </div>
+      </div>
+      <div style="padding:var(--sp-5)">
+        <div class="panel-heading mb-4">Your decision</div>
+        <div class="form-group mb-5">
+          <label class="form-label">Remarks</label>
+          <textarea class="input textarea" rows="3" placeholder="Add any observations or notes before making your decision."></textarea>
+        </div>
+        <div style="display:flex;gap:var(--sp-3)">
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Approve
+          </button>
+          <button class="btn btn-secondary">Request correction</button>
+          <button class="btn btn-danger" style="margin-left:auto">Reject application</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+<script>
+// Highlight active nav link on scroll
+const sections = document.querySelectorAll('.ds-section');
+const navLinks = document.querySelectorAll('.ds-nav a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const link = document.querySelector('.ds-nav a[href="#'+e.target.id+'"]');
+      if (link) link.classList.add('active');
+    }
+  });
+}, { threshold: 0.2 });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

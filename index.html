@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Byelawsindia.com — Reference Screens</title>
+<link rel="stylesheet" href="assets/byelawsindia.css">
+<style>
+body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--c-bg); }
+.hub { max-width: 760px; width: 100%; padding: var(--sp-8); }
+.hub-header { margin-bottom: var(--sp-8); }
+.hub-brand { font-size: 13px; font-weight: var(--w-bold); letter-spacing: 0.06em; color: var(--c-primary); text-transform: uppercase; margin-bottom: var(--sp-2); }
+.hub-title { font-size: 22px; font-weight: var(--w-semibold); color: var(--c-text); margin-bottom: var(--sp-2); }
+.hub-desc  { font-size: var(--text-base); color: var(--c-text-secondary); }
+.hub-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); }
+.hub-card  {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-4) var(--sp-5);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  text-decoration: none;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast);
+}
+.hub-card:hover {
+  border-color: var(--c-secondary);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+}
+.hub-card-label {
+  font-size: 11px;
+  font-weight: var(--w-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--c-text-muted);
+}
+.hub-card-name {
+  font-size: 15px;
+  font-weight: var(--w-semibold);
+  color: var(--c-text);
+}
+.hub-card-desc {
+  font-size: var(--text-sm);
+  color: var(--c-text-secondary);
+  line-height: 1.4;
+}
+.hub-card.ds {
+  grid-column: 1 / -1;
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+}
+.hub-card.ds .hub-card-label { color: rgba(255,255,255,0.5); }
+.hub-card.ds .hub-card-name  { color: var(--c-text-inverse); font-size: 17px; }
+.hub-card.ds .hub-card-desc  { color: rgba(255,255,255,0.65); }
+</style>
+</head>
+<body>
+<div class="hub">
+  <div class="hub-header">
+    <div class="hub-brand">Byelawsindia.com</div>
+    <div class="hub-title">Design reference — Visual grammar and reference screens</div>
+    <div class="hub-desc">Society / Co-operative Housing Society Management Platform. All screens follow the Byelawsindia design system.</div>
+  </div>
+  <div class="hub-grid">
+    <a href="design-system.html" class="hub-card ds">
+      <div class="hub-card-label">Foundation</div>
+      <div class="hub-card-name">Design system showcase</div>
+      <div class="hub-card-desc">Typography, colours, components and application patterns — the complete visual language.</div>
+    </a>
+    <a href="dashboard.html" class="hub-card">
+      <div class="hub-card-label">Screen 1</div>
+      <div class="hub-card-name">Society admin dashboard</div>
+      <div class="hub-card-desc">Operational overview with metrics, pending work and recent activity.</div>
+    </a>
+    <a href="member-applications.html" class="hub-card">
+      <div class="hub-card-label">Screen 2</div>
+      <div class="hub-card-name">Member applications list</div>
+      <div class="hub-card-desc">Filterable, paginated table of membership applications with status.</div>
+    </a>
+    <a href="member-application-detail.html" class="hub-card">
+      <div class="hub-card-label">Screen 3</div>
+      <div class="hub-card-name">Application detail and approval</div>
+      <div class="hub-card-desc">Full application review screen with documents, checklist and approval controls.</div>
+    </a>
+    <a href="vendor-directory.html" class="hub-card">
+      <div class="hub-card-label">Screen 4</div>
+      <div class="hub-card-name">Vendor directory</div>
+      <div class="hub-card-desc">Registered vendor listing with category, rating and contract status.</div>
+    </a>
+    <a href="quotation-comparison.html" class="hub-card">
+      <div class="hub-card-label">Screen 5</div>
+      <div class="hub-card-name">Quotation comparison</div>
+      <div class="hub-card-desc">Side-by-side vendor quotation comparison table for RFQ decisions.</div>
+    </a>
+    <a href="contract-detail.html" class="hub-card">
+      <div class="hub-card-label">Screen 6</div>
+      <div class="hub-card-name">Contract detail</div>
+      <div class="hub-card-desc">Single contract record with status, terms, documents and renewal alert.</div>
+    </a>
+    <a href="member-mobile-dashboard.html" class="hub-card">
+      <div class="hub-card-label">Screen 7</div>
+      <div class="hub-card-name">Member mobile dashboard</div>
+      <div class="hub-card-desc">Responsive mobile view of the resident-facing member portal.</div>
+    </a>
+  </div>
+</div>
+</body>
+</html>

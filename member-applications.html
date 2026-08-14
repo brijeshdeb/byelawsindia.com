@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Member Applications — Sunrise CHS | Byelawsindia</title>
+<link rel="stylesheet" href="assets/byelawsindia.css">
+</head>
+<body>
+<div class="app-shell">
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-brand"><span class="topbar-wordmark">BYELAWSINDIA</span></div>
+  <div class="topbar-society">Sunrise Cooperative Housing Society</div>
+  <div class="topbar-actions">
+    <button class="btn btn-ghost btn-sm btn-icon" title="Search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+    <div class="topbar-user">
+      <div class="topbar-avatar">AJ</div>
+      <div class="topbar-user-info">
+        <div class="topbar-user-name">Anita Joshi</div>
+        <div class="topbar-user-role">Secretary</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-group-label">Overview</div>
+      <a href="dashboard.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Members</div>
+      <a href="member-applications.html" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Applications
+        <span class="nav-badge">18</span>
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Member register
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Share certificates
+      </a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Procurement</div>
+      <a href="vendor-directory.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Vendors
+      </a>
+      <a href="quotation-comparison.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        RFQ / Quotations
+        <span class="nav-badge warn">7</span>
+      </a>
+      <a href="contract-detail.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Contracts
+        <span class="nav-badge warn">4</span>
+      </a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Finance</div>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Maintenance dues
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Fund accounts
+      </a>
+    </div>
+  </nav>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+  <div class="page-container">
+
+    <!-- Breadcrumb + Header -->
+    <nav class="breadcrumb">
+      <a href="dashboard.html">Dashboard</a>
+      <span class="breadcrumb-sep">/</span>
+      <span>Member applications</span>
+    </nav>
+
+    <div class="page-header">
+      <div>
+        <div class="page-title">Member applications</div>
+        <div class="page-description">Review and manage society membership applications across all wings.</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-secondary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
+        <button class="btn btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New application
+        </button>
+      </div>
+    </div>
+
+    <!-- Summary metric chips -->
+    <div class="metrics-row" style="grid-template-columns:repeat(5,1fr);margin-bottom:var(--sp-5)">
+      <div class="metric-card accent-warn">
+        <div class="metric-label">Pending approval</div>
+        <div class="metric-value">18</div>
+        <div class="metric-sub warn">6 overdue</div>
+      </div>
+      <div class="metric-card accent-info">
+        <div class="metric-label">Under review</div>
+        <div class="metric-value">9</div>
+        <div class="metric-sub">Authority 1 stage</div>
+      </div>
+      <div class="metric-card accent-ok">
+        <div class="metric-label">Approved this month</div>
+        <div class="metric-value">14</div>
+        <div class="metric-sub ok">Since 1 Aug 2026</div>
+      </div>
+      <div class="metric-card accent-err">
+        <div class="metric-label">Correction required</div>
+        <div class="metric-value">4</div>
+        <div class="metric-sub err">Awaiting applicant</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Total this year</div>
+        <div class="metric-value">47</div>
+        <div class="metric-sub">FY 2026–27</div>
+      </div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search by name, application no. or flat…" value="">
+      </div>
+      <div class="filter-controls">
+        <select class="input select" style="min-width:120px">
+          <option>All statuses</option>
+          <option selected>Pending approval</option>
+          <option>Under review</option>
+          <option>Approved</option>
+          <option>Rejected</option>
+          <option>Correction required</option>
+        </select>
+        <select class="input select" style="min-width:110px">
+          <option>All wings</option>
+          <option>Wing A</option>
+          <option>Wing B</option>
+          <option>Wing C</option>
+        </select>
+        <select class="input select" style="min-width:130px">
+          <option>All types</option>
+          <option>Primary member</option>
+          <option>Associate member</option>
+          <option>Nominee</option>
+        </select>
+        <button class="btn btn-ghost btn-sm">Clear filters</button>
+      </div>
+    </div>
+
+    <!-- Table panel -->
+    <div class="panel" style="margin-top:var(--sp-4)">
+      <div class="panel-header">
+        <div class="panel-title">Showing 18 pending applications</div>
+        <div style="display:flex;align-items:center;gap:var(--sp-3)">
+          <button class="btn btn-ghost btn-sm btn-icon" title="Sort">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
+          </button>
+          <button class="btn btn-ghost btn-sm btn-icon" title="Columns">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="panel-body" style="padding:0">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th><input type="checkbox" style="cursor:pointer"></th>
+                <th class="sortable">Application no. <span class="sort-icon">↑</span></th>
+                <th>Applicant</th>
+                <th>Wing / flat</th>
+                <th>Type</th>
+                <th>Submitted</th>
+                <th>Pending at</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="clickable" onclick="window.location='member-application-detail.html'">
+                <td><input type="checkbox"></td>
+                <td class="cell-mono">CHS/2026/A/MEM/000123</td>
+                <td><div class="cell-primary">Rajesh Sharma</div><div class="cell-secondary">+91 98765 43210</div></td>
+                <td>Wing A, Flat 502</td>
+                <td>Primary member</td>
+                <td><div>12 Aug 2026</div><div class="cell-muted">4:35 PM</div></td>
+                <td><span style="color:var(--c-danger-text);font-weight:var(--w-semibold)">Authority 2</span><div class="cell-muted">8 days overdue</div></td>
+                <td><span class="badge badge-warning"><span class="badge-dot"></span>Pending approval</span></td>
+                <td>
+                  <div class="table-actions">
+                    <button class="btn btn-ghost btn-sm btn-icon" title="View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    <button class="btn btn-ghost btn-sm btn-icon" title="More"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+                  </div>
+                </td>
+              </tr>
+              <tr class="clickable">
+                <td><input type="checkbox"></td>
+                <td class="cell-mono">CHS/2026/B/MEM/000119</td>
+                <td><div class="cell-primary">Priya Mehta</div><div class="cell-secondary">+91 91234 56789</div></td>
+                <td>Wing B, Flat 304</td>
+                <td>Primary member</td>
+                <td><div>10 Aug 2026</div><div class="cell-muted">11:20 AM</div></td>
+                <td>Authority 1</td>
+                <td><span class="badge badge-info"><span class="badge-dot"></span>Under review</span></td>
+                <td>
+                  <div class="table-actions">
+                    <button class="btn btn-ghost btn-sm btn-icon" title="View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    <button class="btn btn-ghost btn-sm btn-icon" title="More"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+                  </div>
+                </td>
+              </tr>
+              <tr class="clickable">
+                <td><input type="checkbox"></td>
+                <td class="cell-mono">CHS/2026/C/MEM/000107</td>
+                <td><div class="cell-primary">Sunita Desai</div><div class="cell-secondary">+91 99887 76655</div></td>
+                <td>Wing C, Flat 701</td>
+                <td>Primary member</td>
+                <td><div>2 Aug 2026</div><div class="cell-muted">9:40 AM</div></td>
+                <td>Applicant</td>
+                <td><span class="badge badge-danger"><span class="badge-dot"></span>Correction required</span></td>
+                <td>
+                  <div class="table-actions">
+                    <button class="btn btn-ghost btn-sm btn-icon" title="View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    <button class="btn btn-ghost btn-sm btn-icon" title="More"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+                  </div>
+                </td>
+              </tr>
+              <tr class="clickable">
+                <td><input type="checkbox"></td>
+                <td class="cell-mono">CHS/2026/A/MEM/000105</td>
+                <td><div class="cell-primary">Vikram Nair</div><div class="cell-secondary">+91 87654 32109</div></td>
+                <td>Wing A, Flat 804</td>
+                <td>Associate member</td>
+                <td><div>28 Jul 2026</div><div class="cell-muted">2:00 PM</div></td>
+                <td>Authority 1</td>
+                <td><span class="badge badge-info"><span class="badge-dot"></span>Under review</span></td>
+                <td>
+                  <div class="table-actions">
+                    <button class="btn btn-ghost btn-sm btn-icon" title="View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    <button class="btn btn-ghost btn-sm btn-icon" title="More"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+                  </div>
+                </td>
+              </tr>
+              <tr class="clickable">
+                <td><input type="checkbox"></td>
+                <td class="cell-mono">CHS/2026/B/MEM/000099</td>
+                <td><div class="cell-primary">Geeta Rao</div><div class="cell-secondary">+91 76543 21098</div></td>
+                <td>Wing B, Flat 1105</td>
+                <td>Primary member</td>
+                <td><div>22 Jul 2026</div><div class="cell-muted">10:15 AM</div></td>
+                <td>Authority 2</td>
+                <td><span class="badge badge-warning"><span class="badge-dot"></span>Pending approval</span></td>
+                <td>
+                  <div class="table-actions">
+                    <button class="btn btn-ghost btn-sm btn-icon" title="View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    <button class="btn btn-ghost btn-sm btn-icon" title="More"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+                  </div>
+                </td>
+              </tr>
+              <tr class="clickable">
+                <td><input type="checkbox"></td>
+                <td class="cell-mono">CHS/2026/A/MEM/000112</td>
+                <td><div class="cell-primary">Anil Kulkarni</div><div class="cell-secondary">+91 93456 78901</div></td>
+                <td>Wing A, Flat 1201</td>
+                <td>Associate member</td>
+                <td><div>5 Aug 2026</div><div class="cell-muted">2:15 PM</div></td>
+                <td class="cell-muted">Completed</td>
+                <td><span class="badge badge-success"><span class="badge-dot"></span>Approved</span></td>
+                <td>
+                  <div class="table-actions">
+                    <button class="btn btn-ghost btn-sm btn-icon" title="View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    <button class="btn btn-ghost btn-sm btn-icon" title="More"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-bar">
+          <div class="pagination-info">Showing 1–6 of 18 pending applications</div>
+          <div class="pagination-pages">
+            <button class="page-btn" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+          <div style="display:flex;align-items:center;gap:var(--sp-2)">
+            <span class="text-sm text-muted">Per page</span>
+            <select class="input select" style="width:auto;padding:4px 8px;font-size:13px">
+              <option>25</option>
+              <option>50</option>
+              <option>100</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+</div>
+</body>
+</html>

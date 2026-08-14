@@ -1,0 +1,204 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e51]: Dashboard | Byelawsindia
+  - generic [ref=e87]:
+    - banner [ref=e89]:
+      - link "Byelawsindia — go to dashboard" [ref=e90] [cursor=pointer]:
+        - /url: /dashboard
+        - generic [ref=e92]: Byelawsindia
+      - generic [ref=e93]:
+        - button "Notifications (coming soon)" [ref=e94] [cursor=pointer]
+        - button "User menu for Society A Admin" [ref=e99] [cursor=pointer]:
+          - generic [ref=e100]: SA
+          - generic [ref=e101]: Society A Admin
+    - complementary "Application sidebar" [ref=e105]:
+      - generic [ref=e106]:
+        - link "Byelawsindia — go to dashboard" [ref=e107] [cursor=pointer]:
+          - /url: /dashboard
+          - img "Byelawsindia" [ref=e108]
+          - generic [ref=e109]: Byelawsindia
+        - generic [ref=e110]:
+          - paragraph [ref=e111]: Sunrise Cooperative Housing Society
+          - paragraph [ref=e112]: Society-Wide
+          - paragraph [ref=e113]: Society Admin
+      - navigation "Main navigation" [ref=e115]:
+        - generic [ref=e116]:
+          - paragraph [ref=e117]: Overview
+          - list [ref=e118]:
+            - listitem [ref=e119]:
+              - link "Dashboard" [ref=e120] [cursor=pointer]:
+                - /url: /dashboard
+        - generic [ref=e127]:
+          - paragraph [ref=e128]: Registry
+          - list [ref=e129]:
+            - listitem [ref=e130]:
+              - link "Members" [ref=e131] [cursor=pointer]:
+                - /url: /members
+            - listitem [ref=e138]:
+              - link "Units" [ref=e139] [cursor=pointer]:
+                - /url: /units
+        - generic [ref=e145]:
+          - paragraph [ref=e146]: Applications
+          - list [ref=e147]:
+            - listitem [ref=e148]:
+              - link "All Applications" [ref=e149] [cursor=pointer]:
+                - /url: /applications
+        - generic [ref=e154]:
+          - paragraph [ref=e155]: Maintenance
+          - list [ref=e156]:
+            - listitem [ref=e157]:
+              - link "Complaints" [ref=e158] [cursor=pointer]:
+                - /url: /maintenance/complaints
+            - listitem [ref=e162]:
+              - link "Work Orders" [ref=e163] [cursor=pointer]:
+                - /url: /maintenance/work-orders
+        - generic [ref=e167]:
+          - paragraph [ref=e168]: Documents
+          - list [ref=e169]:
+            - listitem [ref=e170]:
+              - link "Repository" [ref=e171] [cursor=pointer]:
+                - /url: /documents
+        - generic [ref=e175]:
+          - paragraph [ref=e176]: Vendors
+          - list [ref=e177]:
+            - listitem [ref=e178]:
+              - link "Vendor Registry" [ref=e179] [cursor=pointer]:
+                - /url: /vendors
+        - generic [ref=e186]:
+          - paragraph [ref=e187]: Procurement
+          - list [ref=e188]:
+            - listitem [ref=e189]:
+              - link "RFQs" [ref=e190] [cursor=pointer]:
+                - /url: /procurement/rfqs
+            - listitem [ref=e196]:
+              - link "Work Orders" [ref=e197] [cursor=pointer]:
+                - /url: /procurement/work-orders
+            - listitem [ref=e203]:
+              - link "Contracts" [ref=e204] [cursor=pointer]:
+                - /url: /procurement/contracts
+        - generic [ref=e209]:
+          - paragraph [ref=e210]: Finance
+          - list [ref=e211]:
+            - listitem [ref=e212]:
+              - link "Maintenance Dues" [ref=e213] [cursor=pointer]:
+                - /url: /finance/dues
+            - listitem [ref=e217]:
+              - link "Payments" [ref=e218] [cursor=pointer]:
+                - /url: /finance/payments
+        - generic [ref=e222]:
+          - paragraph [ref=e223]: Reports
+          - list [ref=e224]:
+            - listitem [ref=e225]:
+              - link "Reports" [ref=e226] [cursor=pointer]:
+                - /url: /reports
+            - listitem [ref=e230]:
+              - link "Audit Log" [ref=e231] [cursor=pointer]:
+                - /url: /reports/audit
+        - generic [ref=e235]:
+          - paragraph [ref=e236]: Administration
+          - list [ref=e237]:
+            - listitem [ref=e238]:
+              - link "Society Settings" [ref=e239] [cursor=pointer]:
+                - /url: /admin/settings
+            - listitem [ref=e244]:
+              - link "Users & Roles" [ref=e245] [cursor=pointer]:
+                - /url: /admin/users
+            - listitem [ref=e252]:
+              - link "Wings & Units" [ref=e253] [cursor=pointer]:
+                - /url: /admin/wings
+      - link "Switch context" [ref=e260] [cursor=pointer]:
+        - /url: /select-context
+    - main "Main content" [ref=e263]:
+      - generic [ref=e264]:
+        - generic [ref=e265]:
+          - generic [ref=e266]:
+            - heading "Sunrise Cooperative Housing Society" [level=1] [ref=e267]
+            - paragraph [ref=e268]: Society-Wide — Society Admin
+          - paragraph [ref=e269]: Thursday, 13 August 2026
+        - generic [ref=e270]:
+          - link "— Members registered" [ref=e271] [cursor=pointer]:
+            - /url: /members
+            - generic [ref=e272]:
+              - generic [ref=e273]: —
+              - paragraph [ref=e274]: Members registered
+          - link "— 0 overdue Applications open" [ref=e275] [cursor=pointer]:
+            - /url: /applications
+            - generic [ref=e276]:
+              - generic [ref=e277]:
+                - text: —
+                - generic [ref=e278]: 0 overdue
+              - paragraph [ref=e279]: Applications open
+          - link "— Maintenance requests" [ref=e280] [cursor=pointer]:
+            - /url: /maintenance/complaints
+            - generic [ref=e281]:
+              - generic [ref=e282]: —
+              - paragraph [ref=e283]: Maintenance requests
+          - link "— Dues outstanding" [ref=e284] [cursor=pointer]:
+            - /url: /finance/dues
+            - generic [ref=e285]:
+              - generic [ref=e286]: —
+              - paragraph [ref=e287]: Dues outstanding
+        - generic [ref=e288]:
+          - generic [ref=e289]:
+            - generic [ref=e290]:
+              - paragraph [ref=e291]: Awaiting your action
+              - generic [ref=e292]: Phase 0 — sample data
+            - generic [ref=e293]:
+              - generic [ref=e294]: APP-2024-018
+              - generic [ref=e295]:
+                - paragraph [ref=e296]: NOC — Sale of flat 4B, Wing A
+                - paragraph [ref=e297]: Submitted by Ramesh Iyer · Pending Level 2 approval
+              - generic [ref=e298]: 3 days
+            - generic [ref=e299]:
+              - generic [ref=e300]: APP-2024-017
+              - generic [ref=e301]:
+                - paragraph [ref=e302]: Sub-let permission — Flat 7C
+                - paragraph [ref=e303]: Submitted by Priya Menon · Pending Secretary sign-off
+              - generic [ref=e304]: 7 days ⚑
+            - generic [ref=e305]:
+              - generic [ref=e306]: RFQ-2024-004
+              - generic [ref=e307]:
+                - paragraph [ref=e308]: Terrace waterproofing — evaluate quotations
+                - paragraph [ref=e309]: 3 vendor quotes received · Closes 20 Aug 2024
+              - generic [ref=e310]: 1 day
+            - generic [ref=e311]:
+              - generic [ref=e312]: DOC-2024-031
+              - generic [ref=e313]:
+                - paragraph [ref=e314]: Society audit report 2023–24 — pending verification
+                - paragraph [ref=e315]: Uploaded by Treasurer · Awaiting Committee sign-off
+              - generic [ref=e316]: 12 days ⚑
+            - paragraph [ref=e318]: Live queue arrives in Phase 2. Items above are illustrative.
+          - generic [ref=e319]:
+            - generic [ref=e320]:
+              - paragraph [ref=e322]: Upcoming
+              - generic [ref=e323]:
+                - generic [ref=e324]: 20 Aug
+                - paragraph [ref=e325]: RFQ-2024-004 quotation deadline
+              - generic [ref=e326]:
+                - generic [ref=e327]: 31 Aug
+                - paragraph [ref=e328]: Quarterly maintenance due notices
+              - generic [ref=e329]:
+                - generic [ref=e330]: 15 Sep
+                - paragraph [ref=e331]: AGM notice period opens
+              - generic [ref=e332]:
+                - generic [ref=e333]: 30 Sep
+                - paragraph [ref=e334]: Audit submission — statutory
+              - paragraph [ref=e336]: Phase 0 — illustrative
+            - generic [ref=e337]:
+              - paragraph [ref=e338]: Your access
+              - generic [ref=e339]:
+                - generic [ref=e340]:
+                  - term [ref=e341]: Signed in as
+                  - definition [ref=e342]: Society A Admin
+                - generic [ref=e343]:
+                  - term [ref=e344]: Society
+                  - definition [ref=e345]: Sunrise Cooperative Housing Society
+                - generic [ref=e346]:
+                  - term [ref=e347]: Wing
+                  - definition [ref=e348]: Society-Wide
+                - generic [ref=e349]:
+                  - term [ref=e350]: Role
+                  - definition [ref=e351]: Society Admin
+                - generic [ref=e352]:
+                  - term [ref=e353]: Permissions
+                  - definition [ref=e354]: 69 granted
+        - paragraph [ref=e355]: Phase 0 build. Navigation and authentication are fully functional. Live metrics, work queues, and statutory deadline tracking arrive in Phase 2.

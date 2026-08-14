@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account — Sunrise CHS | Byelawsindia Member Portal</title>
+<link rel="stylesheet" href="assets/byelawsindia.css">
+<style>
+/* Mobile portal — single column, no desktop app shell */
+body {
+  background: var(--c-bg);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* Preview container — simulates a phone viewport in a desktop browser */
+.phone-preview {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 40px;
+  padding: 48px 32px;
+  min-height: 100vh;
+}
+.phone-frame {
+  width: 375px;
+  min-height: 812px;
+  background: #fff;
+  border-radius: 40px;
+  box-shadow: 0 16px 64px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.08);
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.08);
+  flex-shrink: 0;
+}
+.phone-status {
+  height: 44px;
+  background: var(--c-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+  font-weight: var(--w-semibold);
+}
+
+/* Mobile topbar */
+.mob-topbar {
+  background: var(--c-primary);
+  padding: 0 var(--sp-4) var(--sp-4);
+  color: #fff;
+}
+.mob-topbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-3);
+}
+.mob-brand { font-size: 11px; font-weight: var(--w-bold); letter-spacing: 0.08em; color: rgba(255,255,255,0.6); }
+.mob-topbar-icons { display: flex; gap: var(--sp-3); }
+.mob-topbar-icons svg { width: 20px; height: 20px; color: rgba(255,255,255,0.8); }
+.mob-greeting { font-size: 16px; font-weight: var(--w-semibold); color: #fff; margin-bottom: 2px; }
+.mob-society { font-size: 12px; color: rgba(255,255,255,0.65); }
+
+/* Quick action chips */
+.mob-chips {
+  display: flex;
+  gap: var(--sp-2);
+  padding: var(--sp-4);
+  overflow-x: auto;
+  background: var(--c-primary);
+  scrollbar-width: none;
+}
+.mob-chips::-webkit-scrollbar { display: none; }
+.mob-chip {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: var(--sp-3) var(--sp-3);
+  min-width: 64px;
+  cursor: pointer;
+  transition: background var(--t-fast);
+  text-decoration: none;
+}
+.mob-chip:hover { background: rgba(255,255,255,0.18); }
+.mob-chip svg { width: 20px; height: 20px; color: #fff; }
+.mob-chip-label { font-size: 10px; color: rgba(255,255,255,0.85); text-align: center; line-height: 1.2; white-space: nowrap; }
+
+/* Mobile body */
+.mob-body { padding: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-4); }
+
+/* Mobile card */
+.mob-card {
+  background: var(--c-surface);
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-border);
+  overflow: hidden;
+}
+.mob-card-header {
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--c-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mob-card-title { font-size: 13px; font-weight: var(--w-semibold); color: var(--c-text); }
+.mob-card-link { font-size: 12px; color: var(--c-info); text-decoration: none; }
+.mob-card-body { padding: var(--sp-4); }
+
+/* Due amount card */
+.mob-due-banner {
+  background: var(--c-primary);
+  color: #fff;
+  border-radius: var(--r-md);
+  padding: var(--sp-4) var(--sp-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mob-due-label { font-size: 11px; color: rgba(255,255,255,0.65); margin-bottom: 4px; }
+.mob-due-amount { font-size: 26px; font-weight: var(--w-bold); color: #fff; }
+.mob-due-sub { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+.mob-pay-btn {
+  background: var(--c-accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-sm);
+  padding: var(--sp-2) var(--sp-4);
+  font-size: 13px;
+  font-weight: var(--w-semibold);
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+
+/* Maintenance history list */
+.mob-history-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--c-border);
+}
+.mob-history-row:last-child { border-bottom: none; }
+.mob-history-month { font-size: 13px; color: var(--c-text); }
+.mob-history-date { font-size: 11px; color: var(--c-text-muted); }
+.mob-history-amount { font-size: 14px; font-weight: var(--w-semibold); color: var(--c-text); text-align: right; }
+
+/* Notice list */
+.mob-notice {
+  display: flex;
+  gap: var(--sp-3);
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--c-border);
+  align-items: flex-start;
+}
+.mob-notice:last-child { border-bottom: none; }
+.mob-notice-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+.mob-notice-title { font-size: 13px; color: var(--c-text); line-height: 1.3; margin-bottom: 2px; }
+.mob-notice-meta { font-size: 11px; color: var(--c-text-muted); }
+
+/* Member info chip */
+.mob-info-chip {
+  background: var(--c-surface-secondary);
+  border-radius: var(--r-md);
+  padding: var(--sp-3) var(--sp-4);
+  display: flex;
+  gap: var(--sp-4);
+}
+.mob-info-item { flex: 1; }
+.mob-info-label { font-size: 10px; font-weight: var(--w-semibold); color: var(--c-text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+.mob-info-value { font-size: 13px; color: var(--c-text); font-weight: var(--w-semibold); }
+
+/* Bottom nav */
+.mob-bottom-nav {
+  background: var(--c-surface);
+  border-top: 1px solid var(--c-border);
+  display: flex;
+  padding: var(--sp-2) 0;
+}
+.mob-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: var(--sp-1) 0;
+  text-decoration: none;
+  color: var(--c-text-muted);
+  font-size: 10px;
+  cursor: pointer;
+  transition: color var(--t-fast);
+}
+.mob-nav-item.active { color: var(--c-primary); }
+.mob-nav-item svg { width: 20px; height: 20px; }
+.mob-nav-badge {
+  position: absolute;
+  top: -2px; right: -2px;
+  background: var(--c-danger);
+  color: #fff;
+  font-size: 8px;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 0 3px;
+  min-width: 14px;
+  text-align: center;
+  line-height: 14px;
+}
+
+/* Desktop annotation panel */
+.annotations {
+  width: 280px;
+  flex-shrink: 0;
+  padding-top: 8px;
+}
+.annotation-title {
+  font-size: 14px;
+  font-weight: var(--w-semibold);
+  color: var(--c-text);
+  margin-bottom: var(--sp-4);
+  padding-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--c-border);
+}
+.annotation-item {
+  margin-bottom: var(--sp-4);
+}
+.annotation-label {
+  font-size: 11px;
+  font-weight: var(--w-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--c-primary);
+  margin-bottom: var(--sp-1);
+}
+.annotation-text {
+  font-size: 13px;
+  color: var(--c-text-secondary);
+  line-height: 1.5;
+}
+.annotation-rule {
+  font-size: 11px;
+  color: var(--c-text-muted);
+  font-style: italic;
+  margin-top: 3px;
+}
+</style>
+</head>
+<body>
+
+<div class="phone-preview">
+
+  <!-- Phone frame -->
+  <div class="phone-frame">
+    <!-- Status bar -->
+    <div class="phone-status">
+      <span>9:41 AM</span>
+      <span>Sunrise CHS</span>
+      <span>●●●</span>
+    </div>
+
+    <!-- Topbar with greeting + navigation -->
+    <div class="mob-topbar">
+      <div class="mob-topbar-row">
+        <div class="mob-brand">BYELAWSINDIA</div>
+        <div class="mob-topbar-icons">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
+      </div>
+      <div class="mob-greeting">Rajesh Sharma</div>
+      <div class="mob-society">Wing A, Flat 502 &nbsp;·&nbsp; Sunrise CHS</div>
+    </div>
+
+    <!-- Quick action chips -->
+    <div class="mob-chips">
+      <a href="#" class="mob-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span class="mob-chip-label">Pay dues</span>
+      </a>
+      <a href="#" class="mob-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span class="mob-chip-label">Receipts</span>
+      </a>
+      <a href="#" class="mob-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span class="mob-chip-label">Complaints</span>
+      </a>
+      <a href="#" class="mob-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+        <span class="mob-chip-label">Directory</span>
+      </a>
+      <a href="#" class="mob-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span class="mob-chip-label">Events</span>
+      </a>
+      <a href="#" class="mob-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+        <span class="mob-chip-label">Bye-laws</span>
+      </a>
+    </div>
+
+    <!-- Body content -->
+    <div class="mob-body" style="padding-bottom:80px">
+
+      <!-- Member info -->
+      <div class="mob-info-chip">
+        <div class="mob-info-item">
+          <div class="mob-info-label">Member no.</div>
+          <div class="mob-info-value" style="font-family:var(--font-mono)">M-00231</div>
+        </div>
+        <div class="mob-info-item">
+          <div class="mob-info-label">Status</div>
+          <div class="mob-info-value" style="color:var(--c-success)">Active</div>
+        </div>
+        <div class="mob-info-item">
+          <div class="mob-info-label">Member since</div>
+          <div class="mob-info-value">Mar 2018</div>
+        </div>
+      </div>
+
+      <!-- Maintenance dues banner -->
+      <div class="mob-due-banner">
+        <div>
+          <div class="mob-due-label">Outstanding maintenance</div>
+          <div class="mob-due-amount">₹3,200</div>
+          <div class="mob-due-sub">Due by 31 Aug 2026</div>
+        </div>
+        <button class="mob-pay-btn">Pay now</button>
+      </div>
+
+      <!-- Maintenance history -->
+      <div class="mob-card">
+        <div class="mob-card-header">
+          <div class="mob-card-title">Maintenance history</div>
+          <a href="#" class="mob-card-link">View all</a>
+        </div>
+        <div class="mob-card-body" style="padding-top:0;padding-bottom:0">
+          <div class="mob-history-row">
+            <div>
+              <div class="mob-history-month">Aug 2026</div>
+              <div class="mob-history-date">Due: 31 Aug 2026</div>
+            </div>
+            <div>
+              <div class="mob-history-amount" style="color:var(--c-warning-text)">₹3,200</div>
+              <div style="font-size:10px;color:var(--c-warning-text);text-align:right">Pending</div>
+            </div>
+          </div>
+          <div class="mob-history-row">
+            <div>
+              <div class="mob-history-month">Jul 2026</div>
+              <div class="mob-history-date">Paid 4 Jul 2026</div>
+            </div>
+            <div>
+              <div class="mob-history-amount">₹3,200</div>
+              <div style="font-size:10px;color:var(--c-success);text-align:right">Paid</div>
+            </div>
+          </div>
+          <div class="mob-history-row">
+            <div>
+              <div class="mob-history-month">Jun 2026</div>
+              <div class="mob-history-date">Paid 2 Jun 2026</div>
+            </div>
+            <div>
+              <div class="mob-history-amount">₹3,200</div>
+              <div style="font-size:10px;color:var(--c-success);text-align:right">Paid</div>
+            </div>
+          </div>
+          <div class="mob-history-row">
+            <div>
+              <div class="mob-history-month">May 2026</div>
+              <div class="mob-history-date">Paid 5 May 2026</div>
+            </div>
+            <div>
+              <div class="mob-history-amount">₹3,200</div>
+              <div style="font-size:10px;color:var(--c-success);text-align:right">Paid</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notices and circulars -->
+      <div class="mob-card">
+        <div class="mob-card-header">
+          <div class="mob-card-title">Notices &amp; circulars</div>
+          <a href="#" class="mob-card-link">All</a>
+        </div>
+        <div class="mob-card-body" style="padding-top:0;padding-bottom:0">
+          <div class="mob-notice">
+            <div class="mob-notice-dot" style="background:var(--c-info)"></div>
+            <div>
+              <div class="mob-notice-title">AGM Notice — 37th Annual General Meeting</div>
+              <div class="mob-notice-meta">15 Sep 2026 · Hall A, Ground Floor · Issued 13 Aug 2026</div>
+            </div>
+          </div>
+          <div class="mob-notice">
+            <div class="mob-notice-dot" style="background:var(--c-warning)"></div>
+            <div>
+              <div class="mob-notice-title">Water supply interruption — Wing B, 16 Aug 2026</div>
+              <div class="mob-notice-meta">6:00 AM – 2:00 PM · Tank cleaning · Issued 12 Aug 2026</div>
+            </div>
+          </div>
+          <div class="mob-notice">
+            <div class="mob-notice-dot" style="background:var(--c-text-muted)"></div>
+            <div>
+              <div class="mob-notice-title">Reminder: Vehicles without society stickers will not be permitted</div>
+              <div class="mob-notice-meta">Effective 1 Sep 2026 · Collect sticker from office · 10 Aug 2026</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pending complaint -->
+      <div class="mob-card">
+        <div class="mob-card-header">
+          <div class="mob-card-title">My complaints</div>
+          <a href="#" class="mob-card-link">Raise complaint</a>
+        </div>
+        <div class="mob-card-body">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp-3)">
+            <div>
+              <div style="font-size:13px;color:var(--c-text);margin-bottom:3px">Water seepage — kitchen ceiling</div>
+              <div style="font-size:11px;color:var(--c-text-muted)">Complaint ref: CMP/2026/0312 · 10 Aug 2026</div>
+            </div>
+            <span class="badge badge-warning" style="flex-shrink:0"><span class="badge-dot"></span>In progress</span>
+          </div>
+          <div style="margin-top:var(--sp-3);padding:var(--sp-3);background:var(--c-surface-secondary);border-radius:var(--r-sm);font-size:12px;color:var(--c-text-secondary)">
+            Assigned to plumbing team. Inspection scheduled for 16 Aug 2026, 10:00 AM.
+          </div>
+        </div>
+      </div>
+
+      <!-- Upcoming events -->
+      <div class="mob-card">
+        <div class="mob-card-header">
+          <div class="mob-card-title">Upcoming events</div>
+        </div>
+        <div class="mob-card-body" style="display:flex;flex-direction:column;gap:var(--sp-3)">
+          <div style="display:flex;gap:var(--sp-3);align-items:flex-start">
+            <div style="background:var(--c-primary);color:#fff;border-radius:var(--r-sm);padding:6px 8px;text-align:center;min-width:36px;flex-shrink:0">
+              <div style="font-size:16px;font-weight:700;line-height:1">15</div>
+              <div style="font-size:9px;text-transform:uppercase;letter-spacing:0.05em;opacity:0.7">Sep</div>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:var(--w-semibold);color:var(--c-text)">37th Annual General Meeting</div>
+              <div style="font-size:11px;color:var(--c-text-muted)">10:00 AM · Hall A, Ground Floor</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:var(--sp-3);align-items:flex-start">
+            <div style="background:var(--c-surface-secondary);color:var(--c-text-secondary);border-radius:var(--r-sm);padding:6px 8px;text-align:center;min-width:36px;flex-shrink:0;border:1px solid var(--c-border)">
+              <div style="font-size:16px;font-weight:700;line-height:1">24</div>
+              <div style="font-size:9px;text-transform:uppercase;letter-spacing:0.05em;opacity:0.7">Aug</div>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:var(--w-semibold);color:var(--c-text)">Ganpati decoration committee meeting</div>
+              <div style="font-size:11px;color:var(--c-text-muted)">7:00 PM · Society office</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /mob-body -->
+
+    <!-- Bottom navigation -->
+    <div class="mob-bottom-nav" style="position:sticky;bottom:0;border-top:1px solid var(--c-border)">
+      <a href="#" class="mob-nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Home
+      </a>
+      <a href="#" class="mob-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Dues
+      </a>
+      <a href="#" class="mob-nav-item" style="position:relative">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Complaints
+        <span class="mob-nav-badge">1</span>
+      </a>
+      <a href="#" class="mob-nav-item" style="position:relative">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Notices
+        <span class="mob-nav-badge">3</span>
+      </a>
+      <a href="#" class="mob-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Profile
+      </a>
+    </div>
+
+  </div><!-- /phone-frame -->
+
+  <!-- Annotation panel (desktop only) -->
+  <div class="annotations">
+    <div class="annotation-title">Screen 7 — Design notes</div>
+
+    <div class="annotation-item">
+      <div class="annotation-label">Typography</div>
+      <div class="annotation-text">Source Sans 3 throughout. Body at 13–15px. Labels at 10–11px uppercase + tracked. All sizes meet WCAG 2.2 minimum contrast on their respective backgrounds.</div>
+      <div class="annotation-rule">Rule §3, §31</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="annotation-label">Touch targets</div>
+      <div class="annotation-text">Bottom nav items and chips are ≥44px tall. Pay button has generous padding. No reliance on hover states — everything is tap-first.</div>
+      <div class="annotation-rule">Rule §67–69</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="annotation-label">Indian number format</div>
+      <div class="annotation-text">Maintenance amount shown as ₹3,200 (Indian number format). Large amounts use lakh notation (₹8.4L).</div>
+      <div class="annotation-rule">Rule §89</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="annotation-label">Senior-citizen usability</div>
+      <div class="annotation-text">No reliance on icons alone — all critical actions have visible text labels. Bottom nav uses both icon + label. Font sizes stay above 12px for all body content.</div>
+      <div class="annotation-rule">Rule §70–72</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="annotation-label">Colour palette</div>
+      <div class="annotation-text">Deep navy (#17324D) for primary UI, accent amber (#C6862C) for the Pay button only. Semantic colours for status (warning for pending dues, success for paid). No gradient backgrounds.</div>
+      <div class="annotation-rule">Rule §10–14, §25</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="annotation-label">No "AI/SaaS aesthetic"</div>
+      <div class="annotation-text">Solid cards with 1px borders, not floating shadow-heavy cards. No greeting emoji. No confetti or celebration illustration. Institutional, not consumer-app.</div>
+      <div class="annotation-rule">Rule §1–2, §82–83</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="annotation-label">Bottom nav limit</div>
+      <div class="annotation-text">5 items — Home, Dues, Complaints, Notices, Profile. Labels are present alongside icons. Badge dots show unread counts.</div>
+      <div class="annotation-rule">WCAG / UI/UX Pro Max rule: bottom-nav-limit</div>
+    </div>
+  </div>
+
+</div><!-- /phone-preview -->
+</body>
+</html>

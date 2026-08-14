@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Sunrise CHS | Byelawsindia</title>
+<link rel="stylesheet" href="assets/byelawsindia.css">
+</head>
+<body>
+<div class="app-shell">
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <span class="topbar-wordmark">BYELAWSINDIA</span>
+  </div>
+  <div class="topbar-society">Sunrise Cooperative Housing Society</div>
+  <div class="topbar-actions">
+    <button class="btn btn-ghost btn-sm btn-icon" title="Search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+    <button class="btn btn-ghost btn-sm btn-icon" title="Notifications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </button>
+    <div class="topbar-user">
+      <div class="topbar-avatar">AJ</div>
+      <div class="topbar-user-info">
+        <div class="topbar-user-name">Anita Joshi</div>
+        <div class="topbar-user-role">Secretary</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-group-label">Overview</div>
+      <a href="dashboard.html" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Members</div>
+      <a href="member-applications.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Applications
+        <span class="nav-badge">18</span>
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Member register
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Share certificates
+      </a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Procurement</div>
+      <a href="vendor-directory.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Vendors
+      </a>
+      <a href="quotation-comparison.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        RFQ / Quotations
+        <span class="nav-badge warn">7</span>
+      </a>
+      <a href="contract-detail.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Contracts
+        <span class="nav-badge warn">4</span>
+      </a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Finance</div>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Maintenance dues
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Fund accounts
+      </a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Administration</div>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M5.93 5.93a10 10 0 0 1 0 14.14"/></svg>
+        AGM / Meetings
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h.01M7 20v-4"/><path d="M12 20v-8"/><path d="M17 20V8"/><path d="M22 4v16"/></svg>
+        Reports
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+        Settings
+      </a>
+    </div>
+  </nav>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+  <div class="page-container">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div>
+        <div class="page-title">Dashboard</div>
+        <div class="page-description">Sunrise Cooperative Housing Society &nbsp;·&nbsp; Wing A, B, C &nbsp;·&nbsp; 13 Aug 2026</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-secondary btn-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export report
+        </button>
+      </div>
+    </div>
+
+    <!-- Metrics -->
+    <div class="metrics-row" style="grid-template-columns:repeat(5,1fr);margin-bottom:var(--sp-6)">
+      <div class="metric-card accent-warn">
+        <div class="metric-label">Pending approvals</div>
+        <div class="metric-value">18</div>
+        <div class="metric-sub warn">6 overdue</div>
+      </div>
+      <div class="metric-card accent-ok">
+        <div class="metric-label">Active members</div>
+        <div class="metric-value">342</div>
+        <div class="metric-sub ok">4 added this month</div>
+      </div>
+      <div class="metric-card accent-err">
+        <div class="metric-label">Contracts expiring</div>
+        <div class="metric-value">4</div>
+        <div class="metric-sub err">Within 30 days</div>
+      </div>
+      <div class="metric-card accent-info">
+        <div class="metric-label">Open RFQs</div>
+        <div class="metric-value">7</div>
+        <div class="metric-sub">2 closing this week</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Maintenance collected</div>
+        <div class="metric-value">₹8.4L</div>
+        <div class="metric-sub">Of ₹10.2L target</div>
+      </div>
+    </div>
+
+    <!-- Two-column layout -->
+    <div class="grid-2" style="gap:var(--sp-5);align-items:start">
+
+      <!-- Left column: Attention required + Recent applications -->
+      <div style="display:flex;flex-direction:column;gap:var(--sp-5)">
+
+        <!-- Attention required -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Attention required</div>
+            <span class="badge badge-danger">6 overdue</span>
+          </div>
+          <div class="panel-body" style="padding:0">
+            <div class="attention-item">
+              <div class="attention-dot danger"></div>
+              <div class="attention-content">
+                <div class="attention-title">Application overdue — Rajesh Sharma (CHS/2026/A/MEM/000123)</div>
+                <div class="attention-meta">Pending at Authority 2 since <strong>5 Aug 2026</strong> (8 days). Review threshold is 7 days.</div>
+              </div>
+              <a href="member-application-detail.html" class="btn btn-ghost btn-sm">Review</a>
+            </div>
+            <div class="attention-item">
+              <div class="attention-dot warning"></div>
+              <div class="attention-content">
+                <div class="attention-title">Lift AMC contract expires in 18 days</div>
+                <div class="attention-meta">SecureGuard Services — CON-2025-0098 · Expires 30 Sep 2026</div>
+              </div>
+              <a href="contract-detail.html" class="btn btn-ghost btn-sm">View</a>
+            </div>
+            <div class="attention-item">
+              <div class="attention-dot danger"></div>
+              <div class="attention-content">
+                <div class="attention-title">RFQ closing in 2 days — Pest control annual contract</div>
+                <div class="attention-meta">RFQ/2026/0041 · 3 quotations received · Decision pending</div>
+              </div>
+              <a href="quotation-comparison.html" class="btn btn-ghost btn-sm">Compare</a>
+            </div>
+            <div class="attention-item">
+              <div class="attention-dot warning"></div>
+              <div class="attention-content">
+                <div class="attention-title">Fire NOC renewal due — 30 Aug 2026</div>
+                <div class="attention-meta">Certificate no. FNO-2025-0712 · Application not yet filed</div>
+              </div>
+              <button class="btn btn-ghost btn-sm">Upload</button>
+            </div>
+            <div class="attention-item">
+              <div class="attention-dot danger"></div>
+              <div class="attention-content">
+                <div class="attention-title">Maintenance arrear — Flat C-802 (Suresh Patil)</div>
+                <div class="attention-meta">₹22,400 overdue for 3 months. Notice already served.</div>
+              </div>
+              <button class="btn btn-ghost btn-sm">Notice</button>
+            </div>
+            <div class="attention-item" style="border-bottom:none">
+              <div class="attention-dot warning"></div>
+              <div class="attention-content">
+                <div class="attention-title">AGM notice to be issued by 20 Aug 2026</div>
+                <div class="attention-meta">37th Annual General Meeting tentatively scheduled for 15 Sep 2026</div>
+              </div>
+              <button class="btn btn-ghost btn-sm">Draft</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent member applications -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Member applications</div>
+            <a href="member-applications.html" class="text-link">View all 47</a>
+          </div>
+          <div class="panel-body" style="padding:0">
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Applicant</th>
+                    <th>Wing</th>
+                    <th>Submitted</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="clickable">
+                    <td><div class="cell-primary">Rajesh Sharma</div><div class="cell-secondary cell-mono">CHS/2026/A/MEM/000123</div></td>
+                    <td>Wing A, 502</td>
+                    <td>12 Aug 2026</td>
+                    <td><span class="badge badge-warning"><span class="badge-dot"></span>Pending approval</span></td>
+                  </tr>
+                  <tr class="clickable">
+                    <td><div class="cell-primary">Priya Mehta</div><div class="cell-secondary cell-mono">CHS/2026/B/MEM/000119</div></td>
+                    <td>Wing B, 304</td>
+                    <td>10 Aug 2026</td>
+                    <td><span class="badge badge-info"><span class="badge-dot"></span>Under review</span></td>
+                  </tr>
+                  <tr class="clickable">
+                    <td><div class="cell-primary">Anil Kulkarni</div><div class="cell-secondary cell-mono">CHS/2026/A/MEM/000112</div></td>
+                    <td>Wing A, 1201</td>
+                    <td>5 Aug 2026</td>
+                    <td><span class="badge badge-success"><span class="badge-dot"></span>Approved</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column: Contracts expiring + Procurement status -->
+      <div style="display:flex;flex-direction:column;gap:var(--sp-5)">
+
+        <!-- Contracts approaching expiry -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Contracts approaching expiry</div>
+            <a href="contract-detail.html" class="text-link">All contracts</a>
+          </div>
+          <div class="panel-body" style="padding:0">
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Contract</th>
+                    <th>Vendor</th>
+                    <th>Expires</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="clickable">
+                    <td><div class="cell-primary">Lift AMC</div><div class="cell-secondary cell-mono">CON-2025-0098</div></td>
+                    <td>SecureGuard Services</td>
+                    <td><strong style="color:var(--c-danger-text)">30 Sep 2026</strong><div class="cell-muted">18 days</div></td>
+                    <td><span class="badge badge-warning"><span class="badge-dot"></span>Renewal due</span></td>
+                  </tr>
+                  <tr class="clickable">
+                    <td><div class="cell-primary">Housekeeping</div><div class="cell-secondary cell-mono">CON-2025-0081</div></td>
+                    <td>CleanPro Services</td>
+                    <td><span>7 Oct 2026</span><div class="cell-muted">25 days</div></td>
+                    <td><span class="badge badge-warning"><span class="badge-dot"></span>Renewal due</span></td>
+                  </tr>
+                  <tr class="clickable">
+                    <td><div class="cell-primary">CCTV maintenance</div><div class="cell-secondary cell-mono">CON-2025-0065</div></td>
+                    <td>TechVision India</td>
+                    <td><span>20 Oct 2026</span><div class="cell-muted">38 days</div></td>
+                    <td><span class="badge badge-info"><span class="badge-dot"></span>RFQ issued</span></td>
+                  </tr>
+                  <tr class="clickable">
+                    <td><div class="cell-primary">Electrical maintenance</div><div class="cell-secondary cell-mono">CON-2025-0057</div></td>
+                    <td>Bharat Electricals</td>
+                    <td><span>31 Oct 2026</span><div class="cell-muted">49 days</div></td>
+                    <td><span class="badge badge-neutral"><span class="badge-dot"></span>Negotiation</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Procurement pipeline -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Procurement pipeline</div>
+            <a href="quotation-comparison.html" class="text-link">Open RFQs</a>
+          </div>
+          <div class="panel-body" style="padding:0">
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>RFQ</th>
+                    <th>Category</th>
+                    <th>Closing</th>
+                    <th>Quotes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="clickable">
+                    <td><div class="cell-primary cell-mono">RFQ/2026/0041</div><div class="cell-secondary">Pest control — annual</div></td>
+                    <td>Pest control</td>
+                    <td><strong style="color:var(--c-danger-text)">15 Aug 2026</strong></td>
+                    <td>3 received</td>
+                  </tr>
+                  <tr class="clickable">
+                    <td><div class="cell-primary cell-mono">RFQ/2026/0039</div><div class="cell-secondary">Lift AMC renewal</div></td>
+                    <td>Lift / elevator</td>
+                    <td>22 Aug 2026</td>
+                    <td>2 of 5 received</td>
+                  </tr>
+                  <tr class="clickable">
+                    <td><div class="cell-primary cell-mono">RFQ/2026/0035</div><div class="cell-secondary">Terrace waterproofing</div></td>
+                    <td>Civil / structural</td>
+                    <td>31 Aug 2026</td>
+                    <td>1 received</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent activity -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Recent activity</div>
+          </div>
+          <div class="panel-body">
+            <div class="timeline" style="padding:0">
+              <div class="timeline-item" style="padding-bottom:var(--sp-3)">
+                <div class="timeline-icon success" style="width:20px;height:20px;font-size:10px">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-event">Application approved — Anil Kulkarni (A-1201)</div>
+                  <div class="timeline-time">13 Aug 2026, 10:42 AM</div>
+                </div>
+              </div>
+              <div class="timeline-item" style="padding-bottom:var(--sp-3)">
+                <div class="timeline-icon info" style="width:20px;height:20px;font-size:10px">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-event">RFQ/2026/0041 — 3rd quotation received from Bharat Pest Control</div>
+                  <div class="timeline-time">12 Aug 2026, 3:15 PM</div>
+                </div>
+              </div>
+              <div class="timeline-item" style="padding-bottom:var(--sp-3)">
+                <div class="timeline-icon warning" style="width:20px;height:20px;font-size:10px">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-event">Expiry notice sent — Lift AMC (SecureGuard Services)</div>
+                  <div class="timeline-time">11 Aug 2026, 9:00 AM</div>
+                </div>
+              </div>
+              <div class="timeline-item" style="padding-bottom:0">
+                <div class="timeline-icon neutral" style="width:20px;height:20px;font-size:10px">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-event">New member application — Rajesh Sharma (A-502)</div>
+                  <div class="timeline-time">12 Aug 2026, 4:35 PM</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /grid -->
+
+  </div><!-- /page-container -->
+</main>
+
+</div><!-- /app-shell -->
+</body>
+</html>

@@ -1,0 +1,36 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: Byelawsindia
+        - heading [level=1] [ref=e8]: Society Management, simplified.
+        - paragraph [ref=e9]: Applications, documents, maintenance, procurement — managed in one platform designed for Indian cooperative housing societies.
+      - list [ref=e10]:
+        - listitem [ref=e11]:
+          - generic [ref=e15]: Multi-wing application workflows
+        - listitem [ref=e16]:
+          - generic [ref=e20]: RFQ and procurement management
+        - listitem [ref=e21]:
+          - generic [ref=e25]: Compliance document repository
+        - listitem [ref=e26]:
+          - generic [ref=e30]: Member and unit registry
+      - paragraph [ref=e31]: © 2026 Byelawsindia. All rights reserved.
+    - generic [ref=e33]:
+      - heading "Sign in to your account" [level=2] [ref=e34]
+      - paragraph [ref=e35]: Enter your email and password to continue.
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - generic [ref=e38]: Email address
+          - textbox "Email address" [active] [ref=e39]:
+            - /placeholder: you@example.com
+        - generic [ref=e40]:
+          - generic [ref=e41]: Password
+          - generic [ref=e42]:
+            - textbox "Password" [ref=e43]
+            - button "Show password" [ref=e44] [cursor=pointer]
+        - button "Sign in" [ref=e48] [cursor=pointer]
+      - paragraph [ref=e49]:
+        - text: Forgot your password?
+        - link "Reset it here" [ref=e50] [cursor=pointer]:
+          - /url: /reset-password
+  - alert [ref=e51]
