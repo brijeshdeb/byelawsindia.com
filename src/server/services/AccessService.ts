@@ -12,12 +12,49 @@
  *    at which point in a workflow."
  *
  * Usage: import only in Server Components, Route Handlers, Server Actions.
+ *
+ * NOTE ON JOIN TYPES: Supabase's TypeScript type inference for embedded
+ * relations requires a populated `Relationships` array in the table type.
+ * Since our database.ts uses `Relationships: []` (no static FK metadata),
+ * the inferred types for join results are not correct. We use explicit
+ * intermediate types and casts at each join query so call-sites remain
+ * fully type-safe. The SQL queries themselves are correct — only TS
+ * inference needs the nudge.
  */
 import { createClient } from "@/lib/supabase/server";
 import { AppError, type UserContext, type AccessOption } from "@/types";
 
 // Session storage key for the selected context
 export const CONTEXT_COOKIE = "chs_selected_context";
+
+// ── Intermediate types for join query results ─────────────────────────────────
+// These match the actual shape returned by PostgREST for embedded relations.
+// Supabase returns a single object (not an array) when the FK is singular.
+
+type AccessOptionRow = {
+  id: string;
+  society_id: string;
+  wing_id: string | null;
+  role_id: string;
+  societies: { name: string; logo_url: string | null } | null;
+  wings: { name: string; code: string } | null;
+  roles: { name: string } | null;
+};
+
+type AssignmentRow = {
+  id: string;
+  role_id: string;
+  wing_id: string | null;
+  roles: {
+    id: string;
+    name: string;
+    role_permissions: Array<{
+      permissions: { code: string } | null;
+    }>;
+  } | null;
+  societies: { name: string } | null;
+  wings: { name: string; code: string } | null;
+};
 
 /**
  * Resolves all available access contexts for the current authenticated user.
@@ -44,8 +81,10 @@ export async function getAccessOptions(): Promise<AccessOption[]> {
 
   if (!profile) return [];
 
-  // Fetch all active assignments with joined society, wing, and role data
-  const { data: assignments, error } = await supabase
+  // Fetch all active assignments with joined society, wing, and role data.
+  // The cast to AccessOptionRow[] is required because embedded relation types
+  // can't be inferred from Relationships: [] in database.ts.
+  const queryResult = await supabase
     .from("user_access_assignments")
     .select(
       `
@@ -63,25 +102,21 @@ export async function getAccessOptions(): Promise<AccessOption[]> {
     .or("valid_from.is.null,valid_from.lte.now()")
     .or("valid_until.is.null,valid_until.gt.now()");
 
-  if (error || !assignments) return [];
+  if (queryResult.error || !queryResult.data) return [];
 
-  return assignments.map((a) => {
-    const society = Array.isArray(a.societies) ? a.societies[0] : a.societies;
-    const wing = Array.isArray(a.wings) ? a.wings[0] : a.wings;
-    const role = Array.isArray(a.roles) ? a.roles[0] : a.roles;
+  const assignments = queryResult.data as unknown as AccessOptionRow[];
 
-    return {
-      assignmentId: a.id,
-      societyId: a.society_id,
-      societyName: society?.name ?? "Unknown Society",
-      societyLogoUrl: society?.logo_url ?? null,
-      wingId: a.wing_id,
-      wingName: wing?.name ?? null,
-      wingCode: wing?.code ?? null,
-      roleId: a.role_id,
-      roleName: role?.name ?? "Unknown Role",
-    } satisfies AccessOption;
-  });
+  return assignments.map((a) => ({
+    assignmentId: a.id,
+    societyId: a.society_id,
+    societyName: a.societies?.name ?? "Unknown Society",
+    societyLogoUrl: a.societies?.logo_url ?? null,
+    wingId: a.wing_id,
+    wingName: a.wings?.name ?? null,
+    wingCode: a.wings?.code ?? null,
+    roleId: a.role_id,
+    roleName: a.roles?.name ?? "Unknown Role",
+  }) satisfies AccessOption);
 }
 
 /**
@@ -180,24 +215,21 @@ export async function resolveUserContext(
     assignmentQuery.is("wing_id", null);
   }
 
-  const { data: assignments } = await assignmentQuery.limit(1).single();
+  const assignmentResult = await assignmentQuery.limit(1).single();
 
-  if (!assignments) {
+  if (!assignmentResult.data) {
     throw AppError.forbidden(
       "You don't have access to this society or wing. " +
         "Contact your society administrator."
     );
   }
 
-  const role = Array.isArray(assignments.roles)
-    ? assignments.roles[0]
-    : assignments.roles;
-  const society = Array.isArray(assignments.societies)
-    ? assignments.societies[0]
-    : assignments.societies;
-  const wing = Array.isArray(assignments.wings)
-    ? assignments.wings[0]
-    : assignments.wings;
+  // Cast to the expected shape — Relationships: [] prevents type inference.
+  const assignment = assignmentResult.data as unknown as AssignmentRow;
+
+  const role = assignment.roles;
+  const society = assignment.societies;
+  const wing = assignment.wings;
 
   if (!role) throw AppError.forbidden("Role configuration error.");
 
@@ -205,19 +237,18 @@ export async function resolveUserContext(
   const permissions = new Set<string>();
   if (role.role_permissions && Array.isArray(role.role_permissions)) {
     for (const rp of role.role_permissions) {
-      const perm = Array.isArray(rp.permissions) ? rp.permissions[0] : rp.permissions;
-      if (perm?.code) permissions.add(perm.code);
+      if (rp.permissions?.code) permissions.add(rp.permissions.code);
     }
   }
 
   // Determine effective wing (if assignment is wing-scoped, use it; else use requested)
-  const effectiveWingId = assignments.wing_id ?? wingId;
+  const effectiveWingId = assignment.wing_id ?? wingId;
 
   let wingName: string | null = null;
   let wingCode: string | null = null;
 
   if (effectiveWingId) {
-    if (wing && assignments.wing_id) {
+    if (wing && assignment.wing_id) {
       wingName = wing.name;
       wingCode = wing.code;
     } else {

@@ -12,6 +12,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { resolveUserContext, CONTEXT_COOKIE } from "@/server/services/AccessService";
+import { createClient } from "@/lib/supabase/server";
 import { AppError } from "@/types";
 import { safeJsonParse } from "@/lib/utils";
 import { PERMISSIONS } from "@/types";
@@ -71,6 +72,45 @@ export default async function DashboardPage() {
   const canViewMaintenance = userContext.isPlatformAdmin ||
     hasPermission(userContext, PERMISSIONS.MAINTENANCE_VIEW);
 
+  // Live summary counts — parallel queries, each falls back to 0 on RLS miss.
+  const supabase = await createClient();
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  const [membersRes, openAppsRes, overdueAppsRes, complaintsRes, duesRes] = await Promise.all([
+    supabase
+      .from("members")
+      .select("*", { count: "exact", head: true })
+      .eq("society_id", ctx.societyId)
+      .eq("status", "ACTIVE"),
+    supabase
+      .from("member_applications")
+      .select("*", { count: "exact", head: true })
+      .eq("society_id", ctx.societyId)
+      .in("status", ["SUBMITTED", "UNDER_REVIEW"]),
+    supabase
+      .from("member_applications")
+      .select("*", { count: "exact", head: true })
+      .eq("society_id", ctx.societyId)
+      .in("status", ["SUBMITTED", "UNDER_REVIEW"])
+      .lt("submitted_at", sevenDaysAgo),
+    supabase
+      .from("maintenance_complaints")
+      .select("*", { count: "exact", head: true })
+      .eq("society_id", ctx.societyId)
+      .in("status", ["OPEN", "IN_PROGRESS"]),
+    supabase
+      .from("finance_dues")
+      .select("*", { count: "exact", head: true })
+      .eq("society_id", ctx.societyId)
+      .in("status", ["UNPAID", "PARTIALLY_PAID"]),
+  ]);
+
+  const memberCount  = membersRes.count    ?? 0;
+  const openApps     = openAppsRes.count   ?? 0;
+  const overdueApps  = overdueAppsRes.count ?? 0;
+  const openCmps     = complaintsRes.count  ?? 0;
+  const unpaidDues   = duesRes.count        ?? 0;
+
   return (
     <div className="page-container">
 
@@ -99,24 +139,24 @@ export default async function DashboardPage() {
       {/* Summary strip — one continuous bar, not four equal cards */}
       <div className="summary-strip mb-6">
         <SummaryItem
-          value="—"
+          value={String(memberCount)}
           label="Members registered"
           href={canViewMembers ? "/members" : undefined}
         />
         <SummaryItem
-          value="—"
+          value={String(openApps)}
           label="Applications open"
-          flag="0 overdue"
-          flagVariant="neutral"
+          flag={overdueApps > 0 ? `${overdueApps} overdue` : "0 overdue"}
+          flagVariant={overdueApps > 0 ? "warning" : "neutral"}
           href={canViewApplications ? "/applications" : undefined}
         />
         <SummaryItem
-          value="—"
+          value={String(openCmps)}
           label="Maintenance requests"
           href={canViewMaintenance ? "/maintenance/complaints" : undefined}
         />
         <SummaryItem
-          value="—"
+          value={String(unpaidDues)}
           label="Dues outstanding"
           href={canViewFinance ? "/finance/dues" : undefined}
         />
@@ -223,13 +263,12 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Phase 0 footer notice */}
+      {/* Footer note */}
       <p
         className="font-body-sm text-body-sm pt-4"
         style={{ color: "#6B7280", borderTop: "1px solid #333333" }}
       >
-        Phase 0 build. Navigation and authentication are fully functional. Live metrics,
-        work queues, and statutory deadline tracking arrive in Phase 2.
+        Summary counts are live from the database. Work queue and statutory deadline tracking arrive in Phase 2.
       </p>
     </div>
   );

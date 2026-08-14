@@ -219,7 +219,7 @@ describe("Cross-society isolation", () => {
     expect(error).toBeNull();
     // RLS limits to societies they belong to — only Society A
     expect(data!.length).toBe(1);
-    expect(data![0].id).toBe(IDs.societies.A);
+    expect(data![0]?.id).toBe(IDs.societies.A);
     // Society B must NOT appear
     const societyBRow = data!.find((r) => r.id === IDs.societies.B);
     expect(societyBRow).toBeUndefined();
@@ -387,7 +387,7 @@ describe("Profiles privacy", () => {
 
     expect(error).toBeNull();
     expect(data).toHaveLength(1);
-    expect(data![0].id).toBe(IDs.users.memberA);
+    expect(data![0]?.id).toBe(IDs.users.memberA);
   });
 
   it("A user CANNOT read another user's profile", async () => {
@@ -461,10 +461,13 @@ describe("Audit log isolation and immutability", () => {
       return;
     }
 
+    const targetLogId = logs[0]?.id;
+    if (!targetLogId) return;
+
     const { error } = await clients.societyAAdmin
       .from("audit_logs")
       .delete()
-      .eq("id", logs[0].id);
+      .eq("id", targetLogId);
 
     // Must fail — no DELETE policy exists
     expect(error).not.toBeNull();
@@ -481,10 +484,13 @@ describe("Audit log isolation and immutability", () => {
       return;
     }
 
+    const targetLogId = logs[0]?.id;
+    if (!targetLogId) return;
+
     const { error } = await clients.societyAAdmin
       .from("audit_logs")
       .update({ metadata: { tampered: true } })
-      .eq("id", logs[0].id);
+      .eq("id", targetLogId);
 
     // Must fail — no UPDATE policy exists
     expect(error).not.toBeNull();

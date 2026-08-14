@@ -13,15 +13,15 @@
  * For client components, import hasPermission from @/lib/permissions
  * and use it inside a hook or conditional render.
  */
-import type { UserContext } from "@/types";
+import type { UserContext, PermissionCode } from "@/types";
 import { hasPermission, hasAnyPermission } from "@/lib/permissions";
 
 interface Props {
   context: UserContext;
   /** Require this exact permission. */
-  permission?: string;
+  permission?: PermissionCode;
   /** Require at least one of these permissions. */
-  anyOf?: string[];
+  anyOf?: PermissionCode[];
   /** What to render when access is denied. Defaults to null. */
   fallback?: React.ReactNode;
   children: React.ReactNode;

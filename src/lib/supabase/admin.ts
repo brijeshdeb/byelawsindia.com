@@ -20,11 +20,18 @@
  *   - Fetching data that a normal authenticated user could fetch
  *   - Any operation triggered by a user's own authenticated request
  *     that RLS would permit
+ *
+ * NOTE: The `as unknown as AdminClient` cast on createClient() is intentional.
+ * @supabase/supabase-js's GenericSchema constraint fails when the Schema type
+ * parameter is evaluated against the Database type in certain TypeScript
+ * module-resolution configurations. The cast bypasses constraint checking
+ * while preserving full type safety at all call sites. Runtime behavior is
+ * identical — the service role client is created normally.
  */
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/database";
 
-// This import will fail at build time if called from a browser bundle.
+// This guard fails at build time if called from a browser bundle.
 // That is intentional — it's a compile-time guard against accidental exposure.
 if (typeof window !== "undefined") {
   throw new Error(
@@ -34,10 +41,18 @@ if (typeof window !== "undefined") {
   );
 }
 
-let adminClient: ReturnType<typeof createClient<Database>> | null = null;
+/**
+ * Fully-typed admin client type for internal use.
+ *
+ * SupabaseClient<Database, "public"> is the correct 2-arg form. See server.ts
+ * for the full explanation of why the 3-arg form causes Schema=never.
+ */
+type AdminClient = SupabaseClient<Database, "public">;
 
-export function createAdminClient() {
-  // Singleton per server process — fine because this module is server-only
+let adminClient: AdminClient | null = null;
+
+export function createAdminClient(): AdminClient {
+  // Singleton per server process — fine because this module is server-only.
   if (adminClient) return adminClient;
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -50,13 +65,13 @@ export function createAdminClient() {
     );
   }
 
-  adminClient = createClient<Database>(url, serviceKey, {
+  adminClient = createClient(url, serviceKey, {
     auth: {
-      // Disable auto-refresh — admin client sessions don't expire
+      // Disable auto-refresh — admin client sessions don't expire.
       autoRefreshToken: false,
       persistSession: false,
     },
-  });
+  }) as unknown as AdminClient;
 
   return adminClient;
 }

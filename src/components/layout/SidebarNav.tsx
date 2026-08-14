@@ -13,7 +13,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import type { UserContext } from "@/types";
+import type { UserContext, PermissionCode } from "@/types";
 import { PERMISSIONS } from "@/types";
 import { hasPermission, hasAnyPermission } from "@/lib/permissions";
 
@@ -23,9 +23,9 @@ interface NavItem {
   /** Material Symbols Outlined icon name */
   icon: string;
   /** If provided, the item is hidden unless user holds this permission. */
-  permission?: string;
+  permission?: PermissionCode;
   /** If provided, the item is shown if user holds ANY of these. */
-  anyOf?: string[];
+  anyOf?: PermissionCode[];
   /** Match exact path (default false — prefix match). */
   exact?: boolean;
 }

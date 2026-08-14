@@ -6,6 +6,10 @@
  *
  * In production, generate these automatically with:
  *   npx supabase gen types typescript --project-id YOUR_PROJECT_ID > src/types/database.ts
+ *
+ * NOTE: All Insert/Update types are written as flat explicit literals (no Omit<Row, ...>
+ * self-references). Self-referential types collapse to `never` under TypeScript's
+ * recursion depth limits when the overall Database type is large.
  */
 
 export type Json =
@@ -19,6 +23,7 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      // ── profiles ──────────────────────────────────────────────────────────────
       profiles: {
         Row: {
           id: string;
@@ -35,19 +40,40 @@ export type Database = {
           created_by: string | null;
           updated_by: string | null;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["profiles"]["Row"],
-          "created_at" | "updated_at"
-        > &
-          Partial<
-            Pick<
-              Database["public"]["Tables"]["profiles"]["Row"],
-              "created_at" | "updated_at"
-            >
-          >;
-        Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
+        Insert: {
+          id: string;
+          email: string;
+          full_name: string;
+          phone?: string | null;
+          avatar_url?: string | null;
+          is_active?: boolean;
+          is_platform_admin?: boolean;
+          mfa_enabled?: boolean;
+          last_sign_in_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+          created_by?: string | null;
+          updated_by?: string | null;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          full_name?: string;
+          phone?: string | null;
+          avatar_url?: string | null;
+          is_active?: boolean;
+          is_platform_admin?: boolean;
+          mfa_enabled?: boolean;
+          last_sign_in_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+          created_by?: string | null;
+          updated_by?: string | null;
+        };
+        Relationships: [];
       };
 
+      // ── login_activity ────────────────────────────────────────────────────────
       login_activity: {
         Row: {
           id: string;
@@ -58,13 +84,20 @@ export type Database = {
           metadata: Json | null;
           created_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["login_activity"]["Row"],
-          "id" | "created_at"
-        >;
-        Update: never; // Login activity is immutable
+        Insert: {
+          id?: string;
+          user_id: string;
+          event_type: LoginEventType;
+          ip_address?: string | null;
+          user_agent?: string | null;
+          metadata?: Json | null;
+          created_at?: string;
+        };
+        Update: never;
+        Relationships: [];
       };
 
+      // ── societies ─────────────────────────────────────────────────────────────
       societies: {
         Row: {
           id: string;
@@ -90,13 +123,58 @@ export type Database = {
           created_by: string | null;
           updated_by: string | null;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["societies"]["Row"],
-          "id" | "created_at" | "updated_at"
-        >;
-        Update: Partial<Database["public"]["Tables"]["societies"]["Insert"]>;
+        Insert: {
+          id?: string;
+          name: string;
+          registration_number: string;
+          society_type: string;
+          address: string;
+          city: string;
+          state: string;
+          pin_code: string;
+          email: string;
+          phone: string;
+          website?: string | null;
+          pan?: string | null;
+          gstin?: string | null;
+          registered_at?: string;
+          logo_url?: string | null;
+          letterhead_url?: string | null;
+          is_active?: boolean;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+          created_by?: string | null;
+          updated_by?: string | null;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          registration_number?: string;
+          society_type?: string;
+          address?: string;
+          city?: string;
+          state?: string;
+          pin_code?: string;
+          email?: string;
+          phone?: string;
+          website?: string | null;
+          pan?: string | null;
+          gstin?: string | null;
+          registered_at?: string;
+          logo_url?: string | null;
+          letterhead_url?: string | null;
+          is_active?: boolean;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+          created_by?: string | null;
+          updated_by?: string | null;
+        };
+        Relationships: [];
       };
 
+      // ── society_settings ──────────────────────────────────────────────────────
       society_settings: {
         Row: {
           id: string;
@@ -113,15 +191,40 @@ export type Database = {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["society_settings"]["Row"],
-          "id" | "created_at" | "updated_at"
-        >;
-        Update: Partial<
-          Database["public"]["Tables"]["society_settings"]["Insert"]
-        >;
+        Insert: {
+          id?: string;
+          society_id: string;
+          application_number_pattern?: string;
+          contract_number_pattern?: string;
+          rfq_number_pattern?: string;
+          work_order_number_pattern?: string;
+          default_timezone?: string;
+          allowed_mime_types?: string[];
+          max_upload_size_bytes?: number;
+          contract_reminder_days?: number[];
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          society_id?: string;
+          application_number_pattern?: string;
+          contract_number_pattern?: string;
+          rfq_number_pattern?: string;
+          work_order_number_pattern?: string;
+          default_timezone?: string;
+          allowed_mime_types?: string[];
+          max_upload_size_bytes?: number;
+          contract_reminder_days?: number[];
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
 
+      // ── society_officers ──────────────────────────────────────────────────────
       society_officers: {
         Row: {
           id: string;
@@ -139,15 +242,42 @@ export type Database = {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["society_officers"]["Row"],
-          "id" | "created_at" | "updated_at"
-        >;
-        Update: Partial<
-          Database["public"]["Tables"]["society_officers"]["Insert"]
-        >;
+        Insert: {
+          id?: string;
+          society_id: string;
+          officer_type: OfficerType;
+          member_id?: string | null;
+          name: string;
+          designation?: string | null;
+          phone?: string | null;
+          email?: string | null;
+          is_signatory?: boolean;
+          display_order?: number;
+          effective_from?: string;
+          effective_until?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          society_id?: string;
+          officer_type?: OfficerType;
+          member_id?: string | null;
+          name?: string;
+          designation?: string | null;
+          phone?: string | null;
+          email?: string | null;
+          is_signatory?: boolean;
+          display_order?: number;
+          effective_from?: string;
+          effective_until?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
 
+      // ── document_number_sequences ─────────────────────────────────────────────
       document_number_sequences: {
         Row: {
           id: string;
@@ -158,13 +288,20 @@ export type Database = {
           last_sequence: number;
           created_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["document_number_sequences"]["Row"],
-          "id" | "created_at"
-        >;
-        Update: never; // Updated atomically via get_next_sequence() function
+        Insert: {
+          id?: string;
+          society_id: string;
+          sequence_type: SequenceType;
+          year: number;
+          wing_code?: string | null;
+          last_sequence?: number;
+          created_at?: string;
+        };
+        Update: never;
+        Relationships: [];
       };
 
+      // ── wings ─────────────────────────────────────────────────────────────────
       wings: {
         Row: {
           id: string;
@@ -178,13 +315,34 @@ export type Database = {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["wings"]["Row"],
-          "id" | "created_at" | "updated_at"
-        >;
-        Update: Partial<Database["public"]["Tables"]["wings"]["Insert"]>;
+        Insert: {
+          id?: string;
+          society_id: string;
+          name: string;
+          code: string;
+          address?: string | null;
+          total_units?: number | null;
+          is_active?: boolean;
+          display_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          society_id?: string;
+          name?: string;
+          code?: string;
+          address?: string | null;
+          total_units?: number | null;
+          is_active?: boolean;
+          display_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
 
+      // ── units ─────────────────────────────────────────────────────────────────
       units: {
         Row: {
           id: string;
@@ -200,13 +358,38 @@ export type Database = {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["units"]["Row"],
-          "id" | "created_at" | "updated_at"
-        >;
-        Update: Partial<Database["public"]["Tables"]["units"]["Insert"]>;
+        Insert: {
+          id?: string;
+          society_id: string;
+          wing_id: string;
+          unit_number: string;
+          floor?: number | null;
+          unit_type?: UnitType | null;
+          carpet_area_sqft?: number | null;
+          built_up_area_sqft?: number | null;
+          status?: UnitStatus;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          society_id?: string;
+          wing_id?: string;
+          unit_number?: string;
+          floor?: number | null;
+          unit_type?: UnitType | null;
+          carpet_area_sqft?: number | null;
+          built_up_area_sqft?: number | null;
+          status?: UnitStatus;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
 
+      // ── roles ─────────────────────────────────────────────────────────────────
       roles: {
         Row: {
           id: string;
@@ -217,13 +400,28 @@ export type Database = {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["roles"]["Row"],
-          "id" | "created_at" | "updated_at"
-        >;
-        Update: Partial<Database["public"]["Tables"]["roles"]["Insert"]>;
+        Insert: {
+          id?: string;
+          name: string;
+          description?: string | null;
+          is_system_role?: boolean;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          description?: string | null;
+          is_system_role?: boolean;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
 
+      // ── permissions ───────────────────────────────────────────────────────────
       permissions: {
         Row: {
           id: string;
@@ -234,13 +432,20 @@ export type Database = {
           is_system_permission: boolean;
           created_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["permissions"]["Row"],
-          "id" | "created_at"
-        >;
-        Update: never; // Permissions are system-defined; code changes break authorization
+        Insert: {
+          id?: string;
+          code: string;
+          name: string;
+          description?: string | null;
+          module: string;
+          is_system_permission?: boolean;
+          created_at?: string;
+        };
+        Update: never;
+        Relationships: [];
       };
 
+      // ── role_permissions ──────────────────────────────────────────────────────
       role_permissions: {
         Row: {
           id: string;
@@ -248,19 +453,23 @@ export type Database = {
           permission_id: string;
           created_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["role_permissions"]["Row"],
-          "id" | "created_at"
-        >;
+        Insert: {
+          id?: string;
+          role_id: string;
+          permission_id: string;
+          created_at?: string;
+        };
         Update: never;
+        Relationships: [];
       };
 
+      // ── user_access_assignments ───────────────────────────────────────────────
       user_access_assignments: {
         Row: {
           id: string;
           user_id: string;
           society_id: string;
-          wing_id: string | null; // null = society-wide
+          wing_id: string | null;
           role_id: string;
           is_active: boolean;
           valid_from: string | null;
@@ -270,15 +479,38 @@ export type Database = {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["user_access_assignments"]["Row"],
-          "id" | "created_at" | "updated_at"
-        >;
-        Update: Partial<
-          Database["public"]["Tables"]["user_access_assignments"]["Insert"]
-        >;
+        Insert: {
+          id?: string;
+          user_id: string;
+          society_id: string;
+          wing_id?: string | null;
+          role_id: string;
+          is_active?: boolean;
+          valid_from?: string | null;
+          valid_until?: string | null;
+          created_by: string;
+          updated_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          society_id?: string;
+          wing_id?: string | null;
+          role_id?: string;
+          is_active?: boolean;
+          valid_from?: string | null;
+          valid_until?: string | null;
+          created_by?: string;
+          updated_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
 
+      // ── audit_logs ────────────────────────────────────────────────────────────
       audit_logs: {
         Row: {
           id: string;
@@ -295,13 +527,655 @@ export type Database = {
           user_agent: string | null;
           created_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["audit_logs"]["Row"],
-          "id" | "created_at"
-        >;
-        Update: never; // Audit logs are immutable
+        Insert: {
+          id?: string;
+          society_id?: string | null;
+          wing_id?: string | null;
+          actor_user_id?: string | null;
+          action: string;
+          entity_type: string;
+          entity_id?: string | null;
+          old_values?: Json | null;
+          new_values?: Json | null;
+          metadata?: Json;
+          ip_address?: string | null;
+          user_agent?: string | null;
+          created_at?: string;
+        };
+        Update: never;
+        Relationships: [];
+      };
+
+      // ── members ───────────────────────────────────────────────────────────────
+      members: {
+        Row: {
+          id: string;
+          society_id: string;
+          unit_id: string | null;
+          member_number: string;
+          full_name: string;
+          email: string | null;
+          phone: string | null;
+          member_type: string;
+          status: string;
+          effective_from: string;
+          effective_until: string | null;
+          notes: string | null;
+          metadata: Json;
+          created_at: string;
+          updated_at: string;
+          created_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          society_id: string;
+          unit_id?: string | null;
+          member_number: string;
+          full_name: string;
+          email?: string | null;
+          phone?: string | null;
+          member_type?: string;
+          status?: string;
+          effective_from?: string;
+          effective_until?: string | null;
+          notes?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+          created_by?: string | null;
+        };
+        Update: {
+          id?: string;
+          society_id?: string;
+          unit_id?: string | null;
+          member_number?: string;
+          full_name?: string;
+          email?: string | null;
+          phone?: string | null;
+          member_type?: string;
+          status?: string;
+          effective_from?: string;
+          effective_until?: string | null;
+          notes?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+          created_by?: string | null;
+        };
+        Relationships: [];
+      };
+
+      // ── society_documents ─────────────────────────────────────────────────────
+      society_documents: {
+        Row: {
+          id: string;
+          society_id: string;
+          title: string;
+          category: string;
+          description: string | null;
+          file_name: string | null;
+          file_size_bytes: number | null;
+          mime_type: string | null;
+          storage_path: string | null;
+          is_verified: boolean;
+          verified_by: string | null;
+          verified_at: string | null;
+          metadata: Json;
+          created_at: string;
+          updated_at: string;
+          uploaded_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          society_id: string;
+          title: string;
+          category?: string;
+          description?: string | null;
+          file_name?: string | null;
+          file_size_bytes?: number | null;
+          mime_type?: string | null;
+          storage_path?: string | null;
+          is_verified?: boolean;
+          verified_by?: string | null;
+          verified_at?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+          uploaded_by?: string | null;
+        };
+        Update: {
+          id?: string;
+          society_id?: string;
+          title?: string;
+          category?: string;
+          description?: string | null;
+          file_name?: string | null;
+          file_size_bytes?: number | null;
+          mime_type?: string | null;
+          storage_path?: string | null;
+          is_verified?: boolean;
+          verified_by?: string | null;
+          verified_at?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+          uploaded_by?: string | null;
+        };
+        Relationships: [];
+      };
+
+      // ── member_applications ───────────────────────────────────────────────────
+      member_applications: {
+        Row: {
+          id: string;
+          society_id: string;
+          application_number: string;
+          applicant_name: string;
+          applicant_email: string | null;
+          applicant_phone: string | null;
+          unit_id: string | null;
+          application_type: string;
+          status: string;
+          submitted_at: string | null;
+          notes: string | null;
+          metadata: Json;
+          created_at: string;
+          updated_at: string;
+          created_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          society_id: string;
+          application_number: string;
+          applicant_name: string;
+          applicant_email?: string | null;
+          applicant_phone?: string | null;
+          unit_id?: string | null;
+          application_type?: string;
+          status?: string;
+          submitted_at?: string | null;
+          notes?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+          created_by?: string | null;
+        };
+        Update: {
+          id?: string;
+          society_id?: string;
+          application_number?: string;
+          applicant_name?: string;
+          applicant_email?: string | null;
+          applicant_phone?: string | null;
+          unit_id?: string | null;
+          application_type?: string;
+          status?: string;
+          submitted_at?: string | null;
+          notes?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+          created_by?: string | null;
+        };
+        Relationships: [];
+      };
+
+      // ── vendors ───────────────────────────────────────────────────────────────
+      vendors: {
+        Row: {
+          id: string;
+          society_id: string;
+          vendor_code: string;
+          name: string;
+          vendor_type: string;
+          contact_name: string | null;
+          email: string | null;
+          phone: string | null;
+          address: string | null;
+          gstin: string | null;
+          pan: string | null;
+          status: string;
+          is_verified: boolean;
+          notes: string | null;
+          metadata: Json;
+          created_at: string;
+          updated_at: string;
+          created_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          society_id: string;
+          vendor_code: string;
+          name: string;
+          vendor_type?: string;
+          contact_name?: string | null;
+          email?: string | null;
+          phone?: string | null;
+          address?: string | null;
+          gstin?: string | null;
+          pan?: string | null;
+          status?: string;
+          is_verified?: boolean;
+          notes?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+          created_by?: string | null;
+        };
+        Update: {
+          id?: string;
+          society_id?: string;
+          vendor_code?: string;
+          name?: string;
+          vendor_type?: string;
+          contact_name?: string | null;
+          email?: string | null;
+          phone?: string | null;
+          address?: string | null;
+          gstin?: string | null;
+          pan?: string | null;
+          status?: string;
+          is_verified?: boolean;
+          notes?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+          created_by?: string | null;
+        };
+        Relationships: [];
+      };
+
+      // ── maintenance_complaints ────────────────────────────────────────────────
+      maintenance_complaints: {
+        Row: {
+          id: string;
+          society_id: string;
+          complaint_number: string;
+          title: string;
+          description: string | null;
+          location: string | null;
+          wing_id: string | null;
+          unit_id: string | null;
+          urgency: string;
+          status: string;
+          reported_by_member_id: string | null;
+          assigned_to: string | null;
+          resolved_at: string | null;
+          metadata: Json;
+          created_at: string;
+          updated_at: string;
+          created_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          society_id: string;
+          complaint_number: string;
+          title: string;
+          description?: string | null;
+          location?: string | null;
+          wing_id?: string | null;
+          unit_id?: string | null;
+          urgency?: string;
+          status?: string;
+          reported_by_member_id?: string | null;
+          assigned_to?: string | null;
+          resolved_at?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+          created_by?: string | null;
+        };
+        Update: {
+          id?: string;
+          society_id?: string;
+          complaint_number?: string;
+          title?: string;
+          description?: string | null;
+          location?: string | null;
+          wing_id?: string | null;
+          unit_id?: string | null;
+          urgency?: string;
+          status?: string;
+          reported_by_member_id?: string | null;
+          assigned_to?: string | null;
+          resolved_at?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+          created_by?: string | null;
+        };
+        Relationships: [];
+      };
+
+      // ── maintenance_work_orders ───────────────────────────────────────────────
+      maintenance_work_orders: {
+        Row: {
+          id: string;
+          society_id: string;
+          work_order_number: string;
+          title: string;
+          description: string | null;
+          wing_id: string | null;
+          priority: string;
+          status: string;
+          vendor_id: string | null;
+          complaint_id: string | null;
+          estimated_cost: number | null;
+          actual_cost: number | null;
+          scheduled_date: string | null;
+          completed_at: string | null;
+          created_by: string | null;
+          metadata: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          society_id: string;
+          work_order_number: string;
+          title: string;
+          description?: string | null;
+          wing_id?: string | null;
+          priority?: string;
+          status?: string;
+          vendor_id?: string | null;
+          complaint_id?: string | null;
+          estimated_cost?: number | null;
+          actual_cost?: number | null;
+          scheduled_date?: string | null;
+          completed_at?: string | null;
+          created_by?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          society_id?: string;
+          work_order_number?: string;
+          title?: string;
+          description?: string | null;
+          wing_id?: string | null;
+          priority?: string;
+          status?: string;
+          vendor_id?: string | null;
+          complaint_id?: string | null;
+          estimated_cost?: number | null;
+          actual_cost?: number | null;
+          scheduled_date?: string | null;
+          completed_at?: string | null;
+          created_by?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+
+      // ── rfqs ──────────────────────────────────────────────────────────────────
+      rfqs: {
+        Row: {
+          id: string;
+          society_id: string;
+          rfq_number: string;
+          title: string;
+          description: string | null;
+          category: string;
+          status: string;
+          submission_deadline: string | null;
+          estimated_budget: number | null;
+          notes: string | null;
+          awarded_vendor: string | null;
+          created_by: string | null;
+          metadata: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          society_id: string;
+          rfq_number: string;
+          title: string;
+          description?: string | null;
+          category?: string;
+          status?: string;
+          submission_deadline?: string | null;
+          estimated_budget?: number | null;
+          notes?: string | null;
+          awarded_vendor?: string | null;
+          created_by?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          society_id?: string;
+          rfq_number?: string;
+          title?: string;
+          description?: string | null;
+          category?: string;
+          status?: string;
+          submission_deadline?: string | null;
+          estimated_budget?: number | null;
+          notes?: string | null;
+          awarded_vendor?: string | null;
+          created_by?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+
+      // ── procurement_work_orders ───────────────────────────────────────────────
+      procurement_work_orders: {
+        Row: {
+          id: string;
+          society_id: string;
+          work_order_number: string;
+          title: string;
+          vendor_id: string | null;
+          rfq_id: string | null;
+          contract_id: string | null;
+          amount: number | null;
+          status: string;
+          start_date: string | null;
+          completion_date: string | null;
+          description: string | null;
+          created_by: string | null;
+          metadata: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          society_id: string;
+          work_order_number: string;
+          title: string;
+          vendor_id?: string | null;
+          rfq_id?: string | null;
+          contract_id?: string | null;
+          amount?: number | null;
+          status?: string;
+          start_date?: string | null;
+          completion_date?: string | null;
+          description?: string | null;
+          created_by?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          society_id?: string;
+          work_order_number?: string;
+          title?: string;
+          vendor_id?: string | null;
+          rfq_id?: string | null;
+          contract_id?: string | null;
+          amount?: number | null;
+          status?: string;
+          start_date?: string | null;
+          completion_date?: string | null;
+          description?: string | null;
+          created_by?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+
+      // ── contracts ─────────────────────────────────────────────────────────────
+      contracts: {
+        Row: {
+          id: string;
+          society_id: string;
+          contract_number: string;
+          title: string;
+          vendor_id: string | null;
+          rfq_id: string | null;
+          value: number | null;
+          status: string;
+          start_date: string | null;
+          end_date: string | null;
+          auto_renew: boolean;
+          description: string | null;
+          created_by: string | null;
+          metadata: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          society_id: string;
+          contract_number: string;
+          title: string;
+          vendor_id?: string | null;
+          rfq_id?: string | null;
+          value?: number | null;
+          status?: string;
+          start_date?: string | null;
+          end_date?: string | null;
+          auto_renew?: boolean;
+          description?: string | null;
+          created_by?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          society_id?: string;
+          contract_number?: string;
+          title?: string;
+          vendor_id?: string | null;
+          rfq_id?: string | null;
+          value?: number | null;
+          status?: string;
+          start_date?: string | null;
+          end_date?: string | null;
+          auto_renew?: boolean;
+          description?: string | null;
+          created_by?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+
+      // ── finance_dues ──────────────────────────────────────────────────────────
+      finance_dues: {
+        Row: {
+          id: string;
+          society_id: string;
+          member_id: string | null;
+          unit_id: string | null;
+          due_type: string;
+          description: string | null;
+          amount: number;
+          due_date: string;
+          status: string;
+          period_from: string | null;
+          period_to: string | null;
+          created_by: string | null;
+          metadata: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          society_id: string;
+          member_id?: string | null;
+          unit_id?: string | null;
+          due_type?: string;
+          description?: string | null;
+          amount: number;
+          due_date: string;
+          status?: string;
+          period_from?: string | null;
+          period_to?: string | null;
+          created_by?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          society_id?: string;
+          member_id?: string | null;
+          unit_id?: string | null;
+          due_type?: string;
+          description?: string | null;
+          amount?: number;
+          due_date?: string;
+          status?: string;
+          period_from?: string | null;
+          period_to?: string | null;
+          created_by?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+
+      // ── finance_payments ──────────────────────────────────────────────────────
+      finance_payments: {
+        Row: {
+          id: string;
+          society_id: string;
+          due_id: string | null;
+          payment_method: string;
+          reference_number: string | null;
+          amount_paid: number;
+          payment_date: string;
+          notes: string | null;
+          recorded_by: string | null;
+          metadata: Json;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          society_id: string;
+          due_id?: string | null;
+          payment_method?: string;
+          reference_number?: string | null;
+          amount_paid: number;
+          payment_date: string;
+          notes?: string | null;
+          recorded_by?: string | null;
+          metadata?: Json;
+          created_at?: string;
+        };
+        Update: never;
+        Relationships: [];
       };
     };
+
+    Views: {};
 
     Functions: {
       is_platform_admin: {
@@ -333,9 +1207,15 @@ export type Database = {
         };
         Returns: number;
       };
+      user_has_society_access: {
+        Args: { p_society_id: string };
+        Returns: boolean;
+      };
     };
 
-    Enums: Record<string, never>;
+    Enums: {};
+
+    CompositeTypes: {};
   };
 };
 
