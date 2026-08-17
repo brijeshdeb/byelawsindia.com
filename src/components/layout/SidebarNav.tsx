@@ -28,6 +28,8 @@ interface NavItem {
   anyOf?: PermissionCode[];
   /** Match exact path (default false — prefix match). */
   exact?: boolean;
+  /** If true, the item is ONLY shown to platform admins. */
+  platformAdminOnly?: boolean;
 }
 
 interface NavGroup {
@@ -225,6 +227,17 @@ function buildNavGroups(): NavGroup[] {
         },
       ],
     },
+    {
+      label: "Platform",
+      items: [
+        {
+          label: "Platform Console",
+          href: "/platform/console",
+          icon: "admin_panel_settings",
+          platformAdminOnly: true,
+        },
+      ],
+    },
   ];
 }
 
@@ -240,6 +253,9 @@ export function SidebarNav({ context }: Props) {
     <nav aria-label="Main navigation">
       {groups.map((group) => {
         const visibleItems = group.items.filter((item) => {
+          // Items reserved for platform admins are hidden from regular users.
+          if (item.platformAdminOnly) return context.isPlatformAdmin === true;
+          // Platform admins can see everything else too.
           if (context.isPlatformAdmin) return true;
           if (item.permission) return hasPermission(context, item.permission);
           if (item.anyOf) return hasAnyPermission(context, item.anyOf);
