@@ -241,7 +241,7 @@ function Features() {
               <div className="w-9 h-9 rounded bg-chs-navy-50 text-chs-navy flex items-center justify-center mb-4">
                 {f.icon}
               </div>
-              <h3 className="font-semibold text-chs-text mb-1.5">{f.title}</h3>
+              <h3 className="font-semibold text-chs-navy mb-1.5">{f.title}</h3>
               <p className="text-sm text-chs-text-secondary leading-relaxed">{f.desc}</p>
             </div>
           ))}
