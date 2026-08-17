@@ -15,11 +15,11 @@ const serverSchema = z.object({
   // Supabase service role — server-only, never expose to client
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, "Supabase service role key is required"),
 
-  // Email
-  RESEND_API_KEY: z.string().min(1, "Resend API key is required"),
-  EMAIL_FROM: z.string().email("EMAIL_FROM must be a valid email address"),
+  // Email — optional until Resend is configured in production
+  RESEND_API_KEY: z.string().min(1).optional(),
+  EMAIL_FROM: z.string().email().optional(),
   EMAIL_FROM_NAME: z.string().min(1).default("Byelawsindia Portal"),
-  RESEND_WEBHOOK_SECRET: z.string().min(1, "Resend webhook secret is required"),
+  RESEND_WEBHOOK_SECRET: z.string().min(1).optional(),
 
   // Storage
   STORAGE_BUCKET_DOCUMENTS: z.string().default("society-documents"),

@@ -146,6 +146,17 @@ export default async function LoginPage({ searchParams }: Props) {
               Reset it here
             </Link>
           </p>
+
+          <p className="mt-3 text-center" style={{ fontSize: "12px", color: "#6B7280" }}>
+            New society admin?{" "}
+            <Link
+              href="/register"
+              className="underline underline-offset-2 transition-colors"
+              style={{ color: "#10B981" }}
+            >
+              Create an account
+            </Link>
+          </p>
         </div>
       </div>
     </div>
