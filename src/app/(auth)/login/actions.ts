@@ -76,6 +76,18 @@ export async function loginAction(
 
   revalidatePath("/", "layout");
 
+  // Route platform admins directly to the console so they never touch select-context.
+  // This also prevents the redirect loop caused by a missing profile row.
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_platform_admin")
+    .eq("id", data.user.id)
+    .single();
+
+  if (profile?.is_platform_admin) {
+    redirect("/platform/console");
+  }
+
   // Safe redirect — validate the target stays within our domain
   const safeRedirect = redirectTo.startsWith("/") ? redirectTo : "/select-context";
   redirect(safeRedirect);

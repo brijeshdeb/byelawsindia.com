@@ -20,18 +20,32 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getAccessOptions } from "@/server/services/AccessService";
 import { getCurrentUser } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Select Context",
 };
 
 export default async function SelectContextPage() {
+  // Check raw Supabase auth first so we can distinguish "not logged in" from
+  // "logged in but profile row is missing." The second case must not redirect
+  // to /login — that creates an infinite loop.
+  const supabase = await createClient();
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser();
+
+  if (!authUser) redirect("/login");
+
   const [user, options] = await Promise.all([
     getCurrentUser(),
     getAccessOptions(),
   ]);
 
-  if (!user) redirect("/login");
+  // Profile row is missing. Show a clear message instead of looping to login.
+  if (!user) {
+    return <ProfileMissing email={authUser.email ?? authUser.id} />;
+  }
 
   // Platform admins don't need a society context — take them straight to the console.
   if (user.is_platform_admin) redirect("/platform/console");
@@ -164,6 +178,38 @@ function ContextCard({ option: o }: { option: AccessOption }) {
         />
       </svg>
     </Link>
+  );
+}
+
+function ProfileMissing({ email }: { email: string }) {
+  return (
+    <div className="min-h-dvh flex items-center justify-center px-6 py-12" style={{ backgroundColor: "#121212" }}>
+      <div className="w-full max-w-sm text-center">
+        <div
+          className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
+          style={{ backgroundColor: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}
+        >
+          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" aria-hidden="true" style={{ color: "#EF4444" }}>
+            <path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+              stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
+        <h1 className="text-xl font-semibold mb-2" style={{ color: "#FFFFFF" }}>
+          Account setup incomplete
+        </h1>
+        <p className="text-sm mb-2" style={{ color: "#9CA3AF" }}>
+          Signed in as <span style={{ color: "#FFFFFF" }}>{email}</span>, but no profile record was found.
+        </p>
+        <p className="text-sm mb-6" style={{ color: "#9CA3AF" }}>
+          Contact your platform administrator to complete account setup.
+        </p>
+        <form action="/api/auth/signout" method="POST">
+          <button type="submit" className="text-sm underline underline-offset-2" style={{ color: "#10B981" }}>
+            Sign out
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }
 
