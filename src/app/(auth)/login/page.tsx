@@ -41,14 +41,16 @@ export default async function LoginPage({ searchParams }: Props) {
         {/* Logo + wordmark */}
         <div>
           <div className="mb-12">
-            <Image
-              src="/logo.png"
-              alt="ByelawsIndia"
-              width={160}
-              height={107}
-              style={{ maxWidth: "148px", height: "auto" }}
-              priority
-            />
+            <Link href="/" aria-label="Back to homepage">
+              <Image
+                src="/logo.png"
+                alt="ByelawsIndia"
+                width={160}
+                height={107}
+                style={{ maxWidth: "148px", height: "auto" }}
+                priority
+              />
+            </Link>
           </div>
 
           <h1
@@ -103,14 +105,16 @@ export default async function LoginPage({ searchParams }: Props) {
         <div className="w-full max-w-sm">
           {/* Mobile logo — shown only when branding panel is hidden */}
           <div className="mb-8 lg:hidden">
-            <Image
-              src="/logo.png"
-              alt="ByelawsIndia"
-              width={120}
-              height={80}
-              style={{ height: "auto" }}
-              priority
-            />
+            <Link href="/" aria-label="Back to homepage">
+              <Image
+                src="/logo.png"
+                alt="ByelawsIndia"
+                width={120}
+                height={80}
+                style={{ height: "auto" }}
+                priority
+              />
+            </Link>
           </div>
 
           {/* Form card — Level 1 elevated surface */}

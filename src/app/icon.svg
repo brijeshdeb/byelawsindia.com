@@ -1,10 +1,28 @@
 <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
   <!-- Dark rounded background -->
   <rect width="32" height="32" rx="6" fill="#121212"/>
-  <!-- Building: roof triangle -->
-  <polygon points="16,6 7,15 25,15" fill="#10B981"/>
-  <!-- Building: body -->
-  <rect x="9" y="15" width="14" height="11" fill="#10B981"/>
-  <!-- Door cutout -->
-  <rect x="13" y="20" width="6" height="6" fill="#121212"/>
+
+  <!-- Emerald arc — the green halo/circle element from the ByelawsIndia logo -->
+  <path d="M4,21 Q16,1 28,21" stroke="#10B981" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+  <!-- Left tower -->
+  <rect x="7" y="14" width="7" height="12" rx="0.5" fill="#e5e2e1"/>
+  <!-- Left tower windows -->
+  <rect x="9"   y="16" width="1.5" height="1.5" rx="0.3" fill="#121212"/>
+  <rect x="11.5" y="16" width="1.5" height="1.5" rx="0.3" fill="#121212"/>
+  <rect x="9"   y="19" width="1.5" height="1.5" rx="0.3" fill="#121212"/>
+  <rect x="11.5" y="19" width="1.5" height="1.5" rx="0.3" fill="#121212"/>
+
+  <!-- Right tower (taller) -->
+  <rect x="18" y="10" width="7" height="16" rx="0.5" fill="#e5e2e1"/>
+  <!-- Right tower windows -->
+  <rect x="20"   y="12" width="1.5" height="1.5" rx="0.3" fill="#121212"/>
+  <rect x="22.5" y="12" width="1.5" height="1.5" rx="0.3" fill="#121212"/>
+  <rect x="20"   y="15.5" width="1.5" height="1.5" rx="0.3" fill="#121212"/>
+  <rect x="22.5" y="15.5" width="1.5" height="1.5" rx="0.3" fill="#121212"/>
+  <rect x="20"   y="19" width="1.5" height="1.5" rx="0.3" fill="#121212"/>
+  <rect x="22.5" y="19" width="1.5" height="1.5" rx="0.3" fill="#121212"/>
+
+  <!-- Shared ground / entrance strip -->
+  <rect x="7" y="26" width="18" height="0.5" fill="#333333"/>
 </svg>
