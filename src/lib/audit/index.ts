@@ -81,7 +81,9 @@ export type AuditAction =
   | "SOCIETY_SETTINGS_UPDATED"
   | "WORKFLOW_DEFINITION_UPDATED"
   | "TEMPLATE_UPDATED"
-  | "MASTER_DATA_UPDATED";
+  | "MASTER_DATA_UPDATED"
+  // Platform
+  | "PLATFORM_CONTEXT_SWITCHED";
 
 export interface AuditParams {
   societyId?: string | null;

@@ -18,6 +18,7 @@
  */
 import { createAdminClient } from "@/lib/supabase/admin";
 import Link from "next/link";
+import { switchToSociety } from "./actions";
 
 // ── date helpers for contract expiry buckets ──────────────────────────────────
 
@@ -488,14 +489,17 @@ export default async function PlatformConsolePage() {
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <button
-                            className="text-xs font-medium transition-colors"
-                            style={{ color: "#10B981" }}
-                            title="View society (coming soon)"
-                            disabled
-                          >
-                            View
-                          </button>
+                          <form action={switchToSociety}>
+                            <input type="hidden" name="societyId" value={s.id} />
+                            <button
+                              type="submit"
+                              className="text-xs font-medium transition-colors hover:text-white"
+                              style={{ color: "#10B981" }}
+                              title={`Enter ${s.name} dashboard`}
+                            >
+                              View
+                            </button>
+                          </form>
                         </td>
                       </tr>
                     ))

@@ -22,8 +22,10 @@ export default function HomePage() {
       <SiteNav />
       <main>
         <Hero />
+        <StatBar />
         <PainStrip />
         <Features />
+        <HowItWorks />
         <AudienceSplit />
         <TrustSection />
         <CtaBanner />
@@ -79,62 +81,185 @@ function SiteNav() {
 
 function Hero() {
   return (
-    <section className="bg-chs-navy pt-20 pb-24 px-6">
-      <div className="max-w-5xl mx-auto text-center">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 bg-white/10 text-chs-navy-100 text-xs font-medium px-3 py-1 rounded-full mb-8 border border-white/15">
-          <span className="w-1.5 h-1.5 rounded-full bg-chs-amber shrink-0" />
-          Built for Indian cooperative housing societies
+    <section className="bg-chs-navy pt-16 pb-20 px-6 overflow-hidden">
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+        {/* Left: badge + headline + subheading + CTAs */}
+        <div>
+          <div className="inline-flex items-center gap-2 bg-white/10 text-chs-navy-100 text-xs font-medium px-3 py-1 rounded-full mb-7 border border-white/15">
+            <span className="w-1.5 h-1.5 rounded-full bg-chs-amber shrink-0" />
+            Built for Indian cooperative housing societies
+          </div>
+
+          <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight tracking-tight mb-5">
+            Your society,{" "}
+            <span className="text-chs-amber italic">properly</span> managed.
+          </h1>
+
+          <p className="text-lg text-chs-navy-200 mb-9 leading-relaxed max-w-lg">
+            Replace WhatsApp groups, Excel sheets, and shared email inboxes
+            with one platform your entire committee can use. Every decision
+            tracked. Every rupee accounted for. Full audit trail, always.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-start gap-3">
+            <Link
+              href="/login"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-chs-amber hover:bg-chs-amber-hover text-white font-semibold rounded text-sm transition-colors"
+            >
+              Request access
+              <ArrowRight />
+            </Link>
+            <a
+              href="#features"
+              className="w-full sm:w-auto px-6 py-3 bg-white/10 hover:bg-white/15 text-white font-semibold rounded text-sm transition-colors border border-white/20 text-center"
+            >
+              See what's included
+            </a>
+          </div>
         </div>
 
-        {/* Headline */}
-        <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight tracking-tight mb-6">
-          Run your cooperative housing society{" "}
-          <span className="text-chs-amber">without the paperwork</span>
-        </h1>
-
-        {/* Subheadline */}
-        <p className="text-lg text-chs-navy-200 max-w-2xl mx-auto mb-10 leading-relaxed">
-          From membership applications to maintenance demands, every process
-          your society depends on, digitised. With a complete audit trail
-          that protects your committee and your members.
-        </p>
-
-        {/* CTAs */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <Link
-            href="/login"
-            className="w-full sm:w-auto px-6 py-3 bg-chs-amber hover:bg-chs-amber-hover text-white font-semibold rounded text-sm transition-colors"
-          >
-            Request access
-          </Link>
-          <a
-            href="#features"
-            className="w-full sm:w-auto px-6 py-3 bg-white/10 hover:bg-white/15 text-white font-semibold rounded text-sm transition-colors border border-white/20"
-          >
-            See all features
-          </a>
+        {/* Right: live-looking dashboard mockup — desktop only */}
+        <div className="hidden lg:block">
+          <DashboardMockup />
         </div>
       </div>
+    </section>
+  );
+}
 
-      {/* Feature preview cards */}
-      <div className="max-w-5xl mx-auto mt-16 grid grid-cols-2 md:grid-cols-4 gap-3">
+/* ─── Dashboard Mockup ────────────────────────────────────────────── */
+
+function DashboardMockup() {
+  return (
+    <div
+      className="rounded-xl p-5 text-sm select-none"
+      style={{
+        background: "#16293b",
+        border: "1px solid rgba(255,255,255,0.10)",
+        transform: "perspective(1000px) rotateY(-7deg) rotateX(3deg)",
+        boxShadow: "32px 40px 80px rgba(0,0,0,0.55)",
+      }}
+      aria-hidden="true"
+    >
+      {/* Window chrome */}
+      <div
+        className="flex items-center gap-1.5 pb-3 mb-3"
+        style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
+      >
+        <span className="w-2 h-2 rounded-full bg-red-500" />
+        <span className="w-2 h-2 rounded-full bg-yellow-400" />
+        <span className="w-2 h-2 rounded-full bg-green-500" />
+        <span
+          className="ml-2 text-xs font-semibold"
+          style={{ color: "rgba(255,255,255,0.35)" }}
+        >
+          Sunrise CHS — Dashboard
+        </span>
+      </div>
+
+      {/* Stat cards 2x2 */}
+      <div className="grid grid-cols-2 gap-2 mb-3">
         {[
-          { label: "Member management", icon: <IconUsers /> },
-          { label: "Maintenance & dues", icon: <IconCoin /> },
-          { label: "Document repository", icon: <IconFolder /> },
-          { label: "Full audit trail", icon: <IconShield /> },
-        ].map((item) => (
+          { label: "Active Members", value: "142", color: "#FFFFFF" },
+          { label: "Arrears Outstanding", value: "₹2.4L", color: "#C6862C" },
+          { label: "Open Complaints", value: "7", color: "#FFFFFF" },
+          { label: "Compliance Rate", value: "98%", color: "#10B981" },
+        ].map((s) => (
           <div
-            key={item.label}
-            className="flex items-center gap-2.5 bg-white/8 border border-white/12 rounded px-3 py-3 text-sm text-chs-navy-100"
+            key={s.label}
+            className="rounded-lg p-3"
+            style={{
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(255,255,255,0.07)",
+            }}
           >
-            <span className="text-chs-amber shrink-0">{item.icon}</span>
-            {item.label}
+            <p
+              className="text-xs mb-1"
+              style={{
+                color: "rgba(255,255,255,0.35)",
+                fontWeight: 500,
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+              }}
+            >
+              {s.label}
+            </p>
+            <p className="text-2xl font-bold" style={{ color: s.color }}>
+              {s.value}
+            </p>
           </div>
         ))}
       </div>
-    </section>
+
+      {/* Recent activity */}
+      <p
+        className="text-xs font-semibold mb-2"
+        style={{
+          color: "rgba(255,255,255,0.30)",
+          textTransform: "uppercase",
+          letterSpacing: "0.06em",
+        }}
+      >
+        Recent Activity
+      </p>
+      {[
+        { text: "Flat 4B — Maintenance payment received", badge: "Paid", color: "#10B981", bg: "rgba(16,185,129,0.15)" },
+        { text: "Wing A — Water pump complaint", badge: "Open", color: "#C6862C", bg: "rgba(198,134,44,0.15)" },
+        { text: "Annual AMC — Vendor selected", badge: "Done", color: "#10B981", bg: "rgba(16,185,129,0.15)" },
+        { text: "Flat 7C — NOC application pending", badge: "Review", color: "#C6862C", bg: "rgba(198,134,44,0.15)" },
+      ].map((row) => (
+        <div
+          key={row.text}
+          className="flex items-center justify-between px-2.5 py-2 rounded mb-1.5"
+          style={{
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(255,255,255,0.05)",
+            color: "rgba(255,255,255,0.6)",
+            fontSize: "11.5px",
+          }}
+        >
+          <span className="truncate mr-2">{row.text}</span>
+          <span
+            className="shrink-0 font-semibold px-2 py-0.5 rounded-full"
+            style={{ color: row.color, background: row.bg, fontSize: "10px" }}
+          >
+            {row.badge}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ─── Stat Bar ────────────────────────────────────────────────────── */
+
+function StatBar() {
+  const stats = [
+    { value: "Early Access", label: "now open", highlight: true },
+    { value: "6", label: "modules ready to use", highlight: false },
+    { value: "100%", label: "audit trail, always on", highlight: false },
+    { value: "Zero", label: "WhatsApp groups needed", highlight: false },
+  ];
+
+  return (
+    <div className="bg-chs-navy border-b border-white/10">
+      <div className="max-w-5xl mx-auto px-6 py-4 flex flex-wrap items-center justify-center gap-y-3 gap-x-10 md:gap-x-14">
+        {stats.map((s, i) => (
+          <div key={s.label} className="flex items-center gap-2.5">
+            {i > 0 && (
+              <div className="hidden md:block w-px h-7 bg-white/15 -ml-5 md:-ml-7 mr-2.5 md:mr-3.5" />
+            )}
+            <span
+              className="font-bold text-xl"
+              style={{ color: s.highlight ? "#10B981" : "#FFFFFF" }}
+            >
+              {s.value}
+            </span>
+            <span className="text-sm text-chs-navy-200">{s.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -243,6 +368,76 @@ function Features() {
               </div>
               <h3 className="font-semibold text-chs-navy mb-1.5">{f.title}</h3>
               <p className="text-sm text-chs-text-secondary leading-relaxed">{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── How It Works ────────────────────────────────────────────────── */
+
+function HowItWorks() {
+  const steps = [
+    {
+      num: "1",
+      title: "Register your society",
+      desc: "Create an account with your society name, location, and wing structure. Takes about five minutes, no IT team required.",
+    },
+    {
+      num: "2",
+      title: "Get access configured",
+      desc: "We configure your wings, assign roles to your committee members, and help you import your existing member register.",
+    },
+    {
+      num: "3",
+      title: "Start managing",
+      desc: "Members, dues, complaints, documents, vendors, all in one place from day one. Your data. Your history. Your audit trail.",
+    },
+  ];
+
+  return (
+    <section
+      id="how-it-works"
+      className="bg-chs-bg py-20 px-6 border-t border-b border-chs-border"
+    >
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-14">
+          <p className="text-xs font-semibold uppercase tracking-widest text-chs-text-muted mb-3">
+            Getting started
+          </p>
+          <h2 className="text-3xl font-bold text-chs-navy mb-3">
+            Up and running in three steps
+          </h2>
+          <p className="text-chs-text-secondary max-w-md mx-auto">
+            No IT team. No long implementation. No training sessions that
+            nobody attends.
+          </p>
+        </div>
+
+        {/* Step connectors: relative container with a horizontal rule at the
+            midpoint of the numbered circles, desktop only */}
+        <div className="relative grid md:grid-cols-3 gap-8 md:gap-0">
+          <div
+            className="hidden md:block absolute"
+            style={{
+              top: "19px",
+              left: "calc(16.67% + 20px)",
+              right: "calc(16.67% + 20px)",
+              height: "2px",
+              backgroundColor: "rgba(23,50,77,0.12)",
+            }}
+          />
+          {steps.map((step) => (
+            <div key={step.num} className="text-center px-4 md:px-8 relative">
+              <div className="w-10 h-10 rounded-full bg-chs-navy text-white font-bold text-base flex items-center justify-center mx-auto mb-5 relative z-10">
+                {step.num}
+              </div>
+              <h3 className="font-semibold text-chs-navy mb-2">{step.title}</h3>
+              <p className="text-sm text-chs-text-secondary leading-relaxed">
+                {step.desc}
+              </p>
             </div>
           ))}
         </div>

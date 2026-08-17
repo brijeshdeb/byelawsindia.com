@@ -1,0 +1,10 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dark rounded background -->
+  <rect width="32" height="32" rx="6" fill="#121212"/>
+  <!-- Building: roof triangle -->
+  <polygon points="16,6 7,15 25,15" fill="#10B981"/>
+  <!-- Building: body -->
+  <rect x="9" y="15" width="14" height="11" fill="#10B981"/>
+  <!-- Door cutout -->
+  <rect x="13" y="20" width="6" height="6" fill="#121212"/>
+</svg>
