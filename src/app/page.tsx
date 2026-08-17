@@ -93,10 +93,7 @@ function SiteNav() {
         {/* CTA */}
         <Link
           href="/login"
-          className="text-sm font-semibold px-4 py-1.5 rounded transition-colors"
-          style={{ backgroundColor: T.primary, color: T.white }}
-          onMouseOver={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = T.primaryHover; }}
-          onMouseOut={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = T.primary; }}
+          className="text-sm font-semibold px-4 py-1.5 rounded transition-colors bg-primary-container text-white hover:bg-[#0d9f6e]"
         >
           Sign in
         </Link>
