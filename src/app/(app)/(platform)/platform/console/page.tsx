@@ -38,9 +38,36 @@ function formatDate(iso: string): string {
 
 // ── data fetching ─────────────────────────────────────────────────────────────
 
-async function fetchConsoleSummary() {
-  const admin = createAdminClient();
+const EMPTY_SUMMARY = {
+  societyCount: 0,
+  memberCount: 0,
+  pendingApplications: 0,
+  unverifiedVendors: 0,
+  contractCount: 0,
+  expiry30: 0,
+  expiry60: 0,
+  expiry90: 0,
+  recentSocieties: [] as {
+    id: string;
+    name: string;
+    registration_number: string;
+    city: string;
+    state: string;
+    is_active: boolean;
+    created_at: string;
+  }[],
+};
 
+async function fetchConsoleSummary() {
+  let admin: ReturnType<typeof createAdminClient>;
+  try {
+    admin = createAdminClient();
+  } catch {
+    // Service role key missing — show zeroed dashboard rather than crashing.
+    return EMPTY_SUMMARY;
+  }
+
+  try {
   const today = daysFromNow(0);
   const day30 = daysFromNow(30);
   const day60 = daysFromNow(60);
@@ -133,6 +160,9 @@ async function fetchConsoleSummary() {
     expiry90: expiry90Result.count ?? 0,
     recentSocieties: recentSocietiesResult.data ?? [],
   };
+  } catch {
+    return EMPTY_SUMMARY;
+  }
 }
 
 // ── sub-components ────────────────────────────────────────────────────────────
@@ -428,20 +458,12 @@ export default async function PlatformConsolePage() {
                     data.recentSocieties.map((s, idx) => (
                       <tr
                         key={s.id}
+                        className="transition-colors hover:bg-[#242424]"
                         style={{
                           borderBottom:
                             idx < data.recentSocieties.length - 1
                               ? "1px solid #333333"
                               : undefined,
-                          transition: "background-color 150ms",
-                        }}
-                        onMouseOver={(e) => {
-                          (e.currentTarget as HTMLElement).style.backgroundColor =
-                            "#242424";
-                        }}
-                        onMouseOut={(e) => {
-                          (e.currentTarget as HTMLElement).style.backgroundColor =
-                            "";
                         }}
                       >
                         <td className="px-4 py-3">
