@@ -36,10 +36,9 @@ const platformNav: NavItem[] = [
     disabled: true,
   },
   {
-    label: "Member Management",
+    label: "User Management",
     href: "/platform/members",
     icon: "group",
-    disabled: true,
   },
   {
     label: "Vendors",
