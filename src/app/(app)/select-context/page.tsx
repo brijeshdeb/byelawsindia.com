@@ -33,6 +33,9 @@ export default async function SelectContextPage() {
 
   if (!user) redirect("/login");
 
+  // Platform admins don't need a society context — take them straight to the console.
+  if (user.is_platform_admin) redirect("/platform/console");
+
   // No assignments — show a blocking message (not a redirect loop)
   if (options.length === 0) {
     return <NoAccess name={user.full_name ?? user.email ?? "User"} />;

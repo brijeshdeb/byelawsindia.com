@@ -17,6 +17,7 @@ import { AppError } from "@/types";
 import { safeJsonParse } from "@/lib/utils";
 import { PERMISSIONS } from "@/types";
 import { hasPermission, hasAnyPermission } from "@/lib/permissions";
+import { getCurrentUser } from "@/lib/auth";
 import type { UserContext } from "@/types";
 
 export const metadata: Metadata = {
@@ -34,6 +35,11 @@ export default async function DashboardPage() {
   const ctx = safeJsonParse<ContextCookie>(raw);
 
   if (!ctx?.societyId) {
+    // Platform admins don't use society context — send them straight to the console.
+    const currentUser = await getCurrentUser();
+    if (currentUser?.is_platform_admin) {
+      redirect("/platform/console");
+    }
     redirect("/select-context");
   }
 
