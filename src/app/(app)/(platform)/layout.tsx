@@ -114,7 +114,6 @@ export default async function PlatformLayout({
             href="/select-context"
             className="flex items-center gap-2 text-xs transition-colors py-1"
             style={{ color: "rgba(156,163,175,0.7)" }}
-            onMouseOver={undefined}
           >
             <span
               className="material-symbols-outlined"

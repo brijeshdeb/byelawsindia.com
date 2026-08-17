@@ -17,7 +17,6 @@
  * Design reference: stitch_obsidian_ui_design/super_admin_dashboard/screen.png
  */
 import { createAdminClient } from "@/lib/supabase/admin";
-import Link from "next/link";
 import { switchToSociety } from "./actions";
 
 // ── date helpers for contract expiry buckets ──────────────────────────────────
@@ -403,16 +402,14 @@ export default async function PlatformConsolePage() {
           <SectionCard
             title="Recent Society Registrations"
             action={
-              <Link
-                href="/platform/societies"
-                className="text-sm font-medium transition-colors"
-                style={{ color: "#10B981" }}
-                aria-disabled="true"
-                onClick={(e) => e.preventDefault()}
+              <span
+                className="text-sm font-medium"
+                style={{ color: "#10B981", opacity: 0.4, cursor: "not-allowed" }}
                 title="Coming soon"
+                aria-disabled="true"
               >
                 View All
-              </Link>
+              </span>
             }
           >
             <div className="overflow-x-auto">
