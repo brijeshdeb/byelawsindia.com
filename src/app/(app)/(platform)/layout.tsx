@@ -111,7 +111,7 @@ export default async function PlatformLayout({
           style={{ borderTop: "1px solid #333333" }}
         >
           <Link
-            href="/select-context"
+            href="/platform/select-society"
             className="flex items-center gap-2 text-xs transition-colors py-1"
             style={{ color: "rgba(156,163,175,0.7)" }}
           >
