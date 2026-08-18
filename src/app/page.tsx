@@ -17,6 +17,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { CookieBanner } from "@/components/public/CookieBanner";
 
 export const metadata: Metadata = {
   title: "ByelawsIndia: Cooperative Housing Society Management",
@@ -58,6 +59,7 @@ export default function HomePage() {
         <CtaBanner />
       </main>
       <Footer />
+      <CookieBanner />
     </div>
   );
 }
