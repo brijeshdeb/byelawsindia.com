@@ -27,9 +27,11 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // Root — authenticated users go to dashboard; everyone else sees the public homepage
+  // Root — authenticated users go to the context selector (which routes platform
+  // admins to /platform/console and society users to /dashboard automatically).
+  // Unauthenticated users see the public marketing homepage.
   if (pathname === "/") {
-    if (session) return NextResponse.redirect(new URL("/dashboard", request.url));
+    if (session) return NextResponse.redirect(new URL("/select-context", request.url));
     return response;
   }
 

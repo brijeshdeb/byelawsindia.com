@@ -61,8 +61,10 @@ async function fetchConsoleSummary() {
   let admin: ReturnType<typeof createAdminClient>;
   try {
     admin = createAdminClient();
-  } catch {
-    // Service role key missing — show zeroed dashboard rather than crashing.
+  } catch (err) {
+    // Service role key missing or invalid — show zeroed dashboard rather than crashing.
+    // Check Vercel env vars: SUPABASE_SERVICE_ROLE_KEY must be set.
+    console.error("[platform/console] createAdminClient failed:", err);
     return EMPTY_SUMMARY;
   }
 
@@ -159,7 +161,8 @@ async function fetchConsoleSummary() {
     expiry90: expiry90Result.count ?? 0,
     recentSocieties: recentSocietiesResult.data ?? [],
   };
-  } catch {
+  } catch (err) {
+    console.error("[platform/console] fetchConsoleSummary query failed:", err);
     return EMPTY_SUMMARY;
   }
 }

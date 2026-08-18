@@ -39,9 +39,14 @@ async function fetchSocieties(): Promise<Society[]> {
       .from("societies")
       .select("id, name, registration_number, city, state, is_active")
       .order("name", { ascending: true });
-    if (error) return [];
+    if (error) {
+      console.error("[select-society] societies query error:", error);
+      return [];
+    }
     return (data as Society[]) ?? [];
-  } catch {
+  } catch (err) {
+    // Most likely cause: SUPABASE_SERVICE_ROLE_KEY is not set in environment.
+    console.error("[select-society] createAdminClient failed — check SUPABASE_SERVICE_ROLE_KEY in Vercel env vars:", err);
     return [];
   }
 }

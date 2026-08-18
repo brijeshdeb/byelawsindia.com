@@ -17,9 +17,11 @@ import { signOutAction } from "@/app/actions/auth";
 interface Props {
   userName: string;
   userEmail: string;
+  /** Short label shown under the user's name. Defaults to "Society Admin". */
+  roleLabel?: string;
 }
 
-export function Topbar({ userName, userEmail }: Props) {
+export function Topbar({ userName, userEmail, roleLabel = "Society Admin" }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const initials = getInitials(userName) || userEmail.slice(0, 2).toUpperCase();
@@ -144,7 +146,7 @@ export function Topbar({ userName, userEmail }: Props) {
                 className="text-xs leading-none mt-1"
                 style={{ color: "#9CA3AF", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.05em" }}
               >
-                Society Admin
+                {roleLabel}
               </div>
             </div>
             <span

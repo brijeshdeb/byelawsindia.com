@@ -51,12 +51,13 @@ export async function AppShell({ children }: Props) {
   const profile = userContext.profile;
   const userName = profile.full_name ?? "";
   const userEmail = profile.email ?? "";
+  const roleLabel = userContext.roleName ?? "Society Admin";
 
   return (
     <div className="app-shell">
       {/* ── Topbar ── spans the full width (grid-column 1 / -1) */}
       <div className="app-topbar">
-        <Topbar userName={userName} userEmail={userEmail} />
+        <Topbar userName={userName} userEmail={userEmail} roleLabel={roleLabel} />
       </div>
 
       {/* ── Sidebar ── left column below the topbar */}
