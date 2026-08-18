@@ -406,4 +406,28 @@ INSERT INTO procurement_work_orders (
    '00000001-0000-0000-0000-000000000001', now() - interval '2 months', now())
 ON CONFLICT (id) DO NOTHING;
 
+-- ─── Access assignment: platform admin gets Society Admin role ──────────────
+-- Required so that requirePermission() in server actions passes for the
+-- platform admin when they browse the demo society in the tenant shell.
+-- The RLS function user_has_society_access also grants platform admins
+-- implicit access (see migration 016), but the RBAC layer reads this table
+-- directly, so the explicit row is still needed.
+INSERT INTO public.user_access_assignments (
+  id, user_id, society_id, wing_id, role_id,
+  is_active, valid_from, valid_until,
+  created_by, updated_by, created_at, updated_at
+)
+VALUES (
+  'd0000000-0000-0000-000b-000000000001',
+  'ad53907a-de3c-4d63-8a15-1f2f8e3e2c92',  -- admin@byelawsindia.com (platform admin)
+  'd0000000-0000-0000-0000-000000000001',  -- demo society
+  NULL,
+  '34264cd7-9de4-450f-a96e-d36c0bbb2b20', -- Society Admin role
+  true, NULL, NULL,
+  'ad53907a-de3c-4d63-8a15-1f2f8e3e2c92',
+  'ad53907a-de3c-4d63-8a15-1f2f8e3e2c92',
+  now(), now()
+)
+ON CONFLICT (id) DO NOTHING;
+
 COMMIT;
