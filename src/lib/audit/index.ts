@@ -74,6 +74,9 @@ export type AuditAction =
   | "CONTRACT_RENEWED"
   | "CONTRACT_TERMINATED"
   | "CONTRACT_REMINDER_SENT"
+  // Finance
+  | "DUE_CREATED"
+  | "PAYMENT_RECORDED"
   // Reporting
   | "REPORT_EXPORTED"
   | "AUDIT_LOG_EXPORTED"

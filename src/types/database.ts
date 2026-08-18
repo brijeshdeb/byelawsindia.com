@@ -1211,6 +1211,19 @@ export type Database = {
         Args: { p_society_id: string };
         Returns: boolean;
       };
+      record_payment: {
+        Args: {
+          p_society_id:     string;
+          p_due_id:         string;
+          p_amount_paid:    number;
+          p_payment_method: string;
+          p_payment_date:   string;
+          p_reference_no:   string | null;
+          p_notes:          string | null;
+          p_recorded_by:    string;
+        };
+        Returns: string;
+      };
     };
 
     Enums: {};

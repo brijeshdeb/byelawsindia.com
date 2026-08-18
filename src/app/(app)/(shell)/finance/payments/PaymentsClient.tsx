@@ -1,13 +1,5 @@
 "use client";
 
-const DEMO_PAYMENTS = [
-  { id: "demo-p1", amount_paid: 4500, payment_method: "BANK_TRANSFER", payment_date: "2024-07-05", reference_number: "NEFT/2024070500123", due_type: "MAINTENANCE",   member_name: "Priya Menon"    },
-  { id: "demo-p2", amount_paid: 4500, payment_method: "UPI",           payment_date: "2024-07-08", reference_number: "UPI/20240708/ABX12",  due_type: "MAINTENANCE",   member_name: "Sneha Desai"    },
-  { id: "demo-p3", amount_paid: 2000, payment_method: "CHEQUE",        payment_date: "2024-07-12", reference_number: "CHQ/000412",           due_type: "SINKING_FUND",  member_name: "Ramesh Iyer"    },
-  { id: "demo-p4", amount_paid: 1200, payment_method: "CASH",          payment_date: "2024-07-20", reference_number: null,                   due_type: "PARKING",       member_name: "Kavitha Sharma" },
-  { id: "demo-p5", amount_paid: 800,  payment_method: "UPI",           payment_date: "2024-07-25", reference_number: "UPI/20240725/CDE99",  due_type: "WATER_CHARGES", member_name: "Ajay Kulkarni"  },
-];
-
 interface Payment {
   id: string;
   amount_paid: number;
@@ -21,9 +13,7 @@ interface Payment {
 function label(s: string) { return s.charAt(0) + s.slice(1).toLowerCase().replace("_", " "); }
 
 export function PaymentsClient({ payments }: { payments: Payment[] }) {
-  const isDemo = payments.length === 0;
-  const displayPayments = isDemo ? DEMO_PAYMENTS : payments;
-  const totalCollected = displayPayments.reduce((sum, p) => sum + p.amount_paid, 0);
+  const totalCollected = payments.reduce((sum, p) => sum + p.amount_paid, 0);
 
   return (
     <div className="page-container">
@@ -46,7 +36,7 @@ export function PaymentsClient({ payments }: { payments: Payment[] }) {
       </div>
 
       <div className="queue-section">
-        {displayPayments.length === 0 ? (
+        {payments.length === 0 ? (
           <div className="flex flex-col items-center py-16" style={{ color: "#6B7280" }}>
             <span className="material-symbols-outlined mb-3" style={{ fontSize: "40px" }}>payments</span>
             <p className="text-sm">No payments recorded. Use Finance - Dues to record a payment.</p>
@@ -61,8 +51,8 @@ export function PaymentsClient({ payments }: { payments: Payment[] }) {
               </tr>
             </thead>
             <tbody>
-              {displayPayments.map((row, i) => (
-                <tr key={row.id} style={{ borderBottom: i < displayPayments.length - 1 ? "1px solid #2a2a2a" : "none" }}>
+              {payments.map((row, i) => (
+                <tr key={row.id} style={{ borderBottom: i < payments.length - 1 ? "1px solid #2a2a2a" : "none" }}>
                   <td className="px-4 py-3 font-body-sm text-body-sm text-text-primary">{row.member_name ?? "—"}</td>
                   <td className="px-4 py-3 font-body-sm text-body-sm" style={{ color: "#9CA3AF" }}>{row.due_type ? label(row.due_type) : "—"}</td>
                   <td className="px-4 py-3 font-body-sm text-body-sm text-text-primary font-medium">
@@ -79,10 +69,8 @@ export function PaymentsClient({ payments }: { payments: Payment[] }) {
           </table>
         )}
         <div className="px-4 py-3" style={{ borderTop: "1px solid #333333", backgroundColor: "#1c1b1b" }}>
-          <p className="font-body-sm text-body-sm italic" style={{ color: "#6B7280" }}>
-            {isDemo
-              ? "Illustrative data. Live payments appear here once recorded."
-              : `Showing ${displayPayments.length} payment${displayPayments.length !== 1 ? "s" : ""}.`}
+          <p className="font-body-sm text-body-sm" style={{ color: "#6B7280" }}>
+            {`Showing ${payments.length} payment${payments.length !== 1 ? "s" : ""}.`}
           </p>
         </div>
       </div>

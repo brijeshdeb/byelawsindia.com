@@ -76,8 +76,10 @@ export default function ReportsPage() {
                       {r.format}
                     </span>
                     <button
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium"
-                      style={{ backgroundColor: "#1c1b1b", color: "#9CA3AF", border: "1px solid #333333" }}
+                      disabled
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium cursor-not-allowed"
+                      style={{ backgroundColor: "#1c1b1b", color: "#4B5563", border: "1px solid #2a2a2a" }}
+                      title="Report generation arrives in the next release"
                     >
                       <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>download</span>
                       Generate
@@ -92,7 +94,7 @@ export default function ReportsPage() {
 
       <div className="mt-4 px-4 py-3 rounded" style={{ backgroundColor: "#1c1b1b", border: "1px solid #333333" }}>
         <p className="font-body-sm text-body-sm italic" style={{ color: "#6B7280" }}>
-          Phase 0: report UI is illustrative. Live report generation with filtered date ranges arrives in Phase 2.
+          Report generation with filtered date ranges arrives in the next release.
         </p>
       </div>
     </div>

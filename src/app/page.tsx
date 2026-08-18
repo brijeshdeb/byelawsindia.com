@@ -19,7 +19,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Byelawsindia: Cooperative Housing Society Management",
+  title: "ByelawsIndia: Cooperative Housing Society Management",
   description:
     "The complete management platform for Indian cooperative housing societies. Membership, maintenance, procurement, compliance, all in one place, with a full audit trail.",
 };
@@ -75,7 +75,7 @@ function SiteNav() {
         <Link href="/" className="flex items-center gap-2.5 shrink-0">
           <NavLogoMark />
           <span className="font-semibold tracking-tight text-base leading-none" style={{ color: T.white }}>
-            Byelawsindia
+            ByelawsIndia
           </span>
         </Link>
 
@@ -286,12 +286,12 @@ function PainStrip() {
   const points = [
     {
       heading: "Disputes without evidence",
-      body: "When a member contests a charge or a committee decision is challenged, where is the paper trail? Every action on Byelawsindia is logged, timestamped, and tamper-proof.",
+      body: "When a member contests a charge or a committee decision is challenged, where is the paper trail? Every action on ByelawsIndia is logged, timestamped, and tamper-proof.",
       icon: <IconAlert />,
     },
     {
       heading: "Files across WhatsApp, email, and registers",
-      body: "NOCs, share certificates, meeting minutes, vendor quotes, scattered everywhere. Byelawsindia stores everything in one place, indexed and searchable.",
+      body: "NOCs, share certificates, meeting minutes, vendor quotes, scattered everywhere. ByelawsIndia stores everything in one place, indexed and searchable.",
       icon: <IconFiles />,
     },
     {
@@ -495,7 +495,7 @@ function AudienceSplit() {
             Your secretary does not need an IT department
           </h2>
           <p className="mb-6 leading-relaxed" style={{ color: T.secondary }}>
-            Byelawsindia is designed for the way Indian CHS committees actually
+            ByelawsIndia is designed for the way Indian CHS committees actually
             work, where the secretary is a volunteer, the committee changes
             every few years, and compliance cannot wait for someone to find
             the right file.
@@ -651,7 +651,7 @@ function Footer() {
           <div className="max-w-xs">
             <div className="flex items-center gap-2.5 mb-3">
               <NavLogoMark />
-              <span className="font-semibold" style={{ color: T.white }}>Byelawsindia</span>
+              <span className="font-semibold" style={{ color: T.white }}>ByelawsIndia</span>
             </div>
             <p className="text-sm leading-relaxed" style={{ color: T.secondary }}>
               The management platform built for Indian cooperative
@@ -682,7 +682,7 @@ function Footer() {
         </div>
 
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs" style={{ color: T.muted }}>
-          <p>&copy; {new Date().getFullYear()} Byelawsindia. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} ByelawsIndia. All rights reserved.</p>
           <p>Built for Indian cooperative housing societies.</p>
         </div>
       </div>

@@ -34,26 +34,9 @@ const statusColor: Record<string, { bg: string; text: string; border: string }> 
 };
 const FALLBACK = { bg: "rgba(107,114,128,0.1)", text: "#6B7280", border: "rgba(107,114,128,0.2)" };
 
-const DEMO_UNITS: Unit[] = [
-  { id: "demo-u1", unit_number: "1A", floor: 1, unit_type: "2BHK",  carpet_area_sqft: 850,  status: "OCCUPIED",  wing_id: "demo-w1", wing_name: "Wing A" },
-  { id: "demo-u2", unit_number: "2A", floor: 2, unit_type: "2BHK",  carpet_area_sqft: 850,  status: "TENANTED",  wing_id: "demo-w1", wing_name: "Wing A" },
-  { id: "demo-u3", unit_number: "3A", floor: 3, unit_type: "3BHK",  carpet_area_sqft: 1100, status: "OCCUPIED",  wing_id: "demo-w1", wing_name: "Wing A" },
-  { id: "demo-u4", unit_number: "4B", floor: 4, unit_type: "2BHK",  carpet_area_sqft: 875,  status: "OCCUPIED",  wing_id: "demo-w2", wing_name: "Wing B" },
-  { id: "demo-u5", unit_number: "5B", floor: 5, unit_type: "3BHK",  carpet_area_sqft: 1150, status: "VACANT",    wing_id: "demo-w2", wing_name: "Wing B" },
-  { id: "demo-u6", unit_number: "6B", floor: 6, unit_type: "2BHK",  carpet_area_sqft: 850,  status: "OCCUPIED",  wing_id: "demo-w2", wing_name: "Wing B" },
-  { id: "demo-u7", unit_number: "7C", floor: 7, unit_type: "1BHK",  carpet_area_sqft: 600,  status: "TENANTED",  wing_id: "demo-w3", wing_name: "Wing C" },
-  { id: "demo-u8", unit_number: "8C", floor: 8, unit_type: "2BHK",  carpet_area_sqft: 875,  status: "MAINTENANCE", wing_id: "demo-w3", wing_name: "Wing C" },
-  { id: "demo-u9", unit_number: "9D", floor: 9, unit_type: "3BHK",  carpet_area_sqft: 1200, status: "OCCUPIED",  wing_id: "demo-w4", wing_name: "Wing D" },
-  { id: "demo-u10", unit_number: "10D", floor: 10, unit_type: "3BHK", carpet_area_sqft: 1200, status: "VACANT",  wing_id: "demo-w4", wing_name: "Wing D" },
-];
-const DEMO_SUMMARY: Summary = { total: 10, occupied: 6, vacant: 2, tenanted: 2 };
-
 function label(s: string) { return s.charAt(0) + s.slice(1).toLowerCase(); }
 
 export function UnitsClient({ units, wings, summary }: { units: Unit[]; wings: Wing[]; summary: Summary }) {
-  const isDemo = units.length === 0;
-  const displayUnits = isDemo ? DEMO_UNITS : units;
-  const displaySummary = isDemo ? DEMO_SUMMARY : summary;
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
@@ -80,9 +63,9 @@ export function UnitsClient({ units, wings, summary }: { units: Unit[]; wings: W
 
         <div className="grid grid-cols-3 gap-4 mb-6">
           {[
-            { label: "Total units", value: displaySummary.total, icon: "apartment" },
-            { label: "Occupied", value: displaySummary.occupied, icon: "check_circle" },
-            { label: "Vacant", value: displaySummary.vacant, icon: "lock_open" },
+            { label: "Total units", value: summary.total, icon: "apartment" },
+            { label: "Occupied", value: summary.occupied, icon: "check_circle" },
+            { label: "Vacant", value: summary.vacant, icon: "lock_open" },
           ].map((s) => (
             <div key={s.label} className="queue-section px-5 py-4 flex items-center gap-4">
               <span className="material-symbols-outlined" style={{ fontSize: "28px", color: "#10B981" }}>{s.icon}</span>
@@ -95,7 +78,7 @@ export function UnitsClient({ units, wings, summary }: { units: Unit[]; wings: W
         </div>
 
         <div className="queue-section">
-          {displayUnits.length === 0 ? (
+          {units.length === 0 ? (
             <div className="flex flex-col items-center py-16" style={{ color: "#6B7280" }}>
               <span className="material-symbols-outlined mb-3" style={{ fontSize: "40px" }}>apartment</span>
               <p className="text-sm">No units yet. Add the first unit to get started.</p>
@@ -110,10 +93,10 @@ export function UnitsClient({ units, wings, summary }: { units: Unit[]; wings: W
                 </tr>
               </thead>
               <tbody>
-                {displayUnits.map((row, i) => {
+                {units.map((row, i) => {
                   const sc = statusColor[row.status] ?? FALLBACK;
                   return (
-                    <tr key={row.id} style={{ borderBottom: i < displayUnits.length - 1 ? "1px solid #2a2a2a" : "none" }}>
+                    <tr key={row.id} style={{ borderBottom: i < units.length - 1 ? "1px solid #2a2a2a" : "none" }}>
                       <td className="px-4 py-3 font-mono font-medium" style={{ fontSize: "13px", color: "#10B981" }}>{row.unit_number}</td>
                       <td className="px-4 py-3 font-body-sm text-body-sm" style={{ color: "#9CA3AF" }}>{row.wing_name}</td>
                       <td className="px-4 py-3 font-body-sm text-body-sm" style={{ color: "#9CA3AF" }}>
@@ -136,9 +119,7 @@ export function UnitsClient({ units, wings, summary }: { units: Unit[]; wings: W
           )}
           <div className="px-4 py-3" style={{ borderTop: "1px solid #333333", backgroundColor: "#1c1b1b" }}>
             <p className="font-body-sm text-body-sm italic" style={{ color: "#6B7280" }}>
-              {isDemo
-                ? "Illustrative data. Live units appear here once added."
-                : `Showing ${displayUnits.length} unit${displayUnits.length !== 1 ? "s" : ""}.`}
+              {`Showing ${units.length} unit${units.length !== 1 ? "s" : ""}.`}
             </p>
           </div>
         </div>

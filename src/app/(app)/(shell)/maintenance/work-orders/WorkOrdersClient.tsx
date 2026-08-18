@@ -33,19 +33,9 @@ const statusColor: Record<string, { bg: string; text: string; border: string }> 
 };
 const FALLBACK = { bg: "rgba(107,114,128,0.1)", text: "#6B7280", border: "rgba(107,114,128,0.2)" };
 
-const DEMO_WORK_ORDERS: WorkOrder[] = [
-  { id: "demo-wo1", title: "Lift AMC – Wing A",              priority: "HIGH",   status: "IN_PROGRESS", estimated_cost: 18000,  scheduled_date: "2024-08-10", vendor_name: "Shree Electricals",      created_at: "2024-08-01T09:00:00Z" },
-  { id: "demo-wo2", title: "Waterproofing – Terrace Wing C", priority: "NORMAL", status: "PENDING",     estimated_cost: 75000,  scheduled_date: "2024-09-01", vendor_name: "BuildRight Contractors", created_at: "2024-08-05T10:00:00Z" },
-  { id: "demo-wo3", title: "Plumbing repair – 3rd floor",    priority: "URGENT", status: "IN_PROGRESS", estimated_cost: 8500,   scheduled_date: "2024-08-09", vendor_name: "AquaPure Services",      created_at: "2024-08-07T11:00:00Z" },
-  { id: "demo-wo4", title: "Garden maintenance – monthly",   priority: "LOW",    status: "COMPLETED",   estimated_cost: 5000,   scheduled_date: "2024-07-31", vendor_name: "GreenScape Landscaping", created_at: "2024-07-25T09:00:00Z" },
-  { id: "demo-wo5", title: "CCTV camera replacement – P1",   priority: "HIGH",   status: "PENDING",     estimated_cost: 22000,  scheduled_date: null,         vendor_name: null,                     created_at: "2024-08-08T14:00:00Z" },
-];
-
 function label(s: string) { return s.charAt(0) + s.slice(1).toLowerCase().replace("_", " "); }
 
 export function WorkOrdersClient({ workOrders, vendors }: { workOrders: WorkOrder[]; vendors: Vendor[] }) {
-  const isDemo = workOrders.length === 0;
-  const displayWorkOrders = isDemo ? DEMO_WORK_ORDERS : workOrders;
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
@@ -71,7 +61,7 @@ export function WorkOrdersClient({ workOrders, vendors }: { workOrders: WorkOrde
         </div>
 
         <div className="queue-section">
-          {displayWorkOrders.length === 0 ? (
+          {workOrders.length === 0 ? (
             <div className="flex flex-col items-center py-16" style={{ color: "#6B7280" }}>
               <span className="material-symbols-outlined mb-3" style={{ fontSize: "40px" }}>construction</span>
               <p className="text-sm">No work orders yet.</p>
@@ -86,11 +76,11 @@ export function WorkOrdersClient({ workOrders, vendors }: { workOrders: WorkOrde
                 </tr>
               </thead>
               <tbody>
-                {displayWorkOrders.map((row, i) => {
+                {workOrders.map((row, i) => {
                   const pc = priorityColor[row.priority] ?? FALLBACK;
                   const sc = statusColor[row.status] ?? FALLBACK;
                   return (
-                    <tr key={row.id} style={{ borderBottom: i < displayWorkOrders.length - 1 ? "1px solid #2a2a2a" : "none" }}>
+                    <tr key={row.id} style={{ borderBottom: i < workOrders.length - 1 ? "1px solid #2a2a2a" : "none" }}>
                       <td className="px-4 py-3 font-body-sm text-body-sm text-text-primary">{row.title}</td>
                       <td className="px-4 py-3">
                         <span className="font-label-md text-label-md px-2 py-0.5 rounded" style={{ backgroundColor: pc.bg, color: pc.text, border: `1px solid ${pc.border}` }}>
@@ -117,9 +107,7 @@ export function WorkOrdersClient({ workOrders, vendors }: { workOrders: WorkOrde
           )}
           <div className="px-4 py-3" style={{ borderTop: "1px solid #333333", backgroundColor: "#1c1b1b" }}>
             <p className="font-body-sm text-body-sm italic" style={{ color: "#6B7280" }}>
-              {isDemo
-                ? "Illustrative data. Live work orders appear here once created."
-                : `Showing ${displayWorkOrders.length} work order${displayWorkOrders.length !== 1 ? "s" : ""}.`}
+              {`Showing ${workOrders.length} work order${workOrders.length !== 1 ? "s" : ""}.`}
             </p>
           </div>
         </div>

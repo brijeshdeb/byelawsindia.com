@@ -11,17 +11,8 @@ interface Wing {
   unit_count: number;
 }
 
-const DEMO_WINGS: Wing[] = [
-  { id: "demo-w1", name: "Wing A", code: "A", total_units: 12, is_active: true,  unit_count: 12 },
-  { id: "demo-w2", name: "Wing B", code: "B", total_units: 12, is_active: true,  unit_count: 10 },
-  { id: "demo-w3", name: "Wing C", code: "C", total_units: 8,  is_active: true,  unit_count: 8  },
-  { id: "demo-w4", name: "Wing D", code: "D", total_units: 6,  is_active: false, unit_count: 0  },
-];
-
 export function WingsClient({ wings }: { wings: Wing[] }) {
   const [modalOpen, setModalOpen] = useState(false);
-  const isDemo = wings.length === 0;
-  const displayWings = isDemo ? DEMO_WINGS : wings;
 
   return (
     <>
@@ -45,7 +36,7 @@ export function WingsClient({ wings }: { wings: Wing[] }) {
           </button>
         </div>
 
-        {displayWings.length === 0 ? (
+        {wings.length === 0 ? (
           <div className="queue-section flex flex-col items-center py-16" style={{ color: "#6B7280" }}>
             <span className="material-symbols-outlined mb-3" style={{ fontSize: "40px" }}>domain</span>
             <p className="text-sm">No wings yet. Add the first wing to organise units.</p>
@@ -53,7 +44,7 @@ export function WingsClient({ wings }: { wings: Wing[] }) {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
-              {displayWings.map((wing) => (
+              {wings.map((wing) => (
                 <div key={wing.id} className="queue-section px-6 py-5">
                   <div className="flex items-center justify-between mb-4">
                     <div className="w-10 h-10 rounded flex items-center justify-center font-bold text-lg" style={{ backgroundColor: "rgba(16,185,129,0.15)", color: "#10B981" }}>
@@ -85,10 +76,8 @@ export function WingsClient({ wings }: { wings: Wing[] }) {
               ))}
             </div>
             <div className="queue-section px-4 py-3">
-              <p className="font-body-sm text-body-sm italic" style={{ color: "#6B7280" }}>
-                {isDemo
-                  ? "Illustrative data. Live wings appear here once added."
-                  : `Showing ${displayWings.length} wing${displayWings.length !== 1 ? "s" : ""}.`}
+              <p className="font-body-sm text-body-sm" style={{ color: "#6B7280" }}>
+                {`Showing ${wings.length} wing${wings.length !== 1 ? "s" : ""}.`}
               </p>
             </div>
           </>

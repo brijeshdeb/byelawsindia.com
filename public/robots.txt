@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /admin/
+Disallow: /platform/
+Disallow: /select-context
+Disallow: /finance/
+Disallow: /members
+Disallow: /units
+Disallow: /applications
+Disallow: /documents
+Disallow: /maintenance/
+Disallow: /procurement/
+Disallow: /reports
+Disallow: /api/
+
+Sitemap: https://www.byelawsindia.com/sitemap.xml

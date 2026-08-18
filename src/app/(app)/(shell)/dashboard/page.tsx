@@ -178,47 +178,19 @@ export default async function DashboardPage() {
             <p className="font-headline-sm text-headline-sm text-text-primary">
               Awaiting your action
             </p>
-            <span className="font-label-md text-label-md" style={{ color: "#6B7280" }}>
-              Phase 0: sample data
-            </span>
           </div>
 
-          <Phase0QueueItem
-            id="APP-2024-018"
-            title="NOC: Sale of flat 4B, Wing A"
-            meta="Submitted by Ramesh Iyer · Pending Level 2 approval"
-            age="3 days"
-            overdue={false}
-          />
-          <Phase0QueueItem
-            id="APP-2024-017"
-            title="Sub-let permission, Flat 7C"
-            meta="Submitted by Priya Menon · Pending Secretary sign-off"
-            age="7 days"
-            overdue={true}
-          />
-          <Phase0QueueItem
-            id="RFQ-2024-004"
-            title="Terrace waterproofing: evaluate quotations"
-            meta="3 vendor quotes received · Closes 20 Aug 2024"
-            age="1 day"
-            overdue={false}
-          />
-          <Phase0QueueItem
-            id="DOC-2024-031"
-            title="Society audit report 2023–24, pending verification"
-            meta="Uploaded by Treasurer · Awaiting Committee sign-off"
-            age="12 days"
-            overdue={true}
-          />
+          <div className="flex flex-col items-center py-10" style={{ color: "#6B7280" }}>
+            <span className="material-symbols-outlined mb-3" style={{ fontSize: "36px" }}>inbox</span>
+            <p className="text-sm" style={{ color: "#9CA3AF" }}>Live work queue arrives in the next release.</p>
+          </div>
 
-          {/* Phase 0 notice — dark surface, NOT bg-white */}
           <div
             className="px-6 py-3"
             style={{ backgroundColor: "#1c1b1b", borderTop: "1px solid #333333" }}
           >
             <p className="font-body-sm text-body-sm italic" style={{ color: "#6B7280" }}>
-              Live queue arrives in Phase 2. Items above are illustrative.
+              Personalised action queues with approvals and deadlines arrive in the next release.
             </p>
           </div>
         </div>
@@ -231,14 +203,9 @@ export default async function DashboardPage() {
             <div className="queue-section-header">
               <p className="font-headline-sm text-headline-sm text-text-primary">Upcoming</p>
             </div>
-            <UpcomingItem date="20 Aug" label="RFQ-2024-004 quotation deadline" />
-            <UpcomingItem date="31 Aug" label="Quarterly maintenance due notices" />
-            <UpcomingItem date="15 Sep" label="AGM notice period opens" />
-            <UpcomingItem date="30 Sep" label="Audit submission, statutory" critical />
-            <div className="px-4 py-3">
-              <p className="font-label-md text-label-md italic" style={{ color: "#6B7280" }}>
-                Phase 0: illustrative
-              </p>
+            <div className="flex flex-col items-center py-8" style={{ color: "#6B7280" }}>
+              <span className="material-symbols-outlined mb-2" style={{ fontSize: "28px" }}>event</span>
+              <p className="text-xs text-center" style={{ color: "#6B7280" }}>Statutory deadline tracking arrives in the next release.</p>
             </div>
           </div>
 
@@ -340,61 +307,6 @@ function SummaryItem({
   }
 
   return content;
-}
-
-function Phase0QueueItem({
-  id,
-  title,
-  meta,
-  age,
-  overdue,
-}: {
-  id: string;
-  title: string;
-  meta: string;
-  age: string;
-  overdue: boolean;
-}) {
-  return (
-    <div className="queue-item">
-      {/* Monospace ref ID — body-sm size */}
-      <span className="queue-item-id font-mono">{id}</span>
-      <div className="queue-item-body">
-        <p className="queue-item-title">{title}</p>
-        <p className="queue-item-meta font-body-sm">{meta}</p>
-      </div>
-      <span className={`queue-item-age${overdue ? " overdue" : ""}`}>
-        {overdue ? `${age} ⚑` : age}
-      </span>
-    </div>
-  );
-}
-
-function UpcomingItem({
-  date,
-  label,
-  critical = false,
-}: {
-  date: string;
-  label: string;
-  critical?: boolean;
-}) {
-  return (
-    <div className="queue-item items-center">
-      <span
-        className="font-label-md text-label-md shrink-0 w-14 text-right"
-        style={{ color: critical ? "#EF4444" : "#9CA3AF" }}
-      >
-        {date}
-      </span>
-      <p
-        className="font-body-sm text-body-sm"
-        style={{ color: critical ? "#EF4444" : "#e5e2e1" }}
-      >
-        {label}
-      </p>
-    </div>
-  );
 }
 
 function ContextRow({ label, value }: { label: string; value: string }) {

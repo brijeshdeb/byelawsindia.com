@@ -22,8 +22,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Byelawsindia: CHS Management Portal",
-    template: "%s | Byelawsindia",
+    default: "ByelawsIndia: CHS Management Portal",
+    template: "%s | ByelawsIndia",
   },
   description:
     "Society and Cooperative Housing Society management: applications, documents, maintenance, procurement, and compliance in one platform.",

@@ -34,18 +34,9 @@ const statusColor: Record<string, { bg: string; text: string; border: string }> 
 };
 const FALLBACK = { bg: "rgba(107,114,128,0.1)", text: "#6B7280", border: "rgba(107,114,128,0.2)" };
 
-const DEMO_PROC_WOS: WorkOrder[] = [
-  { id: "demo-pw1", work_order_number: "WO-2024-001", title: "Terrace waterproofing – Phase 1", amount: 150000, status: "IN_PROGRESS", start_date: "2024-08-15", completion_date: "2024-09-30", vendor_name: "BuildRight Contractors", created_at: "2024-08-12T09:00:00Z" },
-  { id: "demo-pw2", work_order_number: "WO-2024-002", title: "CCTV camera installation",         amount: 82000,  status: "ISSUED",       start_date: "2024-09-01", completion_date: "2024-09-20", vendor_name: "SafeGuard Security",     created_at: "2024-08-14T09:00:00Z" },
-  { id: "demo-pw3", work_order_number: "WO-2024-003", title: "Lobby tiles replacement – Wing B",  amount: 38000,  status: "COMPLETED",    start_date: "2024-07-01", completion_date: "2024-07-25", vendor_name: "BuildRight Contractors", created_at: "2024-06-28T09:00:00Z" },
-  { id: "demo-pw4", work_order_number: "WO-2024-004", title: "Fire extinguisher servicing",       amount: 12000,  status: "DRAFT",        start_date: null,         completion_date: null,         vendor_name: undefined,               created_at: "2024-08-13T09:00:00Z" },
-];
-
 function label(s: string) { return s.charAt(0) + s.slice(1).toLowerCase().replace("_", " "); }
 
 export function ProcurementWorkOrdersClient({ workOrders, vendors, rfqs }: { workOrders: WorkOrder[]; vendors: Vendor[]; rfqs: Rfq[] }) {
-  const isDemo = workOrders.length === 0;
-  const displayWorkOrders = isDemo ? DEMO_PROC_WOS : workOrders;
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
@@ -71,7 +62,7 @@ export function ProcurementWorkOrdersClient({ workOrders, vendors, rfqs }: { wor
         </div>
 
         <div className="queue-section">
-          {displayWorkOrders.length === 0 ? (
+          {workOrders.length === 0 ? (
             <div className="flex flex-col items-center py-16" style={{ color: "#6B7280" }}>
               <span className="material-symbols-outlined mb-3" style={{ fontSize: "40px" }}>assignment</span>
               <p className="text-sm">No procurement work orders yet.</p>
@@ -86,10 +77,10 @@ export function ProcurementWorkOrdersClient({ workOrders, vendors, rfqs }: { wor
                 </tr>
               </thead>
               <tbody>
-                {displayWorkOrders.map((row, i) => {
+                {workOrders.map((row, i) => {
                   const sc = statusColor[row.status] ?? FALLBACK;
                   return (
-                    <tr key={row.id} style={{ borderBottom: i < displayWorkOrders.length - 1 ? "1px solid #2a2a2a" : "none" }}>
+                    <tr key={row.id} style={{ borderBottom: i < workOrders.length - 1 ? "1px solid #2a2a2a" : "none" }}>
                       <td className="px-4 py-3 font-mono" style={{ fontSize: "13px", color: "#10B981" }}>{row.work_order_number}</td>
                       <td className="px-4 py-3 font-body-sm text-body-sm text-text-primary">{row.title}</td>
                       <td className="px-4 py-3 font-body-sm text-body-sm" style={{ color: "#9CA3AF" }}>{row.vendor_name ?? "—"}</td>
@@ -112,9 +103,7 @@ export function ProcurementWorkOrdersClient({ workOrders, vendors, rfqs }: { wor
           )}
           <div className="px-4 py-3" style={{ borderTop: "1px solid #333333", backgroundColor: "#1c1b1b" }}>
             <p className="font-body-sm text-body-sm italic" style={{ color: "#6B7280" }}>
-              {isDemo
-                ? "Illustrative data. Live work orders appear here once created."
-                : `Showing ${displayWorkOrders.length} work order${displayWorkOrders.length !== 1 ? "s" : ""}.`}
+              {`Showing ${workOrders.length} work order${workOrders.length !== 1 ? "s" : ""}.`}
             </p>
           </div>
         </div>

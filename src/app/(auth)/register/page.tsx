@@ -75,7 +75,7 @@ export default function RegisterPage() {
         </ol>
 
         <p style={{ fontSize: "11px", color: "#6B7280" }}>
-          &copy; {new Date().getFullYear()} Byelawsindia. All rights reserved.
+          &copy; {new Date().getFullYear()} ByelawsIndia. All rights reserved.
         </p>
       </div>
 
