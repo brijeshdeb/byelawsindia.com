@@ -1,5 +1,7 @@
 "use server";
 import { getServerContext, nextSequenceNumber, wrapAction, type ActionResult } from "@/lib/context";
+import { resolveUserContext, requirePermission } from "@/server/services/AccessService";
+import { PERMISSIONS } from "@/types";
 import { revalidatePath } from "next/cache";
 
 export type RfqCategory =
@@ -26,7 +28,9 @@ export async function createRfqAction(
   input: CreateRfqInput
 ): Promise<ActionResult<{ id: string; rfqNumber: string }>> {
   return wrapAction(async () => {
-    const { supabase, userId, societyId } = await getServerContext();
+    const { supabase, userId, societyId, wingId } = await getServerContext();
+    const userCtx = await resolveUserContext(societyId, wingId);
+    requirePermission(userCtx, PERMISSIONS.RFQ_CREATE);
 
     const rfqNumber = await nextSequenceNumber(supabase, societyId, "RFQ", "RFQ");
 
@@ -69,7 +73,9 @@ export async function createProcurementWorkOrderAction(
   input: CreateProcurementWorkOrderInput
 ): Promise<ActionResult<{ id: string; workOrderNumber: string }>> {
   return wrapAction(async () => {
-    const { supabase, userId, societyId } = await getServerContext();
+    const { supabase, userId, societyId, wingId } = await getServerContext();
+    const userCtx = await resolveUserContext(societyId, wingId);
+    requirePermission(userCtx, PERMISSIONS.WORK_ORDER_CREATE);
 
     const workOrderNumber = await nextSequenceNumber(supabase, societyId, "WORK_ORDER", "WO");
 
@@ -117,7 +123,9 @@ export async function createContractAction(
   input: CreateContractInput
 ): Promise<ActionResult<{ id: string; contractNumber: string }>> {
   return wrapAction(async () => {
-    const { supabase, userId, societyId } = await getServerContext();
+    const { supabase, userId, societyId, wingId } = await getServerContext();
+    const userCtx = await resolveUserContext(societyId, wingId);
+    requirePermission(userCtx, PERMISSIONS.CONTRACT_CREATE);
 
     const contractNumber = await nextSequenceNumber(supabase, societyId, "CONTRACT", "CNT");
 

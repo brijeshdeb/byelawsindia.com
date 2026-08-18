@@ -1,5 +1,7 @@
 "use server";
 import { getServerContext, nextSequenceNumber, wrapAction, type ActionResult } from "@/lib/context";
+import { resolveUserContext, requirePermission } from "@/server/services/AccessService";
+import { PERMISSIONS } from "@/types";
 import { revalidatePath } from "next/cache";
 
 export type VendorType = "CIVIL" | "ELECTRICAL" | "PLUMBING" | "SECURITY" | "HOUSEKEEPING" | "IT" | "LANDSCAPING" | "OTHER";
@@ -20,7 +22,9 @@ export async function registerVendorAction(
   input: RegisterVendorInput
 ): Promise<ActionResult<{ id: string; vendorCode: string }>> {
   return wrapAction(async () => {
-    const { supabase, userId, societyId } = await getServerContext();
+    const { supabase, userId, societyId, wingId } = await getServerContext();
+    const userCtx = await resolveUserContext(societyId, wingId);
+    requirePermission(userCtx, PERMISSIONS.VENDOR_CREATE);
 
     const vendorCode = await nextSequenceNumber(
       supabase,

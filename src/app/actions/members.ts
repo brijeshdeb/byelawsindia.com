@@ -1,5 +1,7 @@
 "use server";
 import { getServerContext, nextSequenceNumber, wrapAction, type ActionResult } from "@/lib/context";
+import { resolveUserContext, requirePermission } from "@/server/services/AccessService";
+import { PERMISSIONS } from "@/types";
 import { revalidatePath } from "next/cache";
 
 export interface RegisterMemberInput {
@@ -16,7 +18,9 @@ export async function registerMemberAction(
   input: RegisterMemberInput
 ): Promise<ActionResult<{ id: string; memberNumber: string }>> {
   return wrapAction(async () => {
-    const { supabase, userId, societyId } = await getServerContext();
+    const { supabase, userId, societyId, wingId } = await getServerContext();
+    const userCtx = await resolveUserContext(societyId, wingId);
+    requirePermission(userCtx, PERMISSIONS.MEMBER_CREATE);
 
     const memberNumber = await nextSequenceNumber(
       supabase,

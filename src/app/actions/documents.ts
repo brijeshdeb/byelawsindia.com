@@ -1,5 +1,7 @@
 "use server";
 import { getServerContext, nextSequenceNumber, wrapAction, type ActionResult } from "@/lib/context";
+import { resolveUserContext, requirePermission } from "@/server/services/AccessService";
+import { PERMISSIONS } from "@/types";
 import { revalidatePath } from "next/cache";
 
 export type DocumentCategory =
@@ -27,7 +29,9 @@ export async function uploadDocumentAction(
   input: UploadDocumentInput
 ): Promise<ActionResult<{ id: string; documentNumber: string }>> {
   return wrapAction(async () => {
-    const { supabase, userId, societyId } = await getServerContext();
+    const { supabase, userId, societyId, wingId } = await getServerContext();
+    const userCtx = await resolveUserContext(societyId, wingId);
+    requirePermission(userCtx, PERMISSIONS.DOCUMENT_UPLOAD);
 
     // Validate the storage path belongs to this society (path must start with societyId).
     if (!input.fileStoragePath.startsWith(`${societyId}/`)) {

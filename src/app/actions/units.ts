@@ -1,5 +1,7 @@
 "use server";
 import { getServerContext, wrapAction, type ActionResult } from "@/lib/context";
+import { resolveUserContext, requirePermission } from "@/server/services/AccessService";
+import { PERMISSIONS } from "@/types";
 import { revalidatePath } from "next/cache";
 
 export interface AddUnitInput {
@@ -15,7 +17,9 @@ export async function addUnitAction(
   input: AddUnitInput
 ): Promise<ActionResult<{ id: string }>> {
   return wrapAction(async () => {
-    const { supabase, societyId } = await getServerContext();
+    const { supabase, societyId, wingId } = await getServerContext();
+    const userCtx = await resolveUserContext(societyId, wingId);
+    requirePermission(userCtx, PERMISSIONS.WING_MANAGE);
 
     const { data, error } = await supabase
       .from("units")

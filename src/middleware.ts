@@ -17,6 +17,17 @@ import { createMiddlewareClient } from "@/lib/supabase/middleware";
 const PUBLIC_PATHS = ["/login"];
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Belt-and-suspenders: bypass auth for public crawler / SEO paths.
+  // The config.matcher regex should already exclude these, but the Vercel
+  // edge runtime can still invoke the function for public-directory files
+  // in Next.js App Router. An early return costs nothing and guarantees
+  // these routes are never accidentally redirected to /login.
+  if (pathname === "/robots.txt" || pathname === "/sitemap.xml") {
+    return NextResponse.next();
+  }
+
   const response = NextResponse.next();
   const supabase = createMiddlewareClient(request, response);
 
@@ -24,8 +35,6 @@ export async function middleware(request: NextRequest) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-
-  const { pathname } = request.nextUrl;
 
   // Root — authenticated users go to the context selector (which routes platform
   // admins to /platform/console and society users to /dashboard automatically).

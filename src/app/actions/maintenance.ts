@@ -1,5 +1,7 @@
 "use server";
 import { getServerContext, nextSequenceNumber, wrapAction, type ActionResult } from "@/lib/context";
+import { resolveUserContext, requirePermission } from "@/server/services/AccessService";
+import { PERMISSIONS } from "@/types";
 import { revalidatePath } from "next/cache";
 
 export type ComplaintUrgency = "LOW" | "NORMAL" | "HIGH" | "CRITICAL";
@@ -17,7 +19,9 @@ export async function createComplaintAction(
   input: CreateComplaintInput
 ): Promise<ActionResult<{ id: string; complaintNumber: string }>> {
   return wrapAction(async () => {
-    const { supabase, userId, societyId } = await getServerContext();
+    const { supabase, userId, societyId, wingId } = await getServerContext();
+    const userCtx = await resolveUserContext(societyId, wingId);
+    requirePermission(userCtx, PERMISSIONS.MAINTENANCE_MANAGE);
 
     // Generate the complaint number before insert (required column: complaint_number text not null)
     const complaintNumber = await nextSequenceNumber(supabase, societyId, "COMPLAINT", "COMP");
@@ -62,7 +66,9 @@ export async function createMaintenanceWorkOrderAction(
   input: CreateMaintenanceWorkOrderInput
 ): Promise<ActionResult<{ id: string; workOrderNumber: string }>> {
   return wrapAction(async () => {
-    const { supabase, userId, societyId } = await getServerContext();
+    const { supabase, userId, societyId, wingId } = await getServerContext();
+    const userCtx = await resolveUserContext(societyId, wingId);
+    requirePermission(userCtx, PERMISSIONS.MAINTENANCE_MANAGE);
 
     // Generate the work order number before insert (required column: work_order_number text not null)
     const workOrderNumber = await nextSequenceNumber(supabase, societyId, "MAINTENANCE_WO", "MWO");

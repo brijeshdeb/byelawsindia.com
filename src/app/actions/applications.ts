@@ -1,5 +1,7 @@
 "use server";
 import { getServerContext, nextSequenceNumber, wrapAction, type ActionResult } from "@/lib/context";
+import { resolveUserContext, requirePermission } from "@/server/services/AccessService";
+import { PERMISSIONS } from "@/types";
 import { revalidatePath } from "next/cache";
 
 export type ApplicationType = "MEMBERSHIP" | "NOC_SALE" | "NOC_RENOVATION" | "PARKING" | "OTHER";
@@ -17,7 +19,9 @@ export async function createApplicationAction(
   input: CreateApplicationInput
 ): Promise<ActionResult<{ id: string; applicationNumber: string }>> {
   return wrapAction(async () => {
-    const { supabase, userId, societyId } = await getServerContext();
+    const { supabase, userId, societyId, wingId } = await getServerContext();
+    const userCtx = await resolveUserContext(societyId, wingId);
+    requirePermission(userCtx, PERMISSIONS.APPLICATION_CREATE);
 
     const applicationNumber = await nextSequenceNumber(
       supabase,
