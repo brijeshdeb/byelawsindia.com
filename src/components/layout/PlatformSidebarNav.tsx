@@ -33,7 +33,6 @@ const platformNav: NavItem[] = [
     label: "Societies",
     href: "/platform/societies",
     icon: "domain",
-    disabled: true,
   },
   {
     label: "User Management",
@@ -44,13 +43,11 @@ const platformNav: NavItem[] = [
     label: "Vendors",
     href: "/platform/vendors",
     icon: "storefront",
-    disabled: true,
   },
   {
     label: "Contracts",
     href: "/platform/contracts",
     icon: "assignment",
-    disabled: true,
   },
 ];
 
@@ -59,13 +56,11 @@ const platformFooterNav: NavItem[] = [
     label: "Settings",
     href: "/platform/settings",
     icon: "settings",
-    disabled: true,
   },
   {
     label: "Support",
     href: "/platform/support",
     icon: "help",
-    disabled: true,
   },
 ];
 
