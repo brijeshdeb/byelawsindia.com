@@ -57,13 +57,32 @@ export function SidebarContents({ context }: Props) {
             borderLeftWidth: "3px",
           }}
         >
-          <p
-            className="font-medium leading-snug truncate"
-            style={{ fontSize: "14px", color: "#FFFFFF" }}
-            title={context.societyName}
-          >
-            {context.societyName}
-          </p>
+          <div className="flex items-center gap-2">
+            <p
+              className="font-medium leading-snug truncate"
+              style={{ fontSize: "14px", color: "#FFFFFF" }}
+              title={context.societyName}
+            >
+              {context.societyName}
+            </p>
+            {context.environmentType === "DEMO" && (
+              <span
+                style={{
+                  fontSize: "9px",
+                  fontWeight: 700,
+                  letterSpacing: "0.08em",
+                  color: "#D97706",
+                  backgroundColor: "rgba(217,119,6,0.15)",
+                  border: "1px solid rgba(217,119,6,0.35)",
+                  borderRadius: "3px",
+                  padding: "1px 5px",
+                  flexShrink: 0,
+                }}
+              >
+                DEMO
+              </span>
+            )}
+          </div>
           <p className="text-xs mt-0.5 truncate" style={{ color: "#9CA3AF" }}>
             {context.wingName
               ? `${context.wingName} (${context.wingCode})`

@@ -218,7 +218,7 @@ export default async function DashboardPage() {
               <dl className="space-y-2">
                 <ContextRow
                   label="Signed in as"
-                  value={userContext.profile.full_name ?? userContext.profile.email ?? "—"}
+                  value={userContext.isPlatformAdmin ? "Platform Admin" : (userContext.profile.full_name ?? userContext.profile.email ?? "—")}
                 />
                 <ContextRow label="Society" value={userContext.societyName} />
                 <ContextRow
@@ -227,8 +227,8 @@ export default async function DashboardPage() {
                     ? `${userContext.wingName} (${userContext.wingCode})`
                     : "Society-Wide"}
                 />
-                <ContextRow label="Role" value={userContext.roleName} />
-                <ContextRow label="Permissions" value={`${userContext.permissions.size} granted`} />
+                <ContextRow label="Role" value={userContext.isPlatformAdmin ? "Super Admin" : userContext.roleName} />
+                <ContextRow label="Permissions" value={userContext.isPlatformAdmin ? "All (platform admin)" : `${userContext.permissions.size} granted`} />
               </dl>
             </div>
           </div>

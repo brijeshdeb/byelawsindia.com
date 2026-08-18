@@ -12,6 +12,7 @@ import { resolveUserContext, CONTEXT_COOKIE } from "@/server/services/AccessServ
 import { createClient } from "@/lib/supabase/server";
 import { safeJsonParse } from "@/lib/utils";
 import { AppError } from "@/types";
+import { ResetDemoDataButton } from "@/components/platform/ResetDemoDataButton";
 
 export const metadata: Metadata = { title: "Administration Console" };
 
@@ -337,8 +338,8 @@ export default async function AdminConsolePage() {
             </div>
             <div className="px-4 pb-4 space-y-2">
               {[
-                { label: "Signed in as", value: userContext.profile.full_name || userContext.profile.email },
-                { label: "Role",         value: userContext.roleName },
+                { label: "Signed in as", value: userContext.isPlatformAdmin ? "Platform Admin" : (userContext.profile.full_name || userContext.profile.email) },
+                { label: "Role",         value: userContext.isPlatformAdmin ? "Super Admin" : userContext.roleName },
                 { label: "Scope",        value: userContext.wingName ? `${userContext.wingName} (${userContext.wingCode})` : "Society-Wide" },
                 { label: "Permissions",  value: userContext.isPlatformAdmin ? "All (platform admin)" : `${userContext.permissions.size} granted` },
               ].map((row) => (
@@ -349,6 +350,22 @@ export default async function AdminConsolePage() {
               ))}
             </div>
           </div>
+
+          {/* Danger zone — platform admin only, DEMO societies only */}
+          {userContext.isPlatformAdmin && userContext.environmentType === "DEMO" && (
+            <div className="queue-section" style={{ borderColor: "rgba(239,68,68,0.2)" }}>
+              <div className="queue-section-header">
+                <span className="material-symbols-outlined" style={{ fontSize: "18px", color: "#EF4444" }}>warning</span>
+                <h2 className="font-headline-sm text-headline-sm" style={{ color: "#EF4444" }}>Danger Zone</h2>
+              </div>
+              <div className="px-4 pb-4 space-y-3">
+                <p style={{ fontSize: "11px", color: "#6B7280", lineHeight: 1.5 }}>
+                  Platform admin only. Resets all transactional demo data to the original seeded state. Structural data (wings, units, members, vendors, contracts) is preserved.
+                </p>
+                <ResetDemoDataButton societyId={societyId} />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

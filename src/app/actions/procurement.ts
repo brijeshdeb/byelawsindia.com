@@ -1,6 +1,6 @@
 "use server";
 import { getServerContext, nextSequenceNumber, wrapAction, type ActionResult } from "@/lib/context";
-import { resolveUserContext, requirePermission } from "@/server/services/AccessService";
+import { resolveUserContext, requirePermission, guardDemoSociety } from "@/server/services/AccessService";
 import { PERMISSIONS } from "@/types";
 import { revalidatePath } from "next/cache";
 
@@ -31,6 +31,9 @@ export async function createRfqAction(
     const { supabase, userId, societyId, wingId } = await getServerContext();
     const userCtx = await resolveUserContext(societyId, wingId);
     requirePermission(userCtx, PERMISSIONS.RFQ_CREATE);
+    // Phase 2: uncomment when vendor notification email (Resend) is wired in.
+    // This MUST fire before the Resend call so DEMO environments never send real emails.
+    // guardDemoSociety(userCtx, "Vendor notification email");
 
     const rfqNumber = await nextSequenceNumber(supabase, societyId, "RFQ", "RFQ");
 

@@ -53,6 +53,8 @@ export interface UserContext {
   permissions: Set<string>;
   /** True if this user is a platform administrator */
   isPlatformAdmin: boolean;
+  /** The society's environment classification */
+  environmentType: "CUSTOMER" | "DEMO" | "TEST";
   /** Full profile data */
   profile: DbProfile;
 }

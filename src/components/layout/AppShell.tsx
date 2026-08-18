@@ -20,6 +20,7 @@ import { safeJsonParse } from "@/lib/utils";
 import { Sidebar, SidebarContents } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { MobileNavDrawer } from "./MobileNavDrawer";
+import { DemoBanner } from "./DemoBanner";
 
 interface ContextCookie {
   societyId: string;
@@ -50,9 +51,15 @@ export async function AppShell({ children }: Props) {
   }
 
   const profile = userContext.profile;
-  const userName = profile.full_name ?? "";
+  // Platform admins viewing a tenant context still identify as "Platform Admin"
+  // in the topbar — their personal name is only relevant in the tenant role context.
+  const userName = userContext.isPlatformAdmin
+    ? "Platform Admin"
+    : (profile.full_name ?? "");
   const userEmail = profile.email ?? "";
-  const roleLabel = userContext.roleName ?? "Society Admin";
+  const roleLabel = userContext.isPlatformAdmin
+    ? "Super Admin"
+    : (userContext.roleName ?? "Society Admin");
 
   return (
     <>
@@ -83,7 +90,9 @@ export async function AppShell({ children }: Props) {
           className="app-main"
           tabIndex={-1}
           aria-label="Main content"
+          style={{ display: "flex", flexDirection: "column" }}
         >
+          <DemoBanner environmentType={userContext.environmentType} />
           {children}
         </main>
       </div>

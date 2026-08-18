@@ -134,7 +134,7 @@ export default async function PlatformLayout({
       <div className="app-shell">
         {/* Topbar spans the full width (grid-column 1 / -1 via .app-topbar) */}
         <div className="app-topbar">
-          <Topbar userName="Platform Admin" userEmail={user.email} roleLabel={user.email} />
+          <Topbar userName="Platform Admin" userEmail={user.email} roleLabel="Super Admin" />
         </div>
 
         {/* Platform-specific sidebar — hidden on mobile via CSS */}

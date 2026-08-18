@@ -52,7 +52,7 @@ type AssignmentRow = {
       permissions: { code: string } | null;
     }>;
   } | null;
-  societies: { name: string } | null;
+  societies: { name: string; environment_type: string } | null;
   wings: { name: string; code: string } | null;
 };
 
@@ -158,7 +158,7 @@ export async function resolveUserContext(
   if (profile.is_platform_admin) {
     const { data: society } = await supabase
       .from("societies")
-      .select("id, name")
+      .select("id, name, environment_type")
       .eq("id", societyId)
       .single();
 
@@ -175,6 +175,7 @@ export async function resolveUserContext(
       roleName: "Platform Administrator",
       permissions: new Set(["*"]), // All permissions
       isPlatformAdmin: true,
+      environmentType: (society.environment_type as "CUSTOMER" | "DEMO" | "TEST") ?? "CUSTOMER",
       profile,
     };
   }
@@ -197,7 +198,7 @@ export async function resolveUserContext(
           permissions ( code )
         )
       ),
-      societies ( name ),
+      societies ( name, environment_type ),
       wings ( name, code )
     `
     )
@@ -274,8 +275,43 @@ export async function resolveUserContext(
     roleName: role.name,
     permissions,
     isPlatformAdmin: false,
+    environmentType: (society?.environment_type as "CUSTOMER" | "DEMO" | "TEST") ?? "CUSTOMER",
     profile,
   };
+}
+
+/**
+ * Returns true if the current context belongs to a DEMO-classified society.
+ *
+ * Usage:
+ *   if (isDemoSociety(ctx)) return { success: true, data: { id: "demo" } };
+ *
+ * Or throw when an external call must not happen:
+ *   guardDemoSociety(ctx, "Payment gateway");
+ */
+export function isDemoSociety(context: UserContext): boolean {
+  return context.environmentType === "DEMO";
+}
+
+/**
+ * Throws a clear AppError if the context is a DEMO society.
+ *
+ * Call this immediately before any code that contacts an external service
+ * (Resend, payment gateway, webhook, SMS, etc.). The caller must not proceed.
+ *
+ * @param context   The resolved UserContext for the current request.
+ * @param operation Human-readable name of the blocked operation (for the error message).
+ *
+ * Example:
+ *   guardDemoSociety(ctx, "Email notification via Resend");
+ */
+export function guardDemoSociety(context: UserContext, operation: string): void {
+  if (isDemoSociety(context)) {
+    throw AppError.validation(
+      `[DEMO] "${operation}" is blocked in DEMO environments. ` +
+        "No external systems are triggered in demonstration mode."
+    );
+  }
 }
 
 /**

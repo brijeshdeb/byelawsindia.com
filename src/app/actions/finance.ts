@@ -1,6 +1,6 @@
 "use server";
 import { getServerContext, wrapAction, type ActionResult } from "@/lib/context";
-import { resolveUserContext, requirePermission } from "@/server/services/AccessService";
+import { resolveUserContext, requirePermission, guardDemoSociety } from "@/server/services/AccessService";
 import { PERMISSIONS } from "@/types";
 import { writeAudit } from "@/lib/audit";
 import { revalidatePath } from "next/cache";
@@ -105,6 +105,9 @@ export async function recordPaymentAction(
     const { supabase, userId, societyId, wingId } = await getServerContext();
     const userCtx = await resolveUserContext(societyId, wingId);
     requirePermission(userCtx, PERMISSIONS.FINANCE_MANAGE);
+    // Phase 2: uncomment when payment gateway / confirmation email is wired in.
+    // This MUST fire before the external call so DEMO environments are never charged.
+    // guardDemoSociety(userCtx, "Payment gateway / confirmation email");
 
     if (input.amountPaid <= 0) {
       throw new Error("Payment amount must be greater than zero.");

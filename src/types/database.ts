@@ -117,6 +117,7 @@ export type Database = {
           logo_url: string | null;
           letterhead_url: string | null;
           is_active: boolean;
+          environment_type: "CUSTOMER" | "DEMO" | "TEST";
           metadata: Json;
           created_at: string;
           updated_at: string;
@@ -141,6 +142,7 @@ export type Database = {
           logo_url?: string | null;
           letterhead_url?: string | null;
           is_active?: boolean;
+          environment_type?: "CUSTOMER" | "DEMO" | "TEST";
           metadata?: Json;
           created_at?: string;
           updated_at?: string;
@@ -165,6 +167,7 @@ export type Database = {
           logo_url?: string | null;
           letterhead_url?: string | null;
           is_active?: boolean;
+          environment_type?: "CUSTOMER" | "DEMO" | "TEST";
           metadata?: Json;
           created_at?: string;
           updated_at?: string;
@@ -1223,6 +1226,10 @@ export type Database = {
           p_recorded_by:    string;
         };
         Returns: string;
+      };
+      reset_demo_society: {
+        Args: { p_society_id: string };
+        Returns: void;
       };
     };
 
