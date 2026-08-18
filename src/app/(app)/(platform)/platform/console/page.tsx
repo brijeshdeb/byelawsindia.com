@@ -16,6 +16,7 @@
  *
  * Design reference: stitch_obsidian_ui_design/super_admin_dashboard/screen.png
  */
+import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { switchToSociety } from "./actions";
 
@@ -304,11 +305,10 @@ export default async function PlatformConsolePage() {
             </span>
             Configure Workflows
           </button>
-          <button
-            className="flex items-center gap-2 px-4 py-2 rounded text-sm font-medium transition-colors"
+          <Link
+            href="/platform/societies/new"
+            className="flex items-center gap-2 px-4 py-2 rounded text-sm font-medium transition-opacity hover:opacity-90"
             style={{ backgroundColor: "#10B981", color: "#FFFFFF" }}
-            disabled
-            title="Coming soon"
           >
             <span
               className="material-symbols-outlined"
@@ -318,7 +318,7 @@ export default async function PlatformConsolePage() {
               add_business
             </span>
             Register New Society
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -579,57 +579,88 @@ export default async function PlatformConsolePage() {
           {/* Admin Toolkit */}
           <SectionCard title="Admin Toolkit">
             <div className="p-4 space-y-3">
-              {[
-                {
-                  icon: "add_business",
-                  label: "Register New Society",
-                  sub: "Initialise base setup",
-                  href: "/platform/societies/new",
-                },
-                {
-                  icon: "storefront",
-                  label: "Add Global Vendor",
-                  sub: "Available to all societies",
-                  href: "/platform/vendors/new",
-                },
-                {
-                  icon: "settings_suggest",
-                  label: "Configure Workflows",
-                  sub: "Manage approval chains",
-                  href: "/platform/settings/workflows",
-                },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  className="flex items-start gap-3 rounded-lg px-4 py-3 transition-colors"
-                  style={{
-                    backgroundColor: "#161616",
-                    border: "1px solid #333333",
-                    cursor: "not-allowed",
-                    opacity: 0.7,
-                  }}
-                  title="Coming soon"
+              {/* Register New Society */}
+              <Link
+                href="/platform/societies/new"
+                className="flex items-start gap-3 rounded-lg px-4 py-3 transition-colors hover:bg-[#1A1A1A]"
+                style={{
+                  backgroundColor: "#161616",
+                  border: "1px solid #333333",
+                  display: "flex",
+                }}
+              >
+                <span
+                  className="material-symbols-outlined mt-0.5 shrink-0"
+                  style={{ fontSize: "18px", color: "#10B981" }}
+                  aria-hidden="true"
                 >
-                  <span
-                    className="material-symbols-outlined mt-0.5 shrink-0"
-                    style={{ fontSize: "18px", color: "#10B981" }}
-                    aria-hidden="true"
-                  >
-                    {item.icon}
-                  </span>
-                  <div>
-                    <p
-                      className="font-medium"
-                      style={{ fontSize: "13px", color: "#FFFFFF" }}
-                    >
-                      {item.label}
-                    </p>
-                    <p style={{ fontSize: "12px", color: "#9CA3AF", marginTop: "2px" }}>
-                      {item.sub}
-                    </p>
-                  </div>
+                  add_business
+                </span>
+                <div>
+                  <p className="font-medium" style={{ fontSize: "13px", color: "#FFFFFF" }}>
+                    Register New Society
+                  </p>
+                  <p style={{ fontSize: "12px", color: "#9CA3AF", marginTop: "2px" }}>
+                    Initialise base setup
+                  </p>
                 </div>
-              ))}
+              </Link>
+
+              {/* Add Global Vendor */}
+              <Link
+                href="/platform/vendors/new"
+                className="flex items-start gap-3 rounded-lg px-4 py-3 transition-colors hover:bg-[#1A1A1A]"
+                style={{
+                  backgroundColor: "#161616",
+                  border: "1px solid #333333",
+                  display: "flex",
+                }}
+              >
+                <span
+                  className="material-symbols-outlined mt-0.5 shrink-0"
+                  style={{ fontSize: "18px", color: "#10B981" }}
+                  aria-hidden="true"
+                >
+                  storefront
+                </span>
+                <div>
+                  <p className="font-medium" style={{ fontSize: "13px", color: "#FFFFFF" }}>
+                    Add Global Vendor
+                  </p>
+                  <p style={{ fontSize: "12px", color: "#9CA3AF", marginTop: "2px" }}>
+                    Available to all societies
+                  </p>
+                </div>
+              </Link>
+
+              {/* Configure Workflows — not yet built */}
+              <div
+                className="flex items-start gap-3 rounded-lg px-4 py-3"
+                style={{
+                  backgroundColor: "#161616",
+                  border: "1px solid #333333",
+                  cursor: "not-allowed",
+                  opacity: 0.45,
+                }}
+                title="Coming soon"
+                aria-disabled="true"
+              >
+                <span
+                  className="material-symbols-outlined mt-0.5 shrink-0"
+                  style={{ fontSize: "18px", color: "#10B981" }}
+                  aria-hidden="true"
+                >
+                  settings_suggest
+                </span>
+                <div>
+                  <p className="font-medium" style={{ fontSize: "13px", color: "#FFFFFF" }}>
+                    Configure Workflows
+                  </p>
+                  <p style={{ fontSize: "12px", color: "#9CA3AF", marginTop: "2px" }}>
+                    Manage approval chains
+                  </p>
+                </div>
+              </div>
             </div>
           </SectionCard>
         </div>

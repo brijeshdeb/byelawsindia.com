@@ -15,6 +15,7 @@ import { requireCurrentUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { writeAudit, writeAuditCritical } from "@/lib/audit";
 
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -202,6 +203,85 @@ export async function revokeUserAccess(
     oldValues: { assignmentId, userId },
     metadata: { revokedBy: caller.email },
   });
+
+  revalidatePath("/platform/members");
+  return { success: true, error: null };
+}
+
+// ---------------------------------------------------------------------------
+// inviteUser
+// ---------------------------------------------------------------------------
+
+/**
+ * Invite a new user to the platform by email.
+ *
+ * Uses Supabase's admin invite flow — sends a one-time sign-up link. Once
+ * the user clicks the link and sets their password, their profile row is
+ * created (via the auth trigger) and they appear in the user list for
+ * access assignment.
+ *
+ * FormData keys:
+ *   email     - email address to invite
+ *   full_name - optional display name pre-filled in their profile
+ */
+export async function inviteUser(
+  _prevState: ActionResult,
+  formData: FormData
+): Promise<ActionResult> {
+  let caller: Awaited<ReturnType<typeof requireCurrentUser>>;
+  try {
+    caller = await requireCurrentUser();
+  } catch {
+    return { success: false, error: "Authentication required." };
+  }
+
+  if (!caller.is_platform_admin) {
+    return { success: false, error: "Forbidden: platform admin access required." };
+  }
+
+  const email     = (formData.get("email")     as string | null)?.trim().toLowerCase() ?? "";
+  const full_name = (formData.get("full_name") as string | null)?.trim() || null;
+
+  if (!email) {
+    return { success: false, error: "Email address is required." };
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return { success: false, error: "Please enter a valid email address." };
+  }
+
+  const admin = createAdminClient();
+
+  const { error } = await admin.auth.admin.inviteUserByEmail(email, {
+    data: { full_name },
+  });
+
+  if (error) {
+    const msg = error.message.toLowerCase();
+    if (
+      msg.includes("already registered") ||
+      msg.includes("already been registered") ||
+      msg.includes("already exists")
+    ) {
+      return { success: false, error: "A user with this email address already exists." };
+    }
+    console.error("[inviteUser] error:", error.message);
+    return { success: false, error: "Failed to send invite. Please try again." };
+  }
+
+  // Audit is critical — an invite is a security event.
+  try {
+    await writeAuditCritical({
+      actorUserId: caller.id,
+      action: "USER_INVITED",
+      entityType: "profiles",
+      entityId: null,
+      metadata: { invitedEmail: email, fullName: full_name, invitedBy: caller.email },
+    });
+  } catch (auditErr) {
+    // Invite already sent — log the audit failure but don't surface an error to the user.
+    console.error("[inviteUser] AUDIT WRITE FAILED after invite:", auditErr);
+  }
 
   revalidatePath("/platform/members");
   return { success: true, error: null };

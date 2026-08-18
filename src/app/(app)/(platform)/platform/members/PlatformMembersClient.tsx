@@ -18,7 +18,7 @@
 import { useState, useEffect, useActionState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { assignUserAccess, revokeUserAccess, type ActionResult } from "./actions";
+import { assignUserAccess, revokeUserAccess, inviteUser, type ActionResult } from "./actions";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -310,6 +310,228 @@ function AssignModal({ user, societies, roles, onClose, onSuccess }: AssignModal
 }
 
 // ---------------------------------------------------------------------------
+// InviteUserModal
+// ---------------------------------------------------------------------------
+
+interface InviteUserModalProps {
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+const INVITE_INPUT_STYLE = {
+  backgroundColor: "#161616",
+  border: "1px solid #333333",
+  color: "#FFFFFF",
+  borderRadius: "6px",
+  padding: "10px 12px",
+  fontSize: "14px",
+  width: "100%",
+  outline: "none",
+};
+
+function InviteUserModal({ onClose, onSuccess }: InviteUserModalProps) {
+  const [state, formAction, isPending] = useActionState(inviteUser, initialResult);
+
+  useEffect(() => {
+    if (state.success) onSuccess();
+  }, [state.success, onSuccess]);
+
+  useEffect(() => {
+    function handler(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      style={{ backgroundColor: "rgba(0,0,0,0.7)", backdropFilter: "blur(2px)" }}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="invite-modal-title"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div
+        className="relative w-full max-w-md mx-4 rounded-xl"
+        style={{ backgroundColor: "#1E1E1E", border: "1px solid #333333" }}
+      >
+        {/* Header */}
+        <div
+          className="flex items-center justify-between px-6 py-4"
+          style={{ borderBottom: "1px solid #333333" }}
+        >
+          <div>
+            <h2
+              id="invite-modal-title"
+              className="text-base font-semibold"
+              style={{ color: "#FFFFFF" }}
+            >
+              Invite User
+            </h2>
+            <p className="text-xs mt-0.5" style={{ color: "#9CA3AF" }}>
+              A sign-up link will be emailed to the address below.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded p-1 transition-colors"
+            style={{ color: "#9CA3AF" }}
+            aria-label="Close modal"
+            onMouseOver={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.color = "#FFFFFF";
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                "rgba(255,255,255,0.05)";
+            }}
+            onMouseOut={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.color = "#9CA3AF";
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>
+              close
+            </span>
+          </button>
+        </div>
+
+        {/* Form */}
+        <form action={formAction} className="px-6 py-5 space-y-4">
+          {/* Email */}
+          <div>
+            <label
+              htmlFor="invite-email"
+              className="block text-xs font-medium mb-1.5"
+              style={{ color: "#9CA3AF", letterSpacing: "0.05em", textTransform: "uppercase" }}
+            >
+              Email Address <span style={{ color: "#EF4444" }}>*</span>
+            </label>
+            <input
+              id="invite-email"
+              name="email"
+              type="email"
+              required
+              placeholder="user@example.com"
+              autoComplete="email"
+              className="focus:outline-none transition-colors"
+              style={INVITE_INPUT_STYLE}
+              onFocus={(e) =>
+                ((e.currentTarget as HTMLInputElement).style.borderColor = "#10B981")
+              }
+              onBlur={(e) =>
+                ((e.currentTarget as HTMLInputElement).style.borderColor = "#333333")
+              }
+            />
+          </div>
+
+          {/* Full name */}
+          <div>
+            <label
+              htmlFor="invite-full-name"
+              className="block text-xs font-medium mb-1.5"
+              style={{ color: "#9CA3AF", letterSpacing: "0.05em", textTransform: "uppercase" }}
+            >
+              Full Name (optional)
+            </label>
+            <input
+              id="invite-full-name"
+              name="full_name"
+              type="text"
+              placeholder="Display name"
+              autoComplete="name"
+              className="focus:outline-none transition-colors"
+              style={INVITE_INPUT_STYLE}
+              onFocus={(e) =>
+                ((e.currentTarget as HTMLInputElement).style.borderColor = "#10B981")
+              }
+              onBlur={(e) =>
+                ((e.currentTarget as HTMLInputElement).style.borderColor = "#333333")
+              }
+            />
+          </div>
+
+          {/* Error */}
+          {state.error && !state.success && (
+            <p
+              className="flex items-center gap-2 text-sm rounded px-3 py-2"
+              style={{ color: "#EF4444", backgroundColor: "rgba(239,68,68,0.08)" }}
+              role="alert"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>
+                error
+              </span>
+              {state.error}
+            </p>
+          )}
+
+          {/* Success */}
+          {state.success && (
+            <p
+              className="flex items-center gap-2 text-sm rounded px-3 py-2"
+              style={{ color: "#10B981", backgroundColor: "rgba(16,185,129,0.08)" }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>
+                check_circle
+              </span>
+              Invite sent successfully.
+            </p>
+          )}
+
+          {/* Actions */}
+          <div className="flex items-center justify-end gap-3 pt-1">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-sm rounded transition-colors"
+              style={{ color: "#9CA3AF", backgroundColor: "transparent" }}
+              onMouseOver={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                  "rgba(255,255,255,0.05)";
+                (e.currentTarget as HTMLButtonElement).style.color = "#FFFFFF";
+              }}
+              onMouseOut={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
+                (e.currentTarget as HTMLButtonElement).style.color = "#9CA3AF";
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isPending}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded transition-opacity disabled:opacity-60"
+              style={{ backgroundColor: "#10B981", color: "#FFFFFF" }}
+            >
+              {isPending ? (
+                <>
+                  <span
+                    className="material-symbols-outlined animate-spin"
+                    style={{ fontSize: "16px" }}
+                  >
+                    progress_activity
+                  </span>
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>
+                    send
+                  </span>
+                  Send Invite
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // RevokeButton — inline form per assignment
 // ---------------------------------------------------------------------------
 
@@ -547,6 +769,7 @@ export function PlatformMembersClient({ users, societies, roles }: Props) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>("pending");
   const [search, setSearch] = useState("");
+  const [inviteOpen, setInviteOpen] = useState(false);
 
   function handleMutate() {
     router.refresh();
@@ -611,15 +834,40 @@ export function PlatformMembersClient({ users, societies, roles }: Props) {
           ))}
         </div>
 
-        {/* Search */}
-        <div
-          className="flex items-center gap-2 rounded px-3 py-2 shrink-0"
-          style={{
-            backgroundColor: "#161616",
-            border: "1px solid #333333",
-            width: "240px",
-          }}
-        >
+        {/* Right side: Invite User + Search */}
+        <div className="flex items-center gap-3 shrink-0">
+          <button
+            type="button"
+            onClick={() => setInviteOpen(true)}
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors"
+            style={{
+              backgroundColor: "rgba(16,185,129,0.1)",
+              border: "1px solid rgba(16,185,129,0.3)",
+              color: "#10B981",
+            }}
+            onMouseOver={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                "rgba(16,185,129,0.18)";
+            }}
+            onMouseOut={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                "rgba(16,185,129,0.1)";
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>
+              person_add
+            </span>
+            Invite User
+          </button>
+
+          <div
+            className="flex items-center gap-2 rounded px-3 py-2"
+            style={{
+              backgroundColor: "#161616",
+              border: "1px solid #333333",
+              width: "240px",
+            }}
+          >
           <span
             className="material-symbols-outlined"
             style={{ fontSize: "16px", color: "#6B7280" }}
@@ -649,6 +897,7 @@ export function PlatformMembersClient({ users, societies, roles }: Props) {
               </span>
             </button>
           )}
+          </div>
         </div>
       </div>
 
@@ -715,6 +964,17 @@ export function PlatformMembersClient({ users, societies, roles }: Props) {
           Showing {filteredUsers.length} of {activeTab === "pending" ? pendingUsers.length : users.length} user
           {(activeTab === "pending" ? pendingUsers.length : users.length) !== 1 ? "s" : ""}
         </p>
+      )}
+
+      {/* Invite User modal */}
+      {inviteOpen && (
+        <InviteUserModal
+          onClose={() => setInviteOpen(false)}
+          onSuccess={() => {
+            setInviteOpen(false);
+            handleMutate();
+          }}
+        />
       )}
     </div>
   );

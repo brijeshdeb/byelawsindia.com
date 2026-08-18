@@ -83,7 +83,9 @@ export type AuditAction =
   | "TEMPLATE_UPDATED"
   | "MASTER_DATA_UPDATED"
   // Platform
-  | "PLATFORM_CONTEXT_SWITCHED";
+  | "PLATFORM_CONTEXT_SWITCHED"
+  | "SOCIETY_REGISTERED"
+  | "USER_INVITED";
 
 export interface AuditParams {
   societyId?: string | null;
