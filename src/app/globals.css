@@ -546,4 +546,147 @@
     @apply rounded animate-skeleton-pulse;
     background-color: #2a2a2a;
   }
+
+  /* ── Mobile nav drawer ─────────────────────────────────────── */
+  /*
+   * Fixed overlay rendered by MobileNavDrawer.tsx.
+   * Sits at z-index 100 so it floats above the 64px topbar (z-50).
+   */
+  .mobile-nav-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+  }
+
+  .mobile-nav-backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.65);
+  }
+
+  .mobile-nav-panel {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    width: min(280px, 88vw);
+    height: 100%;
+    background-color: #131313;
+    border-right: 1px solid #333333;
+    overflow: hidden;
+  }
+
+  .mobile-nav-close-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 8px 12px;
+    border-bottom: 1px solid #333333;
+    flex-shrink: 0;
+  }
+
+  .mobile-nav-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    color: #9CA3AF;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+  }
+
+  .mobile-nav-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    color: #ffffff;
+  }
+
+  /* ── Mobile responsive ─────────────────────────────────────── */
+  /*
+   * Breakpoint: max-width 767px (below Tailwind's md:768px).
+   * This is inside @layer components so it participates in Tailwind's
+   * cascade correctly alongside utility classes.
+   */
+  @media (max-width: 767px) {
+    /* Collapse the 280px sidebar column — content fills full width */
+    .app-shell {
+      grid-template-columns: 1fr;
+    }
+
+    /* Hide the desktop sidebar entirely; mobile drawer replaces it */
+    .app-sidebar {
+      display: none;
+    }
+
+    /* Content area must reclaim column 1 in the now-single-column grid */
+    .app-main {
+      grid-column: 1;
+    }
+
+    /* Summary strip: 4-across → 2x2 grid */
+    .summary-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /*
+     * Reset all right-side borders on direct children.
+     * !important is needed to override the inline borderRight style that
+     * the linked SummaryItem renders on its <a> wrapper.
+     */
+    .summary-strip > * {
+      border-right: none !important;
+      border-bottom: 1px solid #333333;
+    }
+
+    /* Left-column cells (1st, 3rd) get a right divider */
+    .summary-strip > *:nth-child(odd) {
+      border-right: 1px solid #333333 !important;
+    }
+
+    /* Bottom-row cells (3rd, 4th) need no bottom divider */
+    .summary-strip > *:nth-child(n+3) {
+      border-bottom: none;
+    }
+
+    /*
+     * Inner .summary-strip-item div (when nested inside a link wrapper):
+     * its own borders are redundant — the container cell handles them.
+     */
+    .summary-strip a .summary-strip-item {
+      border-right: none !important;
+      border-bottom: none;
+    }
+
+    /* Scale down the large stat numbers so they fit in a half-width cell */
+    .summary-strip-value {
+      font-size: 24px;
+      line-height: 32px;
+    }
+
+    /* Queue items: tighten horizontal padding on small screens */
+    .queue-item {
+      padding: 12px 16px;
+      gap: 8px;
+    }
+
+    .queue-item-id {
+      min-width: 60px;
+    }
+
+    /* Allow queue item titles to wrap rather than disappear off-screen */
+    .queue-item-title {
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    /* Page container: reduce side padding from 24px to 16px */
+    .page-container {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }
 }

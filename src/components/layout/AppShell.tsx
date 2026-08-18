@@ -17,8 +17,9 @@ import { cookies } from "next/headers";
 import { resolveUserContext, CONTEXT_COOKIE } from "@/server/services/AccessService";
 import { AppError } from "@/types";
 import { safeJsonParse } from "@/lib/utils";
-import { Sidebar } from "./Sidebar";
+import { Sidebar, SidebarContents } from "./Sidebar";
 import { Topbar } from "./Topbar";
+import { MobileNavDrawer } from "./MobileNavDrawer";
 
 interface ContextCookie {
   societyId: string;
@@ -54,26 +55,38 @@ export async function AppShell({ children }: Props) {
   const roleLabel = userContext.roleName ?? "Society Admin";
 
   return (
-    <div className="app-shell">
-      {/* ── Topbar ── spans the full width (grid-column 1 / -1) */}
-      <div className="app-topbar">
-        <Topbar userName={userName} userEmail={userEmail} roleLabel={roleLabel} />
-      </div>
+    <>
+      {/*
+       * MobileNavDrawer is a fixed overlay — position in the DOM does not
+       * matter for layout. It renders only when open (returns null otherwise)
+       * and listens for the "mobile-nav-toggle" CustomEvent from Topbar.
+       * SidebarContents is RSC-rendered so permission data stays server-side.
+       */}
+      <MobileNavDrawer>
+        <SidebarContents context={userContext} />
+      </MobileNavDrawer>
 
-      {/* ── Sidebar ── left column below the topbar */}
-      <div className="app-sidebar">
-        <Sidebar context={userContext} />
-      </div>
+      <div className="app-shell">
+        {/* ── Topbar ── spans the full width (grid-column 1 / -1) */}
+        <div className="app-topbar">
+          <Topbar userName={userName} userEmail={userEmail} roleLabel={roleLabel} />
+        </div>
 
-      {/* ── Main content area ── right column below the topbar */}
-      <main
-        id="main-content"
-        className="app-main"
-        tabIndex={-1}
-        aria-label="Main content"
-      >
-        {children}
-      </main>
-    </div>
+        {/* ── Sidebar ── left column below the topbar (hidden on mobile via CSS) */}
+        <div className="app-sidebar">
+          <Sidebar context={userContext} />
+        </div>
+
+        {/* ── Main content area ── right column below the topbar */}
+        <main
+          id="main-content"
+          className="app-main"
+          tabIndex={-1}
+          aria-label="Main content"
+        >
+          {children}
+        </main>
+      </div>
+    </>
   );
 }

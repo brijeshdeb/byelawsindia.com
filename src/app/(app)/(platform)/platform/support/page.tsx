@@ -94,7 +94,7 @@ const FAQ = [
 
 export default function PlatformSupportPage() {
   return (
-    <div className="p-8 max-w-screen-xl mx-auto space-y-10">
+    <div className="p-4 sm:p-8 max-w-screen-xl mx-auto space-y-10">
       {/* Header */}
       <div>
         <h1

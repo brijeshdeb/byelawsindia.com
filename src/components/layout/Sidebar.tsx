@@ -1,11 +1,15 @@
 /**
- * Sidebar — server component wrapper.
+ * Sidebar — server component.
  *
  * Stitch Obsidian design:
  * - Background: #131313 (surface — same tone as topbar)
  * - Border: #333333 (border-subtle)
  * - Society identity block: left border in emerald #10B981
  * - Logo + wordmark at top
+ *
+ * SidebarContents is exported separately so AppShell can pass it as children
+ * to MobileNavDrawer without duplicating markup. The <aside> wrapper is only
+ * rendered in the desktop grid; the drawer gets the raw contents.
  */
 import Image from "next/image";
 import Link from "next/link";
@@ -16,13 +20,13 @@ interface Props {
   context: UserContext;
 }
 
-export function Sidebar({ context }: Props) {
+/**
+ * SidebarContents — the inner markup shared by the desktop sidebar and the
+ * mobile nav drawer. No <aside> or grid-positioning wrapper here.
+ */
+export function SidebarContents({ context }: Props) {
   return (
-    <aside
-      className="app-sidebar flex flex-col"
-      style={{ backgroundColor: "#131313", borderRight: "1px solid #333333" }}
-      aria-label="Application sidebar"
-    >
+    <>
       {/* Brand + society identity */}
       <div className="px-6 pt-5 pb-4 shrink-0" style={{ borderBottom: "1px solid #333333" }}>
 
@@ -88,6 +92,19 @@ export function Sidebar({ context }: Props) {
           Switch context
         </Link>
       </div>
+    </>
+  );
+}
+
+/** Desktop sidebar — wraps SidebarContents in the grid-positioned <aside>. */
+export function Sidebar({ context }: Props) {
+  return (
+    <aside
+      className="app-sidebar flex flex-col"
+      style={{ backgroundColor: "#131313", borderRight: "1px solid #333333" }}
+      aria-label="Application sidebar"
+    >
+      <SidebarContents context={context} />
     </aside>
   );
 }

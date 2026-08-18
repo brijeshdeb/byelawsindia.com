@@ -38,11 +38,29 @@ export function Topbar({ userName, userEmail, roleLabel = "Society Admin" }: Pro
 
   return (
     <header
-      className="app-topbar flex items-center justify-between px-8"
+      className="app-topbar flex items-center justify-between px-4 sm:px-8"
       style={{ height: "64px", backgroundColor: "#131313", borderBottom: "1px solid #333333" }}
     >
-      {/* Left: breadcrumb placeholder */}
-      <div className="flex items-center gap-4">
+      {/* Left: hamburger (mobile) + breadcrumb */}
+      <div className="flex items-center gap-3 sm:gap-4">
+        {/* Hamburger — visible only on mobile; dispatches CustomEvent to MobileNavDrawer */}
+        <button
+          type="button"
+          className="md:hidden flex items-center justify-center w-9 h-9 rounded transition-colors"
+          style={{ color: "#9CA3AF" }}
+          onClick={() => window.dispatchEvent(new CustomEvent("mobile-nav-toggle"))}
+          aria-label="Toggle navigation menu"
+          aria-haspopup="dialog"
+        >
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: "22px" }}
+            aria-hidden="true"
+          >
+            menu
+          </span>
+        </button>
+
         <div className="hidden sm:flex items-center text-sm" style={{ color: "#9CA3AF" }}>
           <span
             className="cursor-pointer transition-colors"

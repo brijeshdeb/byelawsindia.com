@@ -123,7 +123,7 @@ export default async function PlatformSettingsPage({
   const logs = await fetchAuditLogs(search, action, limit);
 
   return (
-    <div className="p-8 max-w-screen-xl mx-auto space-y-8">
+    <div className="p-4 sm:p-8 max-w-screen-xl mx-auto space-y-8">
       {/* Header */}
       <div>
         <h1

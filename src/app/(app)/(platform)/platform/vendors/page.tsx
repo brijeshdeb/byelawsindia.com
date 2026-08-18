@@ -133,7 +133,7 @@ export default async function PlatformVendorsPage({
   const verifiedCount = vendors.filter((v) => v.is_verified).length;
 
   return (
-    <div className="p-8 max-w-screen-xl mx-auto space-y-6">
+    <div className="p-4 sm:p-8 max-w-screen-xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
