@@ -18,7 +18,7 @@
 import { useState, useEffect, useActionState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { assignUserAccess, revokeUserAccess, inviteUser, type ActionResult } from "./actions";
+import { assignUserAccess, revokeUserAccess, inviteSocietyAdmin, type ActionResult } from "./actions";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -314,6 +314,7 @@ function AssignModal({ user, societies, roles, onClose, onSuccess }: AssignModal
 // ---------------------------------------------------------------------------
 
 interface InviteUserModalProps {
+  societies: SocietyOption[];
   onClose: () => void;
   onSuccess: () => void;
 }
@@ -329,8 +330,8 @@ const INVITE_INPUT_STYLE = {
   outline: "none",
 };
 
-function InviteUserModal({ onClose, onSuccess }: InviteUserModalProps) {
-  const [state, formAction, isPending] = useActionState(inviteUser, initialResult);
+function InviteUserModal({ societies, onClose, onSuccess }: InviteUserModalProps) {
+  const [state, formAction, isPending] = useActionState(inviteSocietyAdmin, initialResult);
 
   useEffect(() => {
     if (state.success) onSuccess();
@@ -370,10 +371,10 @@ function InviteUserModal({ onClose, onSuccess }: InviteUserModalProps) {
               className="text-base font-semibold"
               style={{ color: "#FFFFFF" }}
             >
-              Invite User
+              Add Society Admin
             </h2>
             <p className="text-xs mt-0.5" style={{ color: "#9CA3AF" }}>
-              A sign-up link will be emailed to the address below.
+              Creates or links a login and grants Society Admin access immediately.
             </p>
           </div>
           <button
@@ -400,6 +401,28 @@ function InviteUserModal({ onClose, onSuccess }: InviteUserModalProps) {
 
         {/* Form */}
         <form action={formAction} className="px-6 py-5 space-y-4">
+          <div>
+            <label
+              htmlFor="invite-society"
+              className="block text-xs font-medium mb-1.5"
+              style={{ color: "#9CA3AF", letterSpacing: "0.05em", textTransform: "uppercase" }}
+            >
+              Society <span style={{ color: "#EF4444" }}>*</span>
+            </label>
+            <select
+              id="invite-society"
+              name="societyId"
+              required
+              className="focus:outline-none transition-colors"
+              style={INVITE_INPUT_STYLE}
+            >
+              <option value="">Select a society...</option>
+              {societies.map((society) => (
+                <option key={society.id} value={society.id}>{society.name}</option>
+              ))}
+            </select>
+          </div>
+
           {/* Email */}
           <div>
             <label
@@ -434,13 +457,14 @@ function InviteUserModal({ onClose, onSuccess }: InviteUserModalProps) {
               className="block text-xs font-medium mb-1.5"
               style={{ color: "#9CA3AF", letterSpacing: "0.05em", textTransform: "uppercase" }}
             >
-              Full Name (optional)
+              Full Name <span style={{ color: "#EF4444" }}>*</span>
             </label>
             <input
               id="invite-full-name"
               name="full_name"
               type="text"
               placeholder="Display name"
+              required
               autoComplete="name"
               className="focus:outline-none transition-colors"
               style={INVITE_INPUT_STYLE}
@@ -476,7 +500,7 @@ function InviteUserModal({ onClose, onSuccess }: InviteUserModalProps) {
               <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>
                 check_circle
               </span>
-              Invite sent successfully.
+              Society Admin login added successfully.
             </p>
           )}
 
@@ -513,14 +537,14 @@ function InviteUserModal({ onClose, onSuccess }: InviteUserModalProps) {
                   >
                     progress_activity
                   </span>
-                  Sending...
+                  Adding...
                 </>
               ) : (
                 <>
                   <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>
                     send
                   </span>
-                  Send Invite
+                  Add Society Admin
                 </>
               )}
             </button>
@@ -834,7 +858,7 @@ export function PlatformMembersClient({ users, societies, roles }: Props) {
           ))}
         </div>
 
-        {/* Right side: Invite User + Search */}
+        {/* Right side: add Society Admin + Search */}
         <div className="flex items-center gap-3 shrink-0">
           <button
             type="button"
@@ -857,7 +881,7 @@ export function PlatformMembersClient({ users, societies, roles }: Props) {
             <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>
               person_add
             </span>
-            Invite User
+            Add Society Admin
           </button>
 
           <div
@@ -969,6 +993,7 @@ export function PlatformMembersClient({ users, societies, roles }: Props) {
       {/* Invite User modal */}
       {inviteOpen && (
         <InviteUserModal
+          societies={societies}
           onClose={() => setInviteOpen(false)}
           onSuccess={() => {
             setInviteOpen(false);

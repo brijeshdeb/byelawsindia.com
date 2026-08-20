@@ -355,6 +355,44 @@ export function NewSocietyForm() {
         </div>
       </div>
 
+      {/* ── Section 4: First administrator ───────────────── */}
+      <div
+        className="rounded-xl p-6 mb-5"
+        style={{ backgroundColor: "#1E1E1E", border: "1px solid #333333" }}
+      >
+        <SectionHeading>Required Society Administrator</SectionHeading>
+        <p className="text-sm mb-4" style={{ color: "#9CA3AF" }}>
+          Registration creates or links this login and grants it the society-wide Society Admin role. The society cannot be created without it.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <FieldLabel htmlFor="admin_full_name" required>
+              Administrator Full Name
+            </FieldLabel>
+            <TextInput
+              id="admin_full_name"
+              name="admin_full_name"
+              placeholder="e.g. Priya Deshmukh"
+              required
+              autoComplete="name"
+            />
+          </div>
+          <div>
+            <FieldLabel htmlFor="admin_email" required>
+              Administrator Login Email
+            </FieldLabel>
+            <TextInput
+              id="admin_email"
+              name="admin_email"
+              type="email"
+              placeholder="admin@society.org"
+              required
+              autoComplete="email"
+            />
+          </div>
+        </div>
+      </div>
+
       {/* ── Form actions ─────────────────────────────────── */}
       <div className="flex items-center justify-end gap-3">
         <Link
@@ -383,7 +421,7 @@ export function NewSocietyForm() {
               >
                 progress_activity
               </span>
-              Registering...
+              Registering & inviting...
             </>
           ) : (
             <>
@@ -394,7 +432,7 @@ export function NewSocietyForm() {
               >
                 add_business
               </span>
-              Register Society
+              Register Society & Invite Admin
             </>
           )}
         </button>

@@ -68,8 +68,7 @@ export default function RegisterNewSocietyPage() {
           </h1>
         </div>
         <p style={{ color: "#9CA3AF", fontSize: "13px", lineHeight: "1.6" }}>
-          Creates the society record and seeds default settings. After registration,
-          switch to the society view to complete onboarding.
+          Creates the society, default settings, and its first Society Admin login as one protected onboarding step.
         </p>
       </div>
 

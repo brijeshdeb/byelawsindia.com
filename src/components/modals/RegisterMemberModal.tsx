@@ -24,6 +24,7 @@ export function RegisterMemberModal({ open, onClose, units }: Props) {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    const ageValue = (fd.get("ageAtAdmission") as string) || "";
     setError(null);
 
     startTransition(async () => {
@@ -31,6 +32,12 @@ export function RegisterMemberModal({ open, onClose, units }: Props) {
         fullName: fd.get("fullName") as string,
         email: (fd.get("email") as string) || undefined,
         phone: (fd.get("phone") as string) || undefined,
+        address: (fd.get("address") as string) || undefined,
+        occupation: (fd.get("occupation") as string) || undefined,
+        ageAtAdmission: ageValue ? Number(ageValue) : undefined,
+        entranceFeePaidAt: (fd.get("entranceFeePaidAt") as string) || undefined,
+        nomineeNameAddress: (fd.get("nomineeNameAddress") as string) || undefined,
+        nominationDate: (fd.get("nominationDate") as string) || undefined,
         unitId: (fd.get("unitId") as string) || undefined,
         memberType: fd.get("memberType") as "OWNER" | "TENANT" | "ASSOCIATE" | "COMMITTEE",
         effectiveFrom: (fd.get("effectiveFrom") as string) || undefined,
@@ -92,6 +99,39 @@ export function RegisterMemberModal({ open, onClose, units }: Props) {
             defaultValue={new Date().toISOString().split("T")[0]}
           />
         </FormField>
+
+        <div className="pt-2" style={{ borderTop: "1px solid #333333" }}>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#9CA3AF" }}>
+            Form I statutory details
+          </p>
+          <div className="flex flex-col gap-4">
+            <FormField label="Member address" htmlFor="address">
+              <Textarea id="address" name="address" placeholder="Address recorded in the membership register" />
+            </FormField>
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField label="Occupation" htmlFor="occupation">
+                <Input id="occupation" name="occupation" />
+              </FormField>
+              <FormField label="Age on admission" htmlFor="ageAtAdmission">
+                <Input id="ageAtAdmission" name="ageAtAdmission" type="number" min="0" max="120" />
+              </FormField>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField label="Entrance fee paid on" htmlFor="entranceFeePaidAt">
+                <Input id="entranceFeePaidAt" name="entranceFeePaidAt" type="date" />
+              </FormField>
+              <FormField label="Nomination date" htmlFor="nominationDate">
+                <Input id="nominationDate" name="nominationDate" type="date" />
+              </FormField>
+            </div>
+
+            <FormField label="Nominee name and address" htmlFor="nomineeNameAddress">
+              <Textarea id="nomineeNameAddress" name="nomineeNameAddress" placeholder="Full name and address of the person nominated by the member" />
+            </FormField>
+          </div>
+        </div>
 
         <FormField label="Notes" htmlFor="notes">
           <Textarea id="notes" name="notes" placeholder="Any additional notes..." />

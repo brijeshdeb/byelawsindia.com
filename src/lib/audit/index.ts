@@ -88,7 +88,10 @@ export type AuditAction =
   // Platform
   | "PLATFORM_CONTEXT_SWITCHED"
   | "SOCIETY_REGISTERED"
-  | "USER_INVITED";
+  | "USER_INVITED"
+  | "SOCIETY_ADMIN_INVITED"
+  | "SOCIETY_ADMIN_ASSIGNED"
+  | "STATUTORY_REGISTER_EXPORTED";
 
 export interface AuditParams {
   societyId?: string | null;

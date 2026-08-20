@@ -57,6 +57,7 @@ function buildNavGroups(): NavGroup[] {
           label: "Members",
           href: "/members",
           icon: "group",
+          exact: true,
           anyOf: [
             PERMISSIONS.MEMBER_VIEW,
             PERMISSIONS.MEMBER_CREATE,
@@ -67,6 +68,12 @@ function buildNavGroups(): NavGroup[] {
           label: "Units",
           href: "/units",
           icon: "apartment",
+          permission: PERMISSIONS.MEMBER_VIEW,
+        },
+        {
+          label: "Form I & Form J",
+          href: "/members/statutory-registers",
+          icon: "table_view",
           permission: PERMISSIONS.MEMBER_VIEW,
         },
       ],

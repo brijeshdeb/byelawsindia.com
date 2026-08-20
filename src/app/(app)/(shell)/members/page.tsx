@@ -10,7 +10,7 @@ export default async function MembersPage() {
   const [{ data: members }, { data: unitsRaw }] = await Promise.all([
     supabase
       .from("members")
-      .select("id, member_number, full_name, email, phone, member_type, status, effective_from, unit_id, units(unit_number, wings(name))")
+      .select("id, member_number, full_name, email, phone, member_type, status, effective_from, effective_until, address, occupation, age_at_admission, entrance_fee_paid_at, nominee_name_address, nomination_date, cessation_reason, remark, unit_id, units(unit_number, wings(name))")
       .eq("society_id", societyId)
       .order("member_number", { ascending: true }),
     supabase
@@ -29,6 +29,15 @@ export default async function MembersPage() {
     member_type: m.member_type,
     status: m.status,
     effective_from: m.effective_from,
+    effective_until: m.effective_until,
+    address: m.address,
+    occupation: m.occupation,
+    age_at_admission: m.age_at_admission,
+    entrance_fee_paid_at: m.entrance_fee_paid_at,
+    nominee_name_address: m.nominee_name_address,
+    nomination_date: m.nomination_date,
+    cessation_reason: m.cessation_reason,
+    remark: m.remark,
     unit_number: m.units?.unit_number ?? null,
     wing_name: m.units?.wings?.name ?? null,
   }));

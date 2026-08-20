@@ -18,6 +18,11 @@ import { revalidatePath } from "next/cache";
 import { requireCurrentUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { writeAudit } from "@/lib/audit";
+import {
+  removeNewlyInvitedUser,
+  resolveOrInviteUser,
+  validateOperationalEmail,
+} from "@/server/services/SocietyAdminService";
 
 export interface FormResult {
   success: boolean;
@@ -52,8 +57,10 @@ export async function registerSociety(
   const phone               = (formData.get("phone")               as string | null)?.trim() ?? "";
   const website             = (formData.get("website")             as string | null)?.trim() || null;
   const registered_at       = (formData.get("registered_at")       as string | null)?.trim() ?? "";
+  const admin_full_name     = (formData.get("admin_full_name")     as string | null)?.trim() ?? "";
+  const admin_email         = (formData.get("admin_email")         as string | null)?.trim().toLowerCase() ?? "";
 
-  if (!name || !registration_number || !address || !city || !state_val || !pin_code || !email || !phone || !registered_at) {
+  if (!name || !registration_number || !address || !city || !state_val || !pin_code || !email || !phone || !registered_at || !admin_full_name || !admin_email) {
     return { success: false, error: "All required fields must be filled in." };
   }
 
@@ -65,30 +72,45 @@ export async function registerSociety(
     return { success: false, error: "PIN code must be exactly 6 digits." };
   }
 
-  // 3. Insert society.
-  const admin = createAdminClient();
+  const adminEmailError = validateOperationalEmail(admin_email);
+  if (adminEmailError) return { success: false, error: adminEmailError };
 
-  const { data: society, error: insertErr } = await admin
-    .from("societies")
-    .insert({
-      name,
-      registration_number,
-      society_type,
-      address,
-      city,
-      state: state_val,
-      pin_code,
-      email,
-      phone,
-      website,
-      registered_at,
-      is_active: true,
-      created_by: caller.id,
-    })
-    .select("id")
-    .single();
+  // 3. Resolve an existing account or create the one-time Society Admin invite.
+  const admin = createAdminClient();
+  let adminUser: { userId: string; invited: boolean };
+
+  try {
+    adminUser = await resolveOrInviteUser({ email: admin_email, fullName: admin_full_name });
+  } catch (error) {
+    console.error("[registerSociety] admin invite error:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to create the Society Admin login.",
+    };
+  }
+
+  // 4. Create society + settings + first Society Admin atomically.
+  const { data: societyId, error: insertErr } = await admin.rpc(
+    "register_society_with_admin",
+    {
+      p_name: name,
+      p_registration_number: registration_number,
+      p_society_type: society_type,
+      p_address: address,
+      p_city: city,
+      p_state: state_val,
+      p_pin_code: pin_code,
+      p_email: email,
+      p_phone: phone,
+      p_website: website,
+      p_registered_at: registered_at,
+      p_admin_user_id: adminUser.userId,
+      p_created_by: caller.id,
+    }
+  );
 
   if (insertErr) {
+    if (adminUser.invited) await removeNewlyInvitedUser(adminUser.userId);
     if (insertErr.code === "23505") {
       return {
         success: false,
@@ -99,25 +121,26 @@ export async function registerSociety(
     return { success: false, error: "Failed to register society. Please try again." };
   }
 
-  // 4. Seed default society_settings so the society is immediately operable.
-  const { error: settingsErr } = await admin
-    .from("society_settings")
-    .insert({ society_id: society.id });
-
-  if (settingsErr) {
-    // Non-fatal — settings have DB-level defaults.
-    console.error("[registerSociety] society_settings seed failed:", settingsErr.message);
-  }
-
   // 5. Audit (non-blocking — writeAudit catches internally and never throws).
   await writeAudit({
     actorUserId: caller.id,
     action: "SOCIETY_REGISTERED",
     entityType: "societies",
-    entityId: society.id,
-    societyId: society.id,
-    newValues: { name, registration_number, society_type, city, state: state_val },
-    metadata: { registeredBy: caller.email },
+    entityId: societyId,
+    societyId,
+    newValues: {
+      name,
+      registration_number,
+      society_type,
+      city,
+      state: state_val,
+      firstSocietyAdminUserId: adminUser.userId,
+    },
+    metadata: {
+      registeredBy: caller.email,
+      societyAdminEmail: admin_email,
+      invitationSent: adminUser.invited,
+    },
   });
 
   revalidatePath("/platform/console");

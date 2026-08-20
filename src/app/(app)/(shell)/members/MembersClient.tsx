@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { RegisterMemberModal } from "@/components/modals/RegisterMemberModal";
+import { EditMemberStatutoryModal } from "@/components/modals/EditMemberStatutoryModal";
 
 interface Member {
   id: string;
@@ -11,6 +12,15 @@ interface Member {
   member_type: string;
   status: string;
   effective_from: string | null;
+  effective_until: string | null;
+  address: string | null;
+  occupation: string | null;
+  age_at_admission: number | null;
+  entrance_fee_paid_at: string | null;
+  nominee_name_address: string | null;
+  nomination_date: string | null;
+  cessation_reason: string | null;
+  remark: string | null;
   unit_number?: string | null;
   wing_name?: string | null;
 }
@@ -41,6 +51,7 @@ function label(s: string) {
 
 export function MembersClient({ members, units }: { members: Member[]; units: Unit[] }) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [statutoryMember, setStatutoryMember] = useState<Member | null>(null);
   const [filter, setFilter] = useState("All");
 
   const FILTERS = ["All", "Owner", "Tenant", "Active", "Inactive"];
@@ -103,7 +114,7 @@ export function MembersClient({ members, units }: { members: Member[]; units: Un
             <table className="w-full" style={{ borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ backgroundColor: "#1c1b1b", borderBottom: "1px solid #333333" }}>
-                  {["Member ID", "Name", "Unit", "Type", "Status", "Member since"].map((h) => (
+                  {["Member ID", "Name", "Unit", "Type", "Status", "Member since", ""].map((h) => (
                     <th key={h} className="font-label-md text-label-md text-left px-4 py-3" style={{ color: "#6B7280" }}>{h}</th>
                   ))}
                 </tr>
@@ -135,6 +146,16 @@ export function MembersClient({ members, units }: { members: Member[]; units: Un
                       <td className="px-4 py-3 font-body-sm text-body-sm" style={{ color: "#9CA3AF" }}>
                         {row.effective_from ? new Date(row.effective_from).toLocaleDateString("en-IN", { month: "short", year: "numeric" }) : "—"}
                       </td>
+                      <td className="px-4 py-3 text-right">
+                        <button
+                          type="button"
+                          onClick={() => setStatutoryMember(row)}
+                          className="text-xs rounded px-2.5 py-1.5"
+                          style={{ color: row.address ? "#9CA3AF" : "#FBBF24", border: `1px solid ${row.address ? "#333333" : "rgba(251,191,36,0.3)"}` }}
+                        >
+                          {row.address ? "Edit Form I" : "Complete Form I"}
+                        </button>
+                      </td>
                     </tr>
                   );
                 })}
@@ -154,6 +175,13 @@ export function MembersClient({ members, units }: { members: Member[]; units: Un
         onClose={() => setModalOpen(false)}
         units={units}
       />
+      {statutoryMember && (
+        <EditMemberStatutoryModal
+          open
+          member={statutoryMember}
+          onClose={() => setStatutoryMember(null)}
+        />
+      )}
     </>
   );
 }

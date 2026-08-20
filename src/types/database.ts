@@ -559,6 +559,14 @@ export type Database = {
           full_name: string;
           email: string | null;
           phone: string | null;
+          address: string | null;
+          occupation: string | null;
+          age_at_admission: number | null;
+          entrance_fee_paid_at: string | null;
+          nominee_name_address: string | null;
+          nomination_date: string | null;
+          cessation_reason: string | null;
+          remark: string | null;
           member_type: string;
           status: string;
           effective_from: string;
@@ -577,6 +585,14 @@ export type Database = {
           full_name: string;
           email?: string | null;
           phone?: string | null;
+          address?: string | null;
+          occupation?: string | null;
+          age_at_admission?: number | null;
+          entrance_fee_paid_at?: string | null;
+          nominee_name_address?: string | null;
+          nomination_date?: string | null;
+          cessation_reason?: string | null;
+          remark?: string | null;
           member_type?: string;
           status?: string;
           effective_from?: string;
@@ -595,6 +611,14 @@ export type Database = {
           full_name?: string;
           email?: string | null;
           phone?: string | null;
+          address?: string | null;
+          occupation?: string | null;
+          age_at_admission?: number | null;
+          entrance_fee_paid_at?: string | null;
+          nominee_name_address?: string | null;
+          nomination_date?: string | null;
+          cessation_reason?: string | null;
+          remark?: string | null;
           member_type?: string;
           status?: string;
           effective_from?: string;
@@ -1176,6 +1200,31 @@ export type Database = {
         Update: never;
         Relationships: [];
       };
+
+      form_register_snapshots: {
+        Row: {
+          id: string;
+          version: number;
+          society_id: string;
+          form_type: "FORM_I" | "FORM_J";
+          row_count: number;
+          data: Json;
+          generated_by: string;
+          generated_at: string;
+        };
+        Insert: {
+          id?: string;
+          version?: never;
+          society_id: string;
+          form_type: "FORM_I" | "FORM_J";
+          row_count: number;
+          data: Json;
+          generated_by: string;
+          generated_at?: string;
+        };
+        Update: never;
+        Relationships: [];
+      };
     };
 
     Views: {};
@@ -1230,6 +1279,24 @@ export type Database = {
       reset_demo_society: {
         Args: { p_society_id: string };
         Returns: void;
+      };
+      register_society_with_admin: {
+        Args: {
+          p_name: string;
+          p_registration_number: string;
+          p_society_type: string;
+          p_address: string;
+          p_city: string;
+          p_state: string;
+          p_pin_code: string;
+          p_email: string;
+          p_phone: string;
+          p_website: string | null;
+          p_registered_at: string;
+          p_admin_user_id: string;
+          p_created_by: string;
+        };
+        Returns: string;
       };
     };
 

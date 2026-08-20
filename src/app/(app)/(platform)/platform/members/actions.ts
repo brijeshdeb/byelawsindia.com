@@ -14,6 +14,12 @@ import { revalidatePath } from "next/cache";
 import { requireCurrentUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { writeAudit, writeAuditCritical } from "@/lib/audit";
+import {
+  assignSocietyAdmin,
+  removeNewlyInvitedUser,
+  resolveOrInviteUser,
+  validateOperationalEmail,
+} from "@/server/services/SocietyAdminService";
 
 
 // ---------------------------------------------------------------------------
@@ -281,6 +287,95 @@ export async function inviteUser(
   } catch (auditErr) {
     // Invite already sent — log the audit failure but don't surface an error to the user.
     console.error("[inviteUser] AUDIT WRITE FAILED after invite:", auditErr);
+  }
+
+  revalidatePath("/platform/members");
+  return { success: true, error: null };
+}
+
+// ---------------------------------------------------------------------------
+// inviteSocietyAdmin
+// ---------------------------------------------------------------------------
+
+/**
+ * Create or link a login and immediately grant the society-wide Society Admin
+ * role. This is the safe one-step path for adding administrators after initial
+ * society registration.
+ */
+export async function inviteSocietyAdmin(
+  _prevState: ActionResult,
+  formData: FormData
+): Promise<ActionResult> {
+  let caller: Awaited<ReturnType<typeof requireCurrentUser>>;
+  try {
+    caller = await requireCurrentUser();
+  } catch {
+    return { success: false, error: "Authentication required." };
+  }
+
+  if (!caller.is_platform_admin) {
+    return { success: false, error: "Forbidden: platform admin access required." };
+  }
+
+  const societyId = (formData.get("societyId") as string | null)?.trim() ?? "";
+  const email = (formData.get("email") as string | null)?.trim().toLowerCase() ?? "";
+  const fullName = (formData.get("full_name") as string | null)?.trim() ?? "";
+
+  if (!societyId || !email || !fullName) {
+    return { success: false, error: "Society, full name, and login email are required." };
+  }
+
+  const emailError = validateOperationalEmail(email);
+  if (emailError) return { success: false, error: emailError };
+
+  const admin = createAdminClient();
+  const { data: society, error: societyError } = await admin
+    .from("societies")
+    .select("id, name")
+    .eq("id", societyId)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  if (societyError || !society) {
+    return { success: false, error: "Select an active society." };
+  }
+
+  let account: { userId: string; invited: boolean } | null = null;
+  let assignmentId: string;
+  try {
+    account = await resolveOrInviteUser({ email, fullName });
+    assignmentId = await assignSocietyAdmin({
+      userId: account.userId,
+      societyId,
+      actorUserId: caller.id,
+    });
+  } catch (error) {
+    if (account?.invited) await removeNewlyInvitedUser(account.userId);
+    console.error("[inviteSocietyAdmin] error:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to add the Society Admin login.",
+    };
+  }
+
+  try {
+    await writeAuditCritical({
+      actorUserId: caller.id,
+      action: account.invited ? "SOCIETY_ADMIN_INVITED" : "SOCIETY_ADMIN_ASSIGNED",
+      entityType: "user_access_assignments",
+      entityId: assignmentId,
+      societyId,
+      newValues: { userId: account.userId, role: "Society Admin" },
+      metadata: {
+        invitedEmail: email,
+        fullName,
+        societyName: society.name,
+        invitedBy: caller.email,
+        invitationSent: account.invited,
+      },
+    });
+  } catch (auditError) {
+    console.error("[inviteSocietyAdmin] AUDIT WRITE FAILED after assignment:", auditError);
   }
 
   revalidatePath("/platform/members");
