@@ -33,6 +33,7 @@ import type { Database } from "@/types/database";
 type MiddlewareSupabaseClient = SupabaseClient<Database, "public">;
 
 const PUBLIC_PATHS = ["/login"];
+const PASSWORD_PATHS = ["/reset-password"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -86,6 +87,12 @@ export async function middleware(request: NextRequest) {
   // Unauthenticated users see the public marketing homepage.
   if (pathname === "/") {
     if (user) return NextResponse.redirect(new URL("/select-context", request.url));
+    return response;
+  }
+
+  // Password recovery must remain reachable before and after the email-link
+  // callback establishes a short-lived recovery session.
+  if (PASSWORD_PATHS.some((p) => pathname.startsWith(p))) {
     return response;
   }
 

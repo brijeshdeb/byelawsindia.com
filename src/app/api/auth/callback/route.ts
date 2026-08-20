@@ -35,5 +35,15 @@ export async function GET(request: NextRequest) {
 
   // Safe redirect — must stay on the same origin
   const safeNext = next.startsWith("/") ? next : "/select-context";
-  return NextResponse.redirect(`${origin}${safeNext}`);
+  const response = NextResponse.redirect(`${origin}${safeNext}`);
+  if (safeNext === "/reset-password/update") {
+    response.cookies.set("bli_password_recovery", "1", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/reset-password/update",
+      maxAge: 10 * 60,
+    });
+  }
+  return response;
 }
