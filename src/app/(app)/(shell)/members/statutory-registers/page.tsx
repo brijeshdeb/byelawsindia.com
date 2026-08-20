@@ -63,15 +63,12 @@ export default async function StatutoryRegistersPage() {
           },
         ].map((form) => (
           <section key={form.code} className="rounded-xl p-6" style={{ backgroundColor: "#1E1E1E", border: "1px solid #333333" }}>
-            <div className="flex items-start justify-between gap-4">
+            <div>
               <div>
                 <span className="material-symbols-outlined mb-3" style={{ color: "#10B981", fontSize: 28 }}>table_view</span>
                 <h2 className="text-base font-semibold text-white">{form.title}</h2>
                 <p className="text-sm mt-2 leading-6" style={{ color: "#9CA3AF" }}>{form.description}</p>
               </div>
-              <span className="text-xs rounded-full px-2.5 py-1" style={{ backgroundColor: "rgba(16,185,129,0.1)", color: "#10B981" }}>
-                {members?.length ?? 0} rows
-              </span>
             </div>
             <Link
               href={`/api/members/statutory-registers/${form.code}`}
