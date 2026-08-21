@@ -21,7 +21,7 @@
 | Data fetching | TanStack Query (client components) |
 | Table | TanStack Table |
 | Forms | React Hook Form + Zod |
-| Email | Supabase Auth plus Resend-backed queued delivery, retry, webhook and delivery history |
+| Email | Supabase Auth plus Resend-backed queued delivery, retry, webhook and delivery history; daily Vercel fallback worker on the current Hobby plan |
 | Hosting | Vercel |
 
 ---
