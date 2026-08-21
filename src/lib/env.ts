@@ -15,6 +15,14 @@ const optionalEnv = <T extends z.ZodTypeAny>(schema: T) =>
     schema.optional(),
   );
 
+// Email delivery is an optional integration. An invalid placeholder must not
+// prevent the rest of the application from building or serving requests.
+const optionalEmailEnv = z.preprocess((value) => {
+  const candidate = typeof value === "string" ? value.trim() : value;
+  const parsed = z.string().email().safeParse(candidate);
+  return parsed.success ? parsed.data : undefined;
+}, z.string().email().optional());
+
 // ── Server-only environment schema ───────────────────────────────────────────
 // These values must never reach the browser bundle.
 const serverSchema = z.object({
@@ -23,7 +31,7 @@ const serverSchema = z.object({
 
   // Email — optional until Resend is configured in production
   RESEND_API_KEY: optionalEnv(z.string().min(1)),
-  EMAIL_FROM: optionalEnv(z.string().email()),
+  EMAIL_FROM: optionalEmailEnv,
   EMAIL_FROM_NAME: z.string().min(1).default("Byelawsindia Portal"),
   RESEND_WEBHOOK_SECRET: optionalEnv(z.string().min(1)),
   CRON_SECRET: optionalEnv(z.string().min(16)),
