@@ -1,12 +1,16 @@
 "use client";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { AddDueModal } from "@/components/modals/AddDueModal";
 import { RecordPaymentModal } from "@/components/modals/RecordPaymentModal";
+import { requestDueWaiverAction } from "@/app/actions/finance";
 
 interface Due {
   id: string;
   due_type: string;
   amount: number;
+  waived_amount: number;
+  outstanding_amount: number;
+  waiver_reason: string | null;
   due_date: string;
   status: string;
   description: string | null;
@@ -30,10 +34,13 @@ const FALLBACK = { bg: "rgba(107,114,128,0.1)", text: "#6B7280", border: "rgba(1
 
 function label(s: string) { return s.charAt(0) + s.slice(1).toLowerCase().replace("_", " "); }
 
-export function DuesClient({ dues, members }: { dues: Due[]; members: Member[] }) {
+export function DuesClient({ dues, members, canWaive }: { dues: Due[]; members: Member[]; canWaive:boolean }) {
   const [addDueOpen, setAddDueOpen] = useState(false);
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [selectedDueId, setSelectedDueId] = useState<string | undefined>();
+  const [waiverFor, setWaiverFor] = useState<Due | null>(null);
+  const [message, setMessage] = useState("");
+  const [pending, startTransition] = useTransition();
 
   function openPayment(dueId?: string) {
     setSelectedDueId(dueId);
@@ -42,7 +49,20 @@ export function DuesClient({ dues, members }: { dues: Due[]; members: Member[] }
 
   const totalOutstanding = dues
     .filter((d) => d.status === "UNPAID" || d.status === "PARTIALLY_PAID")
-    .reduce((sum, d) => sum + d.amount, 0);
+    .reduce((sum, d) => sum + d.outstanding_amount, 0);
+
+  function submitWaiver(formData: FormData) {
+    if (!waiverFor) return;
+    startTransition(async () => {
+      const result = await requestDueWaiverAction({
+        dueId: waiverFor.id,
+        amount: Number(formData.get("amount")),
+        reason: String(formData.get("reason") ?? ""),
+      });
+      setMessage(result.success ? "Waiver request submitted for independent approval." : result.error);
+      if (result.success) setWaiverFor(null);
+    });
+  }
 
 
 
@@ -87,6 +107,15 @@ export function DuesClient({ dues, members }: { dues: Due[]; members: Member[] }
           </div>
         )}
 
+        {message && <p role="status" className="mb-4 rounded border border-[#333] bg-[#1c1b1b] px-4 py-3 text-sm text-[#D1D5DB]">{message}</p>}
+
+        {waiverFor && <form action={submitWaiver} className="queue-section mb-5 grid grid-cols-1 gap-4 p-5 md:grid-cols-2">
+          <div className="md:col-span-2"><h2 className="font-semibold text-text-primary">Request waiver</h2><p className="text-sm text-[#9CA3AF]">{waiverFor.member_name} · available balance INR {waiverFor.outstanding_amount.toLocaleString("en-IN")}. A different authorized user must approve it.</p></div>
+          <label className="text-sm text-[#9CA3AF]">Amount<input name="amount" type="number" min="0.01" max={waiverFor.outstanding_amount} step="0.01" required className="mt-1 w-full rounded border border-[#333] bg-[#171717] px-3 py-2 text-sm text-text-primary" /></label>
+          <label className="text-sm text-[#9CA3AF]">Reason<input name="reason" required className="mt-1 w-full rounded border border-[#333] bg-[#171717] px-3 py-2 text-sm text-text-primary" /></label>
+          <div className="md:col-span-2 flex justify-end gap-2"><button type="button" onClick={() => setWaiverFor(null)} className="rounded border border-[#444] px-4 py-2 text-sm text-[#D1D5DB]">Cancel</button><button disabled={pending} className="rounded bg-[#F59E0B] px-4 py-2 text-sm font-medium text-black disabled:opacity-50">Submit for approval</button></div>
+        </form>}
+
         <div className="queue-section">
           {dues.length === 0 ? (
             <div className="flex flex-col items-center py-16" style={{ color: "#6B7280" }}>
@@ -97,7 +126,7 @@ export function DuesClient({ dues, members }: { dues: Due[]; members: Member[] }
             <table className="w-full" style={{ borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ backgroundColor: "#1c1b1b", borderBottom: "1px solid #333333" }}>
-                  {["Member", "Type", "Amount", "Due date", "Status", ""].map((h) => (
+                  {["Member", "Type", "Amount / balance", "Due date", "Status", ""].map((h) => (
                     <th key={h} className="font-label-md text-label-md text-left px-4 py-3" style={{ color: "#6B7280" }}>{h}</th>
                   ))}
                 </tr>
@@ -114,7 +143,7 @@ export function DuesClient({ dues, members }: { dues: Due[]; members: Member[] }
                       </td>
                       <td className="px-4 py-3 font-body-sm text-body-sm" style={{ color: "#9CA3AF" }}>{label(row.due_type)}</td>
                       <td className="px-4 py-3 font-body-sm text-body-sm text-text-primary font-medium">
-                        INR {row.amount.toLocaleString("en-IN")}
+                        <p>INR {row.amount.toLocaleString("en-IN")}</p><p className="text-xs text-[#9CA3AF]">Balance: INR {row.outstanding_amount.toLocaleString("en-IN")}{row.waived_amount>0?` · waived INR ${row.waived_amount.toLocaleString("en-IN")}`:""}</p>
                       </td>
                       <td className="px-4 py-3 font-body-sm text-body-sm" style={{ color: "#9CA3AF" }}>
                         {new Date(row.due_date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
@@ -125,15 +154,13 @@ export function DuesClient({ dues, members }: { dues: Due[]; members: Member[] }
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        {canPay && (
-                          <button
+                        {canPay && (<div className="flex gap-2"><button
                             onClick={() => openPayment(row.id)}
                             className="text-xs px-3 py-1 rounded font-medium"
                             style={{ backgroundColor: "rgba(16,185,129,0.1)", color: "#10B981", border: "1px solid rgba(16,185,129,0.2)" }}
                           >
                             Record payment
-                          </button>
-                        )}
+                          </button>{canWaive&&<button disabled={pending||row.outstanding_amount<=0} onClick={() => setWaiverFor(row)} className="rounded border border-[#F59E0B] px-3 py-1 text-xs font-medium text-[#F59E0B]">Request waiver</button>}</div>)}
                       </td>
                     </tr>
                   );

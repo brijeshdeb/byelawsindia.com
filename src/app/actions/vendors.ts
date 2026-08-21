@@ -3,6 +3,7 @@ import { getServerContext, nextSequenceNumber, wrapAction, type ActionResult } f
 import { resolveUserContext, requirePermission } from "@/server/services/AccessService";
 import { PERMISSIONS } from "@/types";
 import { revalidatePath } from "next/cache";
+import { writeAuditCritical } from "@/lib/audit";
 
 export type VendorType = "CIVIL" | "ELECTRICAL" | "PLUMBING" | "SECURITY" | "HOUSEKEEPING" | "IT" | "LANDSCAPING" | "OTHER";
 
@@ -15,6 +16,9 @@ export interface RegisterVendorInput {
   address?: string;
   gstin?: string;
   pan?: string;
+  serviceAreas?: string[];
+  branchAvailability?: string;
+  isPreferred?: boolean;
   notes?: string;
 }
 
@@ -46,6 +50,9 @@ export async function registerVendorAction(
         address: input.address?.trim() || null,
         gstin: input.gstin?.trim() || null,
         pan: input.pan?.trim() || null,
+        service_areas: Array.from(new Set((input.serviceAreas??[]).map(value=>value.trim()).filter(Boolean))),
+        branch_availability: input.branchAvailability?.trim() || null,
+        is_preferred: input.isPreferred??false,
         status: "ACTIVE",
         is_verified: false,
         notes: input.notes?.trim() || null,
@@ -55,6 +62,8 @@ export async function registerVendorAction(
       .single();
 
     if (error) throw new Error(error.message);
+
+    await writeAuditCritical({societyId,wingId,actorUserId:userId,action:"VENDOR_CREATED",entityType:"vendor",entityId:data.id,newValues:{vendorCode,name:input.name.trim(),vendorType:input.vendorType,isPreferred:input.isPreferred??false,serviceAreas:input.serviceAreas??[]}});
 
     revalidatePath("/vendors");
     return { id: data.id, vendorCode };

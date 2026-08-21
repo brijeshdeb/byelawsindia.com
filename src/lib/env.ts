@@ -20,6 +20,7 @@ const serverSchema = z.object({
   EMAIL_FROM: z.string().email().optional(),
   EMAIL_FROM_NAME: z.string().min(1).default("Byelawsindia Portal"),
   RESEND_WEBHOOK_SECRET: z.string().min(1).optional(),
+  CRON_SECRET: z.string().min(16).optional(),
 
   // Storage
   STORAGE_BUCKET_DOCUMENTS: z.string().default("society-documents"),
@@ -83,7 +84,7 @@ function validateEnv() {
   return clientResult.data;
 }
 
-export const env = validateEnv();
+export const env = validateEnv() as z.infer<typeof clientSchema> & Partial<z.infer<typeof serverSchema>>;
 
 // ── Type exports ─────────────────────────────────────────────────────────────
 export type ClientEnv = z.infer<typeof clientSchema>;

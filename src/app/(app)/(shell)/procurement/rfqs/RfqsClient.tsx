@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { NewRfqModal } from "@/components/modals/NewRfqModal";
+import Link from "next/link";
 
 interface Rfq {
   id: string;
@@ -69,7 +70,7 @@ export function RfqsClient({ rfqs }: { rfqs: Rfq[] }) {
                   const sc = statusColor[row.status] ?? FALLBACK;
                   return (
                     <tr key={row.id} style={{ borderBottom: i < rfqs.length - 1 ? "1px solid #2a2a2a" : "none" }}>
-                      <td className="px-4 py-3 font-mono" style={{ fontSize: "13px", color: "#10B981" }}>{row.rfq_number}</td>
+                      <td className="px-4 py-3 font-mono" style={{ fontSize: "13px", color: "#10B981" }}><Link href={`/procurement/rfqs/${row.id}`} className="hover:underline">{row.rfq_number}</Link></td>
                       <td className="px-4 py-3 font-body-sm text-body-sm text-text-primary">{row.title}</td>
                       <td className="px-4 py-3 font-body-sm text-body-sm" style={{ color: "#9CA3AF" }}>{label(row.category)}</td>
                       <td className="px-4 py-3 font-body-sm text-body-sm" style={{ color: "#9CA3AF" }}>

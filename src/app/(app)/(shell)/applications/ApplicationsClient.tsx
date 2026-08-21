@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { NewApplicationModal } from "@/components/modals/NewApplicationModal";
+import Link from "next/link";
 
 interface Application {
   id: string;
@@ -37,6 +38,8 @@ function typeLabel(t: string) {
     NOC_SALE: "NOC - Sale",
     NOC_RENOVATION: "NOC - Renovation",
     PARKING: "Parking",
+    NOMINATION: "Nomination",
+    ASSOCIATE_MEMBERSHIP: "Associate membership",
     OTHER: "Other",
   };
   return map[t] ?? label(t);
@@ -87,7 +90,7 @@ export function ApplicationsClient({ applications, units }: { applications: Appl
                   const sc = statusColor[row.status] ?? FALLBACK;
                   return (
                     <tr key={row.id} style={{ borderBottom: i < applications.length - 1 ? "1px solid #2a2a2a" : "none" }}>
-                      <td className="px-4 py-3 font-mono" style={{ fontSize: "13px", color: "#10B981" }}>{row.application_number}</td>
+                      <td className="px-4 py-3 font-mono" style={{ fontSize: "13px", color: "#10B981" }}><Link href={`/applications/${row.id}`} className="underline-offset-2 hover:underline">{row.application_number}</Link></td>
                       <td className="px-4 py-3">
                         <p className="font-body-sm text-body-sm text-text-primary">{row.applicant_name}</p>
                         {row.applicant_email && <p className="text-xs" style={{ color: "#6B7280" }}>{row.applicant_email}</p>}

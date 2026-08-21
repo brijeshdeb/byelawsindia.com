@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getServerContext } from "@/lib/context";
 import { PERMISSIONS } from "@/types";
 import { requirePermission, resolveUserContext } from "@/server/services/AccessService";
+import { StatutoryImport } from "./StatutoryImport";
 
 export const metadata: Metadata = { title: "Form I & Form J Registers" };
 
@@ -49,6 +50,8 @@ export default async function StatutoryRegistersPage() {
         </div>
       )}
 
+      {!context.isPlatformAdmin&&context.permissions.has(PERMISSIONS.MEMBER_UPDATE)?<StatutoryImport/>:null}
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-7">
         {[
           {
@@ -70,14 +73,7 @@ export default async function StatutoryRegistersPage() {
                 <p className="text-sm mt-2 leading-6" style={{ color: "#9CA3AF" }}>{form.description}</p>
               </div>
             </div>
-            <Link
-              href={`/api/members/statutory-registers/${form.code}`}
-              className="inline-flex items-center gap-2 mt-5 px-4 py-2 rounded-lg text-sm font-medium"
-              style={{ backgroundColor: "#10B981", color: "white" }}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 17 }}>download</span>
-              Download Excel & Record Snapshot
-            </Link>
+            <div className="mt-5 flex flex-wrap gap-2"><Link href={`/api/members/statutory-registers/${form.code}`} className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium" style={{ backgroundColor: "#10B981", color: "white" }}><span className="material-symbols-outlined" style={{ fontSize: 17 }}>table_view</span>Excel</Link><Link href={`/api/members/statutory-registers/${form.code}?format=pdf`} className="inline-flex items-center gap-2 rounded-lg border border-[#444] px-4 py-2 text-sm text-[#D1D5DB]"><span className="material-symbols-outlined" style={{ fontSize: 17 }}>picture_as_pdf</span>PDF</Link><Link href={`/api/members/statutory-registers/${form.code}?format=html`} target="_blank" className="inline-flex items-center gap-2 rounded-lg border border-[#444] px-4 py-2 text-sm text-[#D1D5DB]"><span className="material-symbols-outlined" style={{ fontSize: 17 }}>print</span>Print</Link></div>
           </section>
         ))}
       </div>

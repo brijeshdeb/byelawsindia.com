@@ -35,6 +35,9 @@ export function RegisterVendorModal({ open, onClose }: Props) {
         address: (fd.get("address") as string) || undefined,
         gstin: (fd.get("gstin") as string) || undefined,
         pan: (fd.get("pan") as string) || undefined,
+        serviceAreas: String(fd.get("serviceAreas")??"").split(","),
+        branchAvailability: (fd.get("branchAvailability") as string) || undefined,
+        isPreferred: fd.get("isPreferred")==="on",
         notes: (fd.get("notes") as string) || undefined,
       });
 
@@ -85,6 +88,19 @@ export function RegisterVendorModal({ open, onClose }: Props) {
         <FormField label="Address" htmlFor="address">
           <Input id="address" name="address" placeholder="Business address" />
         </FormField>
+
+        <div className="grid grid-cols-2 gap-4">
+          <FormField label="Service areas / wings" htmlFor="serviceAreas" hint="Comma-separated">
+            <Input id="serviceAreas" name="serviceAreas" placeholder="Mumbai, Wing A, Wing B" />
+          </FormField>
+          <FormField label="Branch availability" htmlFor="branchAvailability">
+            <Input id="branchAvailability" name="branchAvailability" placeholder="Mumbai office; 24x7 team" />
+          </FormField>
+        </div>
+
+        <label className="flex items-center gap-2 text-sm text-[#D1D5DB]">
+          <input name="isPreferred" type="checkbox" /> Preferred vendor
+        </label>
 
         <div className="grid grid-cols-2 gap-4">
           <FormField label="GSTIN" htmlFor="gstin" hint="15-character GST number">

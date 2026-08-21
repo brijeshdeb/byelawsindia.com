@@ -9,9 +9,10 @@ interface Props {
   open: boolean;
   onClose: () => void;
   societyId: string;
+  replacement?: { id:string; title:string } | null;
 }
 
-export function UploadDocumentModal({ open, onClose, societyId }: Props) {
+export function UploadDocumentModal({ open, onClose, societyId, replacement }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -50,6 +51,8 @@ export function UploadDocumentModal({ open, onClose, societyId }: Props) {
       const ext = file.name.split(".").pop() ?? "bin";
       // Use a generated path — never raw filenames (Rule 13)
       const storagePath = `${societyId}/documents/${crypto.randomUUID()}.${ext}`;
+      const digest=await crypto.subtle.digest("SHA-256",await file.arrayBuffer());
+      const checksumSha256=Array.from(new Uint8Array(digest)).map(byte=>byte.toString(16).padStart(2,"0")).join("");
 
       const { error: storageError } = await supabase.storage
         .from("society-documents")
@@ -72,6 +75,10 @@ export function UploadDocumentModal({ open, onClose, societyId }: Props) {
           fileName: file.name,
           fileSize: file.size,
           mimeType: file.type,
+          expiresOn:(fd.get("expiresOn") as string)||undefined,
+          classification:(fd.get("classification") as "INTERNAL"|"MEMBERS"|"CONFIDENTIAL")||"INTERNAL",
+          replacesDocumentId:replacement?.id,
+          checksumSha256,
         });
 
         if (!result.success) {
@@ -91,11 +98,13 @@ export function UploadDocumentModal({ open, onClose, societyId }: Props) {
   }
 
   return (
-    <Modal open={open} onClose={handleClose} title="Upload Document" description="Add a document to the society document library.">
+    <Modal open={open} onClose={handleClose} title={replacement?"Upload Replacement":"Upload Document"} description={replacement?"The current version will remain in history and be marked replaced.":"Add a document to the society document library."}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <FormField label="Title" htmlFor="title" required>
-          <Input id="title" name="title" placeholder="e.g. AGM Minutes - April 2026" required />
+          <Input id="title" name="title" defaultValue={replacement?.title??""} placeholder="e.g. AGM Minutes - April 2026" required />
         </FormField>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2"><FormField label="Classification" htmlFor="classification" required><Select id="classification" name="classification" required><option value="INTERNAL">Internal</option><option value="MEMBERS">Members</option><option value="CONFIDENTIAL">Confidential</option></Select></FormField><FormField label="Expiry date" htmlFor="expiresOn"><Input id="expiresOn" name="expiresOn" type="date" /></FormField></div>
 
         <FormField label="Category" htmlFor="category" required>
           <Select id="category" name="category" required>
@@ -142,7 +151,7 @@ export function UploadDocumentModal({ open, onClose, societyId }: Props) {
         <ModalActions>
           <CancelButton onClick={handleClose} />
           <SubmitButton loading={isLoading}>
-            {uploading ? "Uploading..." : "Upload Document"}
+            {uploading ? "Uploading..." : replacement?"Upload Replacement":"Upload Document"}
           </SubmitButton>
         </ModalActions>
       </form>

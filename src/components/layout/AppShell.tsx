@@ -21,6 +21,7 @@ import { Sidebar, SidebarContents } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { MobileNavDrawer } from "./MobileNavDrawer";
 import { DemoBanner } from "./DemoBanner";
+import { createClient } from "@/lib/supabase/server";
 
 interface ContextCookie {
   societyId: string;
@@ -60,6 +61,8 @@ export async function AppShell({ children }: Props) {
   const roleLabel = userContext.isPlatformAdmin
     ? "Super Admin"
     : (userContext.roleName ?? "Society Admin");
+  const supabase=await createClient();
+  const{count:unreadNotifications}=await supabase.from("notifications").select("id",{count:"exact",head:true}).eq("user_id",userContext.userId).is("read_at",null);
 
   return (
     <>
@@ -76,7 +79,7 @@ export async function AppShell({ children }: Props) {
       <div className="app-shell">
         {/* ── Topbar ── spans the full width (grid-column 1 / -1) */}
         <div className="app-topbar">
-          <Topbar userName={userName} userEmail={userEmail} roleLabel={roleLabel} />
+          <Topbar userName={userName} userEmail={userEmail} roleLabel={roleLabel} unreadNotifications={unreadNotifications??0} />
         </div>
 
         {/* ── Sidebar ── left column below the topbar (hidden on mobile via CSS) */}

@@ -131,6 +131,8 @@ export const PERMISSIONS = {
   VENDOR_CREATE: "vendor.create",
   VENDOR_UPDATE: "vendor.update",
   VENDOR_VERIFY: "vendor.verify",
+  VENDOR_PORTAL: "vendor.portal",
+  VENDOR_PERFORMANCE_MANAGE: "vendor.performance.manage",
 
   // RFQ
   RFQ_READ: "rfq.read",
@@ -142,10 +144,15 @@ export const PERMISSIONS = {
   QUOTATION_READ: "quotation.read",
   QUOTATION_EVALUATE: "quotation.evaluate",
   QUOTATION_COMPARE: "quotation.compare",
+  QUOTATION_CREATE: "quotation.create",
+  QUOTATION_SUBMIT: "quotation.submit",
 
   // Vendor selection
   VENDOR_SELECTION_RECOMMEND: "vendor_selection.recommend",
   VENDOR_SELECTION_APPROVE: "vendor_selection.approve",
+  VENDOR_SELECTION_APPROVE_LEVEL1: "vendor_selection.approve.level1",
+  VENDOR_SELECTION_APPROVE_LEVEL2: "vendor_selection.approve.level2",
+  VENDOR_SELECTION_APPROVE_FINAL: "vendor_selection.approve.final",
 
   // Work orders
   WORK_ORDER_CREATE: "work_order.create",
@@ -158,6 +165,7 @@ export const PERMISSIONS = {
   CONTRACT_APPROVE: "contract.approve",
   CONTRACT_RENEW: "contract.renew",
   CONTRACT_TERMINATE: "contract.terminate",
+  CONTRACT_RENEWAL_MANAGE: "contract.renewal.manage",
 
   // Maintenance / facilities
   MAINTENANCE_VIEW: "maintenance.view",
@@ -166,6 +174,13 @@ export const PERMISSIONS = {
   // Finance
   FINANCE_VIEW: "finance.view",
   FINANCE_MANAGE: "finance.manage",
+  FINANCE_DUES_MANAGE: "finance.dues.manage",
+  FINANCE_PAYMENT_RECORD: "finance.payment.record",
+  FINANCE_PAYMENT_RECONCILE: "finance.payment.reconcile",
+  FINANCE_PAYMENT_REFUND: "finance.payment.refund",
+  FINANCE_DUE_WAIVE: "finance.due.waive",
+  FINANCE_SETTINGS_MANAGE: "finance.settings.manage",
+  FINANCE_ADJUSTMENT_APPROVE: "finance.adjustment.approve",
 
   // RFQ approval (separate from rfq.publish)
   RFQ_APPROVE: "rfq.approve",

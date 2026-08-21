@@ -125,7 +125,16 @@ async function signInAs(
   email: string,
   password: string
 ): Promise<SupabaseClient> {
-  const client = createClient(SUPABASE_URL!, ANON_KEY!);
+  // Each persona must keep an isolated in-memory session. Sharing the default
+  // browser storage key makes concurrent clients overwrite one another and can
+  // produce false tenant-isolation failures (or false passes).
+  const client = createClient(SUPABASE_URL!, ANON_KEY!, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+  });
   const { error } = await client.auth.signInWithPassword({ email, password });
   if (error) {
     throw new Error(
@@ -142,7 +151,9 @@ async function signInAs(
  * never to represent a real user in a security assertion.
  */
 function adminClient(): SupabaseClient {
-  return createClient(SUPABASE_URL!, SERVICE_KEY!);
+  return createClient(SUPABASE_URL!, SERVICE_KEY!, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+  });
 }
 
 // Pre-authenticated clients, built once in beforeAll

@@ -56,11 +56,20 @@ export async function registerSociety(
   const email               = (formData.get("email")               as string | null)?.trim() ?? "";
   const phone               = (formData.get("phone")               as string | null)?.trim() ?? "";
   const website             = (formData.get("website")             as string | null)?.trim() || null;
+  const pan                 = (formData.get("pan")                 as string | null)?.trim().toUpperCase() || null;
+  const gstin               = (formData.get("gstin")               as string | null)?.trim().toUpperCase() || null;
   const registered_at       = (formData.get("registered_at")       as string | null)?.trim() ?? "";
   const admin_full_name     = (formData.get("admin_full_name")     as string | null)?.trim() ?? "";
   const admin_email         = (formData.get("admin_email")         as string | null)?.trim().toLowerCase() ?? "";
+  const chairman_name       = (formData.get("chairman_name")       as string | null)?.trim() ?? "";
+  const chairman_email      = (formData.get("chairman_email")      as string | null)?.trim().toLowerCase() ?? "";
+  const secretary_name      = (formData.get("secretary_name")      as string | null)?.trim() ?? "";
+  const secretary_email     = (formData.get("secretary_email")     as string | null)?.trim().toLowerCase() ?? "";
+  const treasurer_name      = (formData.get("treasurer_name")      as string | null)?.trim() ?? "";
+  const treasurer_email     = (formData.get("treasurer_email")     as string | null)?.trim().toLowerCase() ?? "";
+  const committee_details   = (formData.get("committee_details")   as string | null)?.trim() ?? "";
 
-  if (!name || !registration_number || !address || !city || !state_val || !pin_code || !email || !phone || !registered_at || !admin_full_name || !admin_email) {
+  if (!name || !registration_number || !address || !city || !state_val || !pin_code || !email || !phone || !registered_at || !admin_full_name || !admin_email || !chairman_name || !secretary_name || !treasurer_name) {
     return { success: false, error: "All required fields must be filled in." };
   }
 
@@ -70,6 +79,13 @@ export async function registerSociety(
 
   if (!/^\d{6}$/.test(pin_code)) {
     return { success: false, error: "PIN code must be exactly 6 digits." };
+  }
+
+  if (pan && !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan)) {
+    return { success: false, error: "Please enter a valid PAN." };
+  }
+  if (gstin && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][0-9A-Z]Z[0-9A-Z]$/.test(gstin)) {
+    return { success: false, error: "Please enter a valid GSTIN." };
   }
 
   const adminEmailError = validateOperationalEmail(admin_email);
@@ -91,7 +107,7 @@ export async function registerSociety(
 
   // 4. Create society + settings + first Society Admin atomically.
   const { data: societyId, error: insertErr } = await admin.rpc(
-    "register_society_with_admin",
+    "register_society_with_admin_v2",
     {
       p_name: name,
       p_registration_number: registration_number,
@@ -103,9 +119,17 @@ export async function registerSociety(
       p_email: email,
       p_phone: phone,
       p_website: website,
+      p_pan: pan,
+      p_gstin: gstin,
       p_registered_at: registered_at,
       p_admin_user_id: adminUser.userId,
       p_created_by: caller.id,
+      p_officers: [
+        { officer_type:"CHAIRMAN", name:chairman_name, designation:"Chairman", email:chairman_email, phone:"", is_signatory:true },
+        { officer_type:"SECRETARY", name:secretary_name, designation:"Secretary", email:secretary_email, phone:"", is_signatory:true },
+        { officer_type:"TREASURER", name:treasurer_name, designation:"Treasurer", email:treasurer_email, phone:"", is_signatory:true },
+        ...(committee_details ? [{ officer_type:"MANAGING_COMMITTEE", name:committee_details, designation:"Managing Committee", email:"", phone:"", is_signatory:false }] : []),
+      ],
     }
   );
 

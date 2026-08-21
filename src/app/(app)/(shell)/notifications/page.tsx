@@ -1,0 +1,2 @@
+import{getServerContext}from"@/lib/context";import{NotificationsClient}from"./NotificationsClient";
+export default async function NotificationsPage(){const{supabase,userId}=await getServerContext();const{data}=await supabase.from("notifications").select("id,notification_type,title,message,entity_type,entity_id,action_url,read_at,created_at").eq("user_id",userId).order("created_at",{ascending:false}).limit(200);return <NotificationsClient notifications={data??[]}/>;}

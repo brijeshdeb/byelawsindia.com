@@ -242,6 +242,14 @@ export function NewSocietyForm() {
               required
             />
           </div>
+          <div>
+            <FieldLabel htmlFor="pan">PAN (optional)</FieldLabel>
+            <TextInput id="pan" name="pan" placeholder="ABCDE1234F" />
+          </div>
+          <div>
+            <FieldLabel htmlFor="gstin">GSTIN (where applicable)</FieldLabel>
+            <TextInput id="gstin" name="gstin" placeholder="27ABCDE1234F1Z5" />
+          </div>
         </div>
       </div>
 
@@ -351,6 +359,28 @@ export function NewSocietyForm() {
               placeholder="https://sunrisechs.org"
               autoComplete="url"
             />
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="rounded-xl p-6 mb-5"
+        style={{ backgroundColor: "#1E1E1E", border: "1px solid #333333" }}
+      >
+        <SectionHeading>Committee &amp; Authorized Signatories</SectionHeading>
+        <p className="text-sm mb-4" style={{ color: "#9CA3AF" }}>
+          The three principal officers are created as authorized signatories and can be updated later by the Society Admin.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div><FieldLabel htmlFor="chairman_name" required>Chairman Name</FieldLabel><TextInput id="chairman_name" name="chairman_name" required /></div>
+          <div><FieldLabel htmlFor="chairman_email">Chairman Email</FieldLabel><TextInput id="chairman_email" name="chairman_email" type="email" /></div>
+          <div><FieldLabel htmlFor="secretary_name" required>Secretary Name</FieldLabel><TextInput id="secretary_name" name="secretary_name" required /></div>
+          <div><FieldLabel htmlFor="secretary_email">Secretary Email</FieldLabel><TextInput id="secretary_email" name="secretary_email" type="email" /></div>
+          <div><FieldLabel htmlFor="treasurer_name" required>Treasurer Name</FieldLabel><TextInput id="treasurer_name" name="treasurer_name" required /></div>
+          <div><FieldLabel htmlFor="treasurer_email">Treasurer Email</FieldLabel><TextInput id="treasurer_email" name="treasurer_email" type="email" /></div>
+          <div className="md:col-span-2">
+            <FieldLabel htmlFor="committee_details">Other Managing Committee Details</FieldLabel>
+            <textarea id="committee_details" name="committee_details" rows={3} placeholder="Names/designations of other committee members" className="w-full resize-none focus:outline-none transition-colors" style={INPUT_STYLE} />
           </div>
         </div>
       </div>

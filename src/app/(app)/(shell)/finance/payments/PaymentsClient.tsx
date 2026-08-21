@@ -1,79 +1,26 @@
 "use client";
 
-interface Payment {
-  id: string;
-  amount_paid: number;
-  payment_method: string;
-  payment_date: string;
-  reference_number: string | null;
-  due_type?: string;
-  member_name?: string;
-}
+import { useState, useTransition } from "react";
+import { decideFinanceAdjustmentAction, reconcilePaymentAction, refundPaymentAction, type PaymentMethod } from "@/app/actions/finance";
 
-function label(s: string) { return s.charAt(0) + s.slice(1).toLowerCase().replace("_", " "); }
+interface Payment { id: string; receipt_number: string; amount_paid: number; payment_method: string; payment_date: string; reference_number: string | null; status: string; reconciliation_status: string; reconciliation_notes: string | null; due_type?: string; member_name?: string }
+interface Refund { id: string; payment_id: string; refund_number: string; amount: number; refund_method: string; reason: string; processed_at: string }
+interface Adjustment { id:string; adjustment_type:"REFUND"|"WAIVER"; payment_id:string|null; due_id:string|null; amount:number; payment_method:string|null; reason:string; status:string; requested_by:string; requested_at:string; reviewed_by:string|null; reviewed_at:string|null; review_notes:string|null }
+const label = (value: string) => value.toLowerCase().replace(/_/g," ").replace(/^./,(c)=>c.toUpperCase());
 
-export function PaymentsClient({ payments }: { payments: Payment[] }) {
-  const totalCollected = payments.reduce((sum, p) => sum + p.amount_paid, 0);
-
-  return (
-    <div className="page-container">
-      <div className="page-header">
-        <div>
-          <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-text-primary">
-            Payments
-          </h1>
-          <p className="font-body-sm text-body-sm mt-1" style={{ color: "#9CA3AF" }}>
-            Payment transactions recorded for the society
-          </p>
-        </div>
-        {totalCollected > 0 && (
-          <div className="px-4 py-2 rounded" style={{ backgroundColor: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)" }}>
-            <p className="text-sm font-medium" style={{ color: "#10B981" }}>
-              Total collected: INR {totalCollected.toLocaleString("en-IN")}
-            </p>
-          </div>
-        )}
-      </div>
-
-      <div className="queue-section">
-        {payments.length === 0 ? (
-          <div className="flex flex-col items-center py-16" style={{ color: "#6B7280" }}>
-            <span className="material-symbols-outlined mb-3" style={{ fontSize: "40px" }}>payments</span>
-            <p className="text-sm">No payments recorded. Use Finance - Dues to record a payment.</p>
-          </div>
-        ) : (
-          <table className="w-full" style={{ borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ backgroundColor: "#1c1b1b", borderBottom: "1px solid #333333" }}>
-                {["Member", "Due type", "Amount paid", "Method", "Reference", "Date"].map((h) => (
-                  <th key={h} className="font-label-md text-label-md text-left px-4 py-3" style={{ color: "#6B7280" }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {payments.map((row, i) => (
-                <tr key={row.id} style={{ borderBottom: i < payments.length - 1 ? "1px solid #2a2a2a" : "none" }}>
-                  <td className="px-4 py-3 font-body-sm text-body-sm text-text-primary">{row.member_name ?? "—"}</td>
-                  <td className="px-4 py-3 font-body-sm text-body-sm" style={{ color: "#9CA3AF" }}>{row.due_type ? label(row.due_type) : "—"}</td>
-                  <td className="px-4 py-3 font-body-sm text-body-sm text-text-primary font-medium">
-                    INR {row.amount_paid.toLocaleString("en-IN")}
-                  </td>
-                  <td className="px-4 py-3 font-body-sm text-body-sm" style={{ color: "#9CA3AF" }}>{label(row.payment_method)}</td>
-                  <td className="px-4 py-3 font-mono text-xs" style={{ color: "#9CA3AF" }}>{row.reference_number ?? "—"}</td>
-                  <td className="px-4 py-3 font-body-sm text-body-sm" style={{ color: "#9CA3AF" }}>
-                    {new Date(row.payment_date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-        <div className="px-4 py-3" style={{ borderTop: "1px solid #333333", backgroundColor: "#1c1b1b" }}>
-          <p className="font-body-sm text-body-sm" style={{ color: "#6B7280" }}>
-            {`Showing ${payments.length} payment${payments.length !== 1 ? "s" : ""}.`}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+export function PaymentsClient({ payments, refunds, adjustments, currentUserId, canApprove, canRequestRefund }: { payments: Payment[]; refunds: Refund[]; adjustments: Adjustment[]; currentUserId:string; canApprove:boolean; canRequestRefund:boolean }) {
+  const [refundFor, setRefundFor] = useState<Payment | null>(null); const [message,setMessage]=useState(""); const [pending,startTransition]=useTransition();
+  const refunded = refunds.reduce((sum,row)=>sum+row.amount,0); const collected = payments.reduce((sum,row)=>sum+row.amount_paid,0); const net = collected-refunded;
+  function reconcile(paymentId:string,status:"MATCHED"|"EXCEPTION") { startTransition(async()=>{ const result=await reconcilePaymentAction({paymentId,status}); setMessage(result.success?`Payment marked ${label(status)}.`:result.error); }); }
+  function submitRefund(formData:FormData) { if(!refundFor)return; startTransition(async()=>{ const result=await refundPaymentAction({ paymentId:refundFor.id, amount:Number(formData.get("amount")), refundMethod:String(formData.get("method")) as PaymentMethod, referenceNumber:String(formData.get("reference")??""), reason:String(formData.get("reason")??"") }); setMessage(result.success?"Refund request submitted for independent approval.":result.error); if(result.success)setRefundFor(null); }); }
+  function decide(requestId:string,decision:"APPROVED"|"REJECTED") { const notes=decision==="REJECTED"?window.prompt("Reason for rejection")??"":""; if(decision==="REJECTED"&&!notes.trim())return; startTransition(async()=>{const result=await decideFinanceAdjustmentAction({requestId,decision,notes});setMessage(result.success?`Adjustment ${label(decision)}.`:result.error);}); }
+  const input="w-full rounded border border-[#333] bg-[#171717] px-3 py-2 text-sm text-text-primary";
+  return <div className="page-container"><div className="page-header"><div><h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-text-primary">Payments & Reconciliation</h1><p className="mt-1 text-sm text-[#9CA3AF]">Receipts, collection matching and auditable refunds</p></div></div>
+    <div className="mb-5 grid grid-cols-1 gap-4 md:grid-cols-3">{[["Gross collected",collected,"#10B981"],["Refunded",refunded,"#F59E0B"],["Net collected",net,"#38BDF8"]].map(([name,value,color])=><div key={String(name)} className="queue-section p-5"><p className="text-xs text-[#6B7280]">{name}</p><p className="mt-1 text-xl font-semibold" style={{color:String(color)}}>INR {Number(value).toLocaleString("en-IN")}</p></div>)}</div>
+    {message&&<p role="status" className="mb-4 rounded border border-[#333] bg-[#1c1b1b] px-4 py-3 text-sm text-[#D1D5DB]">{message}</p>}
+    {refundFor&&<form action={submitRefund} className="queue-section mb-5 grid grid-cols-1 gap-4 p-5 md:grid-cols-2"><div className="md:col-span-2"><h2 className="font-semibold text-text-primary">Request refund for {refundFor.receipt_number}</h2><p className="text-sm text-[#9CA3AF]">Original payment: INR {refundFor.amount_paid.toLocaleString("en-IN")}. A different authorized user must approve this request.</p></div><label className="text-sm text-[#9CA3AF]">Amount<input name="amount" type="number" min="0.01" max={refundFor.amount_paid} step="0.01" required className={`${input} mt-1`}/></label><label className="text-sm text-[#9CA3AF]">Method<select name="method" className={`${input} mt-1`}>{["BANK_TRANSFER","UPI","NEFT","RTGS","CHEQUE","CASH","OTHER"].map((m)=><option key={m}>{m}</option>)}</select></label><label className="text-sm text-[#9CA3AF]">Reference<input name="reference" className={`${input} mt-1`}/></label><label className="text-sm text-[#9CA3AF]">Reason<input name="reason" required className={`${input} mt-1`}/></label><div className="md:col-span-2 flex justify-end gap-2"><button type="button" onClick={()=>setRefundFor(null)} className="rounded border border-[#444] px-4 py-2 text-sm text-[#D1D5DB]">Cancel</button><button disabled={pending} className="rounded bg-[#EF4444] px-4 py-2 text-sm font-medium text-white disabled:opacity-50">Submit for approval</button></div></form>}
+    {adjustments.length>0&&<section className="queue-section mb-5"><div className="border-b border-[#333] px-5 py-4"><h2 className="font-semibold text-text-primary">Finance adjustment approvals</h2><p className="mt-1 text-xs text-[#9CA3AF]">Refunds and waivers require a different authorized user to approve them.</p></div>{adjustments.map((row)=><div key={row.id} className="flex flex-wrap items-center justify-between gap-3 border-b border-[#292929] px-5 py-3 text-sm"><div><p className="text-text-primary">{label(row.adjustment_type)} · INR {row.amount.toLocaleString("en-IN")}</p><p className="text-[#9CA3AF]">{row.reason} · {label(row.status)}</p></div>{row.status==="PENDING"&&canApprove&&<div className="flex gap-2">{row.requested_by===currentUserId?<span className="text-xs text-[#F59E0B]">Awaiting another approver</span>:<><button disabled={pending} onClick={()=>decide(row.id,"APPROVED")} className="rounded border border-[#10B981] px-3 py-1 text-xs text-[#10B981]">Approve</button><button disabled={pending} onClick={()=>decide(row.id,"REJECTED")} className="rounded border border-[#EF4444] px-3 py-1 text-xs text-[#EF4444]">Reject</button></>}</div>}</div>)}</section>}
+    <div className="queue-section overflow-x-auto"><table className="w-full border-collapse"><thead><tr className="border-b border-[#333] bg-[#1c1b1b]">{["Receipt","Member","Amount","Method","Payment status","Reconciliation","Date","Actions"].map((h)=><th key={h} className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-[#6B7280]">{h}</th>)}</tr></thead><tbody>{payments.length===0?<tr><td colSpan={8} className="py-16 text-center text-sm text-[#6B7280]">No payments recorded.</td></tr>:payments.map((row)=><tr key={row.id} className="border-b border-[#292929]"><td className="px-4 py-3"><p className="font-mono text-xs text-[#10B981]">{row.receipt_number}</p><a href={`/api/finance/payments/${row.id}/receipt`} target="_blank" className="text-xs text-[#9CA3AF] underline">View receipt</a></td><td className="px-4 py-3 text-sm text-text-primary">{row.member_name??"—"}</td><td className="px-4 py-3 text-sm text-text-primary">INR {row.amount_paid.toLocaleString("en-IN")}</td><td className="px-4 py-3 text-sm text-[#9CA3AF]">{label(row.payment_method)}</td><td className="px-4 py-3 text-xs" style={{color:row.status==="RECORDED"?"#10B981":"#F59E0B"}}>{label(row.status)}</td><td className="px-4 py-3 text-xs" style={{color:row.reconciliation_status==="MATCHED"?"#10B981":row.reconciliation_status==="EXCEPTION"?"#EF4444":"#9CA3AF"}}>{label(row.reconciliation_status)}</td><td className="whitespace-nowrap px-4 py-3 text-sm text-[#9CA3AF]">{new Date(row.payment_date).toLocaleDateString("en-IN")}</td><td className="px-4 py-3"><div className="flex gap-2"><button disabled={pending} onClick={()=>reconcile(row.id,"MATCHED")} className="rounded border border-[#10B981] px-2 py-1 text-xs text-[#10B981]">Match</button><button disabled={pending} onClick={()=>reconcile(row.id,"EXCEPTION")} className="rounded border border-[#F59E0B] px-2 py-1 text-xs text-[#F59E0B]">Flag</button>{canRequestRefund&&row.status!=="REFUNDED"&&<button disabled={pending} onClick={()=>setRefundFor(row)} className="rounded border border-[#EF4444] px-2 py-1 text-xs text-[#EF4444]">Request refund</button>}</div></td></tr>)}</tbody></table></div>
+    {refunds.length>0&&<section className="queue-section mt-5"><div className="border-b border-[#333] px-5 py-4"><h2 className="font-semibold text-text-primary">Refund register</h2></div>{refunds.map((row)=><div key={row.id} className="flex flex-wrap justify-between gap-3 border-b border-[#292929] px-5 py-3 text-sm"><div><p className="font-mono text-xs text-[#F59E0B]">{row.refund_number}</p><p className="text-[#9CA3AF]">{row.reason}</p></div><p className="text-text-primary">INR {row.amount.toLocaleString("en-IN")} · {label(row.refund_method)}</p></div>)}</section>}
+  </div>;
 }

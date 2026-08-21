@@ -21,7 +21,7 @@
 | Data fetching | TanStack Query (client components) |
 | Table | TanStack Table |
 | Forms | React Hook Form + Zod |
-| Email | Supabase Auth email and Resend integration; production delivery requires verification |
+| Email | Supabase Auth plus Resend-backed queued delivery, retry, webhook and delivery history |
 | Hosting | Vercel |
 
 ---
@@ -76,9 +76,12 @@ hold both flags.
 |---|---|
 | `/dashboard` | Society dashboard — key metrics and recent activity |
 | `/members` | Member directory |
-| `/members/statutory-registers` | Form I and Form J registers, Excel exports, and immutable snapshots |
+| `/members/statutory-registers` | Form I and Form J manual register, atomic Excel import, Excel/PDF/print exports and immutable snapshots |
+| `/members/nominations` | Nominee records, percentage validation and Society Admin decisions |
+| `/members/associates` | Associate applications, fees, approval and member-register creation |
 | `/units` | Unit (flat/shop) registry |
 | `/applications` | Member application queue and approval workflow |
+| `/service-requests` | Member service requests, approval history and generated letters/forms |
 | `/documents` | Society document repository |
 | `/finance/dues` | Maintenance due management |
 | `/finance/payments` | Payment recording |
@@ -88,6 +91,9 @@ hold both flags.
 | `/procurement/work-orders` | Procurement work order issuance |
 | `/procurement/contracts` | Society-scoped contract management |
 | `/vendors` | Society-scoped vendor directory |
+| `/vendor` | Isolated vendor portal for RFQs, quotations, documents, contracts and renewals |
+| `/notifications` | Portal notification inbox and read history |
+| `/search` | Society-scoped global search |
 | `/reports` | Reports hub |
 | `/reports/audit` | Society audit log |
 | `/admin/console` | Society admin — overview and settings |
@@ -108,7 +114,7 @@ hold both flags.
 | `profiles` | Extended user record linked to `auth.users`. Holds `is_platform_admin` flag and `is_active`. |
 | `login_activity` | Login event log (success, failure, logout). |
 | `societies` | Top-level tenant entity. Every transactional table references `society_id`. |
-| `society_settings` | Per-society configuration (number patterns, timezone, approval thresholds). |
+| `society_settings` | Per-society numbering, timezone, payment and renewal-notification configuration. |
 | `sequences` | Atomic counter table — drives `get_next_sequence()` DB function for number generation. |
 | `wings` | Physical blocks/wings within a society. |
 | `units` | Individual flats/shops within a wing. |
@@ -138,6 +144,16 @@ hold both flags.
 | `finance_dues` | `society_id`, `member_id`, `unit_id`, `due_type`, `amount`, `status` |
 | `finance_payments` | `society_id`, `due_id`, `payment_method`, `amount_paid`, `payment_date` |
 | `audit_logs` | `society_id`, `actor_user_id`, `action`, `entity_type`, `entity_id`, `old_values`, `new_values` |
+| `approval_workflows`, `approval_workflow_steps`, `approval_instances`, `approval_decisions` | Configurable and auditable staged approvals |
+| `application_checklist_items`, `application_status_history` | Member-document checklist and application timeline |
+| `joint_members`, `nominations`, `nominees`, `associate_memberships` | Detailed membership and statutory relations |
+| `service_requests`, `service_request_status_history` | Society service workflow and immutable status history |
+| `master_data_items`, `content_templates`, `generated_documents` | Configurable master data, versioned templates and generated outputs |
+| `vendor_users`, `vendor_documents`, `vendor_performance_reviews` | Isolated vendor access, compliance files and performance history |
+| `rfq_invitations`, `quotations`, `quotation_items`, `quotation_evaluations`, `vendor_selections` | End-to-end procurement workflow |
+| `contract_renewals` | Renewal intimation, vendor quotation and Society Admin decision |
+| `notifications`, `notification_deliveries` | Portal/email queue, retries and delivery events |
+| `finance_refunds`, `finance_adjustment_requests` | Refund/waiver maker-checker workflow |
 
 ### Migration History
 
@@ -204,11 +220,13 @@ is never sent to the browser.
 ### Key Security Rules (non-negotiable)
 
 - Service role key: server-only, never in browser bundle.
-- `RESEND_API_KEY`: server-only. Currently placeholder — emails broken.
+- `RESEND_API_KEY`: server-only. Missing configuration leaves email deliveries queued/retryable without exposing the key.
 - `society_id` is present on every transactional record. No record exists without tenant scope.
 - Frontend filters are UX only. Authorization is enforced at DB layer.
 - Storage paths use generated IDs, not raw member names or Aadhaar/PAN.
 - Vendor A cannot see Vendor B's quotations (RLS + application logic).
+- Platform Owner has cross-society oversight, configuration and account-recovery access but cannot make society operational decisions.
+- Final society decisions require an active, society-wide Society Admin for the same society; the database rejects Platform Owner or cross-society attempts.
 
 ---
 
@@ -231,10 +249,10 @@ All subsequent tenant server actions call `getServerContext()` which reads this
 cookie and returns a typed `ServerContext` object containing the Supabase
 client, `userId`, `societyId`, and `wingId`.
 
-Platform admins can switch into any society via the "Switch" action on the
-Societies list page, which calls `switchToSociety(formData)` from
-`platform/console/actions.ts`. This overwrites the context cookie and redirects
-to `/dashboard`.
+Platform admins can switch into any society for oversight via the "Switch"
+action. This never grants operational approval authority: application,
+finance, procurement, service-request, nomination, associate, renewal and
+document decisions explicitly reject Platform Owner sessions.
 
 ---
 
@@ -248,13 +266,20 @@ to `/dashboard`.
 | Wing Admin | Wing-scoped | Full access within their wing |
 | Application Officer | Society or Wing | application.read/verify, document.read/upload/verify |
 | Application Authority | Society or Wing | application.approve.level2 |
-| Final Authority | Society or Wing | application.approve.final, member.create |
+| Society Treasurer | Society-wide | Record/reconcile payments and raise refund/waiver requests; cannot self-approve adjustments |
 | Documents Officer | Society or Wing | document.read/upload/verify/archive |
 | Procurement Officer | Society or Wing | rfq.create/publish/evaluate, quotation.evaluate/compare, contract.create |
-| Procurement Authority | Society or Wing | rfq.approve, vendor_selection.approve, work_order.create/approve, contract.approve/renew |
+| Procurement Authority | Society-wide | First-stage vendor-selection approval |
+| Procurement Authority 2 | Society-wide | Second-stage vendor-selection approval |
 | Finance Officer | Society or Wing | finance.view/manage |
 | Report Viewer | Society or Wing | report.view (read-only) |
 | Member (Read-only) | Self | Own records, submitted applications, service_request.create |
+| Vendor | Vendor-scoped | Own profile/documents, invited RFQs, quotations, work orders, contracts and renewals |
+
+The three-stage member flow is Application Officer → Application Authority →
+same-society Society Admin. The three-stage vendor-selection flow is
+Procurement Authority 1 → Procurement Authority 2 → same-society Society
+Admin. Platform Owner is excluded from every stage.
 
 ### Permission Code Format
 
@@ -333,40 +358,18 @@ Vendor codes use a different format generated in application code:
 
 ## 11. Feature Status
 
-### Implemented foundations
+### Release implementation summary
 
-- Multi-society and multi-wing data model with RLS-based isolation.
-- Platform and society authentication, scoped RBAC and context switching.
-- Mandatory Society Admin during registration and protection against removing the final administrator.
-- Platform society directory, society registration, user access assignment and vendor directory.
-- Society dashboard, member/unit registers, manual dues/payment recording and audit views.
-- Form I and Form J Excel export with immutable snapshots.
-- Responsive desktop/mobile shells and navigation.
-- Self-service password change and email-based password recovery for every account type.
-
-### Partially implemented modules
-
-- Member applications, document management, nominations, vendors, RFQs, work orders and contracts have data models or screens but not every required lifecycle action.
-- Audit coverage includes authentication, finance, access, society registration and statutory exports; full mutation coverage and actor-name resolution remain.
-- Local search and filters exist on several directories; global search is not implemented.
-- Platform and society dashboards are live; authority and vendor dashboards remain.
-
-### Waiting modules
-
-| Item | Dependency |
-|---|---|
-| Three-level approval workflow | Configurable workflow engine and complete decision actions |
-| Society service letters and remaining forms | Template management plus PDF/DOCX generation |
-| Associate membership | Application, documents, fees, approval and register |
-| Vendor portal and quotation submission | Vendor authentication, documents and submission workflow |
-| Quotation comparison and selection approval | Submitted quotation data and approval workflow |
-| Contract renewal automation | Reminder engine, vendor quotation and approval workflow |
-| Reports and MIS generation | Report builders and PDF/Excel/CSV/print outputs |
-| Master data and email template management | Administrator configuration interfaces |
-| Online payments and reconciliation | Gateway, webhooks, refunds, settlements and merchant model |
-| Society deactivation workflow | Confirmation, session revocation, audit and recovery path |
-| MFA | Enrollment, challenge and recovery user interfaces |
-| Central notifications | Verified delivery provider, templates, logs and reminder engine |
+- **Implemented: 38 of 47 sections.** Primary member, approval, service,
+  document, procurement, vendor portal, renewal, finance, notification,
+  reporting, audit and configuration workflows are operational.
+- **Partial: 8 sections.** Remaining work is concentrated in full wing parity,
+  signed nomination/associate uploads, extended vendor/contract fields,
+  quotation draft persistence, the long-tail MIS catalogue and external
+  security operations.
+- **Waiting: 1 section.** Future integrations remain roadmap scope.
+- All four demo societies and their test accounts remain available. Every
+  society has an active Society Admin and the final-admin invariant is enforced.
 
 ---
 
@@ -379,7 +382,7 @@ Vendor codes use a different format generated in application code:
 | `NEXT_PUBLIC_SUPABASE_URL` | All Supabase clients (browser + server) |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Browser and SSR Supabase client |
 | `SUPABASE_SERVICE_ROLE_KEY` | `createAdminClient()` — server only, never public |
-| `RESEND_API_KEY` | Application notifications via Resend; production delivery must be verified |
+| `RESEND_API_KEY` | Resend email delivery; queued portal notifications remain available if omitted |
 | `NEXT_PUBLIC_APP_URL` | Redirect URLs in auth callbacks |
 
 ---
@@ -390,53 +393,53 @@ Status assessed against **ByelawsIndia Requirements**, 21 August 2026.
 
 | No. | Requirement | Status | Reason / dependency |
 |---:|---|---|---|
-| 1 | Project overview and multi-society platform | Implemented | Multi-society, multi-wing Next.js and PostgreSQL foundation is live with tenant isolation. |
-| 2 | User roles | Partial | Core platform, society, staff, authority and member roles exist; vendor portal roles and fully configurable authorities are incomplete. |
-| 3 | Society/client registration | Partial | Basic registration and mandatory first administrator are implemented; committee, logo, signatory, document and template configuration remain. |
-| 4 | Wing/branch management | Partial | Wings, units and scoped access exist; complete wing-specific workflows across every module are not finished. |
-| 5 | Authentication and RBAC | Partial | Login, activation, deactivation, sessions, password change/reset, roles and scope checks exist; MFA and full denial regression remain. |
-| 6 | Member registration | Partial | Core member and statutory fields are supported; joint/associate members, identity documents and complete application lifecycle remain. |
-| 7 | Member document checklist | Partial | Application/document foundations exist; configurable checklist, blank-form, signed upload and replacement workflow remain. |
-| 8 | Document management system | Partial | Repository and protected data model exist; full upload, preview, versioning, expiry and access-history workflow remain. |
-| 9 | Three-level approval workflow | Waiting | Roles and statuses exist, but the complete three-authority decision workflow and configurable engine are not implemented. |
-| 10 | Application tracking | Partial | Application records and statuses exist; complete timeline, member tracking and status notifications remain. |
-| 11 | Society service requests | Waiting | Dedicated service-request types, approval history and generated service letters are not implemented. |
-| 12 | Society letter and form generation | Partial | Form I and Form J Excel generation is live; remaining letters, PDF/DOCX output, signatures and template administration remain. |
-| 13 | Form I and Form J management | Partial | Manual member data, Excel export and immutable history are implemented; Excel import, PDF generation and direct printing remain. |
-| 14 | Nomination management | Partial | A single nominee and nomination date are captured for Form I; multiple nominees, shares, uploads, approval and history remain. |
-| 15 | Associate membership management | Waiting | Dedicated applications, documents, fees, approval workflow and associate register are not implemented. |
-| 16 | Vendor management | Partial | Central vendor directory and basic registration exist; full profile, category, bank, licence and lifecycle management remain. |
-| 17 | Vendor document management | Waiting | Dedicated vendor-document upload, verification, expiry and reminder workflow is not implemented. |
-| 18 | Vendor portal | Waiting | Separate vendor authentication, dashboard, RFQs, quotations, contracts and communications are not implemented. |
-| 19 | Contract/AMC management | Partial | Contract schema and listings exist; complete create/edit, approval, documents, SLA and status lifecycle remain. |
-| 20 | Contract renewal management | Partial | Expiry dates and presentation exist; configurable reminder engine and escalation are not implemented. |
-| 21 | Contract renewal intimation | Waiting | Recipient rules, generated intimation, delivery and notification history depend on the notification engine. |
-| 22 | Renewal quotation | Waiting | Vendor portal, renewal request, quotation submission and approval workflow are dependencies. |
-| 23 | RFQ/quotation management | Partial | RFQ data model and screens exist; complete creation-to-submission workflow and attachments remain. |
-| 24 | Vendor selection for RFQ | Partial | Vendor directory filtering exists; RFQ-linked multi-vendor selection and experience/preference scoring remain. |
-| 25 | Email quotation invitation | Waiting | Requires production email delivery, templates, vendor portal links and delivery tracking. |
-| 26 | Vendor quotation submission | Waiting | Requires the vendor portal, draft quotations, document uploads and submission controls. |
-| 27 | Quotation comparison | Waiting | Requires submitted quotation data, evaluation controls and comparison-report generation. |
-| 28 | Vendor selection and approval | Waiting | Depends on quotation evaluation and the configurable multi-level approval engine. |
-| 29 | Work order management | Partial | Work-order records and screens exist; generation from selection, approvals, documents and contract linkage remain. |
-| 30 | Vendor performance management | Waiting | Rating criteria, history, UI and RFQ-selection integration are not implemented. |
-| 31 | Notification and email management | Partial | Authentication recovery emails are supported; centralized templates, portal notifications, reminders, delivery logs, SMS and WhatsApp remain. |
-| 32 | Dashboards | Partial | Platform and society dashboards show live metrics; authority and vendor dashboards and complete operational metrics remain. |
-| 33 | Search and filtering | Partial | Several directories have local search/filters; global cross-module search is not implemented. |
-| 34 | Reports and MIS | Waiting | Report catalogue is visible but generation buttons are disabled; PDF, Excel, CSV and print outputs remain. |
-| 35 | Audit trail | Partial | Authentication, finance, access, society and statutory exports are logged; full mutation coverage and actor-name resolution remain. |
-| 36 | Security requirements | Partial | HTTPS, RBAC, RLS, CSP, token security and audit foundations exist; MFA, malware scanning, backup restore, DR and complete security tests remain. |
-| 37 | Recommended database structure | Partial | Core identity, tenant, member, application, vendor, contract, RFQ, finance and audit tables exist; several workflow entities remain. |
-| 38 | Recommended application architecture | Partial | Next.js, TypeScript, PostgreSQL, private server access and Vercel deployment exist; verified staging, backups, monitoring and email operations remain. |
-| 39 | End-to-end member workflow | Waiting | Registration exists, but checklist, three-level approval, notifications and complete document/form lifecycle are dependencies. |
-| 40 | End-to-end vendor procurement workflow | Waiting | Vendor portal, quotation submission/comparison, approvals, selection and renewal are dependencies. |
-| 41 | Contract renewal workflow | Waiting | Reminder engine, vendor renewal quotation and approval automation are not implemented. |
-| 42 | Master data management | Waiting | Configurable types, statuses, reasons, approval levels and template administration are not implemented. |
-| 43 | Email template management | Waiting | Requires a template editor, dynamic-field validation, delivery provider and email logs. |
-| 44 | Mobile and responsive requirements | Partial | Responsive shells and mobile navigation are live; all tables, uploads and unfinished vendor/RFQ flows need device regression. |
-| 45 | Future enhancements | Waiting | Items are roadmap scope; complaint tracking and manual finance exist, but gateway, accounting, voting, facilities and other integrations remain. |
-| 46 | Final module structure | Partial | Administration, member, finance, maintenance and foundation procurement modules exist; several complete workflows remain. |
-| 47 | Overall system flow | Partial | Society registration, scoped access, member register and basic operational modules work; complete approval, procurement, renewal and notification flows remain. |
+| 1 | Project overview and multi-society platform | Implemented | Multi-society, multi-wing portal with isolated member and procurement operations is live. |
+| 2 | User roles | Implemented | Platform, society, staff, two authority stages, Society Admin final approval, Treasurer, member and vendor roles are permission-scoped. |
+| 3 | Society/client registration | Implemented | Atomic society registration captures configuration and requires an active first Society Admin. |
+| 4 | Wing/branch management | Partial | Wings, units, users, members, documents and dashboards are scoped; vendor/contract/RFQ wing parity remains. |
+| 5 | Authentication and RBAC | Implemented | Login, sessions, activation, password change/reset, scoped RBAC, login history and denial tests are operational; MFA is optional. |
+| 6 | Member registration | Implemented | Detailed member, identity mask/hash, ownership, share and joint-member registration is atomic and audited. |
+| 7 | Member document checklist | Implemented | Configurable checklist, blank-form download, signed upload, verification, rejection and replacement are live. |
+| 8 | Document management system | Implemented | Private upload/download, preview, versions, replacement, classification, expiry, verification and access history are live. |
+| 9 | Three-level approval workflow | Implemented | Authority 1, Authority 2 and same-society Society Admin decisions are atomic, distinct and fully audited. |
+| 10 | Application tracking | Implemented | Status timeline, checklist progress, correction/resubmission, approval history and notifications are live. |
+| 11 | Society service requests | Implemented | Configurable request types, status controls, Society Admin approval, history and generated documents are live. |
+| 12 | Society letter and form generation | Implemented | Versioned templates, dynamic fields, numbering, letterhead/signatory inputs and PDF, Word-compatible and print outputs are live. |
+| 13 | Form I and Form J management | Implemented | Manual data, atomic Excel import, Excel/PDF/print export and immutable historical snapshots are live. |
+| 14 | Nomination management | Partial | Multiple nominees, percentage validation, approval and records are live; signed-form upload and replacement history remain. |
+| 15 | Associate membership management | Partial | Application, consent, fee, Society Admin approval and register creation are live; signed/supporting document upload remains. |
+| 16 | Vendor management | Partial | Registration, categories, service areas, branch availability, status and preferred flags are live; structured bank/licence fields remain. |
+| 17 | Vendor document management | Implemented | Private upload, version replacement, verification/rejection, expiry and reminder processing are live. |
+| 18 | Vendor portal | Implemented | Vendor-scoped login, dashboard, documents, RFQs, quotations, contracts, renewals and notifications are live. |
+| 19 | Contract/AMC management | Partial | Registration, tracking, vendor/RFQ links, value, dates and renewal are live; full SLA/penalty/document detail remains. |
+| 20 | Contract renewal management | Implemented | Configurable reminders, expiry detection, escalation records and idempotent daily automation are live. |
+| 21 | Contract renewal intimation | Implemented | Society, authority and vendor recipients receive recorded portal/email intimations with contract context. |
+| 22 | Renewal quotation | Implemented | Society initiation, vendor quotation, Society Admin decision and contract renewal are operational. |
+| 23 | RFQ/quotation management | Implemented | RFQ numbering, requirement details, deadlines, publishing, invitations and quotation lifecycle are operational. |
+| 24 | Vendor selection for RFQ | Implemented | Multi-select search/filter covers category, location/wing/service area, status, experience, contracts and preference. |
+| 25 | Email quotation invitation | Implemented | Invitations queue email/portal delivery with recipients, timestamps, status, response and retry history. |
+| 26 | Vendor quotation submission | Partial | Vendor acceptance and itemized commercial submission are live; server-persisted draft editing and quotation-file upload remain. |
+| 27 | Quotation comparison | Implemented | Price comparison, technical/commercial/experience scoring, remarks and recommendation are live. |
+| 28 | Vendor selection and approval | Implemented | Recommendation follows two procurement authorities and final same-society Society Admin approval. |
+| 29 | Work order management | Implemented | Final vendor approval atomically generates a numbered, RFQ/vendor-linked work order visible to society and vendor. |
+| 30 | Vendor performance management | Implemented | Multi-criteria ratings, comments and rating history feed vendor-selection experience filters. |
+| 31 | Notification and email management | Implemented | Central portal/email queue, templates, retries, provider webhook, reminders and delivery history are live; SMS/WhatsApp are optional. |
+| 32 | Dashboards | Implemented | Platform, Society Admin, authority work queues and vendor operational dashboards use live database data. |
+| 33 | Search and filtering | Implemented | Society-scoped global search covers members, flats, applications, vendors, contracts, RFQs, documents and requests. |
+| 34 | Reports and MIS | Partial | Core finance, member, application, document, vendor, contract, procurement and audit outputs work in PDF/Excel/CSV/print; long-tail catalogue expansion remains. |
+| 35 | Audit trail | Implemented | Critical identity, access, member, document, approval, finance, procurement, renewal, export and notification events are immutable and queryable. |
+| 36 | Security requirements | Partial | HTTPS, hashing, RBAC/RLS, private files, validation, isolation and regression tests are live; malware scanning and client-owned DR rehearsal remain. |
+| 37 | Recommended database structure | Implemented | Required identity, workflow, document, member, vendor, procurement, notification, finance and audit entities are deployed. |
+| 38 | Recommended application architecture | Implemented | Next.js/TypeScript, PostgreSQL, private storage, Resend, Vercel preview/production CI and provider logging are deployed. |
+| 39 | End-to-end member workflow | Implemented | Application through checklist, signed documents, three-stage decision, member creation, generation, notification and audit is operational. |
+| 40 | End-to-end vendor procurement workflow | Implemented | RFQ through portal quotation, evaluation, staged selection, work order, performance and renewal is operational. |
+| 41 | Contract renewal workflow | Implemented | Expiry monitoring, reminders, vendor quote, Society Admin decision and renewed/not-renewed outcomes are operational. |
+| 42 | Master data management | Implemented | Society-scoped administrator CRUD supports configurable categories, types, statuses, reasons and periods. |
+| 43 | Email template management | Implemented | Versioned template CRUD, activation and validated dynamic-field rendering feed the notification system. |
+| 44 | Mobile and responsive requirements | Implemented | Responsive navigation, forms, upload controls, vendor portal and RFQ actions support desktop through mobile layouts. |
+| 45 | Future enhancements | Waiting | Gateway, accounting, voting, facilities, OCR/e-signature and native-mobile integrations remain roadmap scope. |
+| 46 | Final module structure | Implemented | Administration, member, service, approval, document, vendor, procurement, contract, communication, report and security modules are present. |
+| 47 | Overall system flow | Implemented | Platform setup, society member flow, procurement flow, contract renewal and vendor self-service operate end to end. |
 
 ### Build Commands
 

@@ -1,6 +1,6 @@
 "use server";
 import { getServerContext, wrapAction, type ActionResult } from "@/lib/context";
-import { resolveUserContext, requirePermission, guardDemoSociety } from "@/server/services/AccessService";
+import { resolveUserContext, requirePermission } from "@/server/services/AccessService";
 import { PERMISSIONS } from "@/types";
 import { writeAudit } from "@/lib/audit";
 import { revalidatePath } from "next/cache";
@@ -24,7 +24,7 @@ export async function createDueAction(
   return wrapAction(async () => {
     const { supabase, userId, societyId, wingId } = await getServerContext();
     const userCtx = await resolveUserContext(societyId, wingId);
-    requirePermission(userCtx, PERMISSIONS.FINANCE_MANAGE);
+    requirePermission(userCtx, PERMISSIONS.FINANCE_DUES_MANAGE);
 
     if (input.amount <= 0) {
       throw new Error("Amount must be greater than zero.");
@@ -104,7 +104,7 @@ export async function recordPaymentAction(
   return wrapAction(async () => {
     const { supabase, userId, societyId, wingId } = await getServerContext();
     const userCtx = await resolveUserContext(societyId, wingId);
-    requirePermission(userCtx, PERMISSIONS.FINANCE_MANAGE);
+    requirePermission(userCtx, PERMISSIONS.FINANCE_PAYMENT_RECORD);
     // Phase 2: uncomment when payment gateway / confirmation email is wired in.
     // This MUST fire before the external call so DEMO environments are never charged.
     // guardDemoSociety(userCtx, "Payment gateway / confirmation email");
@@ -113,7 +113,7 @@ export async function recordPaymentAction(
       throw new Error("Payment amount must be greater than zero.");
     }
 
-    const { data: paymentId, error } = await supabase.rpc("record_payment", {
+    const { data: paymentId, error } = await supabase.rpc("record_payment_v2", {
       p_society_id:        societyId,
       p_due_id:            input.dueId,
       p_amount_paid:       input.amountPaid,
@@ -155,5 +155,124 @@ export async function recordPaymentAction(
     revalidatePath("/finance/dues");
     revalidatePath("/finance/payments");
     return { id: String(paymentId) };
+  });
+}
+
+export async function reconcilePaymentAction(input: {
+  paymentId: string;
+  status: "MATCHED" | "EXCEPTION" | "UNRECONCILED";
+  notes?: string;
+}): Promise<ActionResult> {
+  return wrapAction(async () => {
+    const { supabase, userId, societyId, wingId } = await getServerContext();
+    requirePermission(await resolveUserContext(societyId, wingId), PERMISSIONS.FINANCE_PAYMENT_RECONCILE);
+    const { error } = await supabase.rpc("reconcile_payment_v2", {
+      p_society_id: societyId,
+      p_payment_id: input.paymentId,
+      p_status: input.status,
+      p_notes: input.notes?.trim() ?? "",
+      p_actor_user_id: userId,
+    });
+    if (error) throw new Error(error.message);
+    revalidatePath("/finance/payments");
+  });
+}
+
+export async function refundPaymentAction(input: {
+  paymentId: string;
+  amount: number;
+  refundMethod: PaymentMethod;
+  referenceNumber?: string;
+  reason: string;
+}): Promise<ActionResult<{ id: string }>> {
+  return wrapAction(async () => {
+    const { supabase, userId, societyId, wingId } = await getServerContext();
+    const context=await resolveUserContext(societyId,wingId);
+    if(context.isPlatformAdmin) throw new Error("A society Treasurer must raise refund requests.");
+    requirePermission(context, PERMISSIONS.FINANCE_PAYMENT_REFUND);
+    if (!Number.isFinite(input.amount) || input.amount <= 0) throw new Error("Refund amount must be greater than zero.");
+    if (!input.reason.trim()) throw new Error("A refund reason is required.");
+    const { data, error } = await supabase.rpc("request_finance_adjustment", {
+      p_society_id: societyId,
+      p_adjustment_type: "REFUND",
+      p_payment_id: input.paymentId,
+      p_due_id: null,
+      p_amount: input.amount,
+      p_payment_method: input.refundMethod,
+      p_reference_number: input.referenceNumber?.trim() ?? "",
+      p_reason: input.reason.trim(),
+      p_actor_user_id: userId,
+    });
+    if (error) {
+      if (error.message.includes("refund_exceeds_payment")) throw new Error("Refund exceeds the refundable payment balance.");
+      if (error.message.includes("payment_already_refunded")) throw new Error("This payment has already been fully refunded.");
+      if (error.message.includes("pending_adjustment_exists")) throw new Error("A refund request for this payment is already awaiting approval.");
+      throw new Error(error.message);
+    }
+    revalidatePath("/finance/payments"); revalidatePath("/finance/dues");
+    return { id: String(data) };
+  });
+}
+
+export async function requestDueWaiverAction(input: {
+  dueId: string;
+  amount: number;
+  reason: string;
+}): Promise<ActionResult<{ id: string }>> {
+  return wrapAction(async () => {
+    const { supabase, userId, societyId, wingId } = await getServerContext();
+    const context=await resolveUserContext(societyId,wingId);
+    if(context.isPlatformAdmin) throw new Error("A society Treasurer must raise waiver requests.");
+    requirePermission(context, PERMISSIONS.FINANCE_DUE_WAIVE);
+    if (!Number.isFinite(input.amount) || input.amount <= 0) throw new Error("Waiver amount must be greater than zero.");
+    if (!input.reason.trim()) throw new Error("A waiver reason is required.");
+    const { data, error } = await supabase.rpc("request_finance_adjustment", {
+      p_society_id: societyId,
+      p_adjustment_type: "WAIVER",
+      p_payment_id: null,
+      p_due_id: input.dueId,
+      p_amount: input.amount,
+      p_payment_method: null,
+      p_reference_number: "",
+      p_reason: input.reason.trim(),
+      p_actor_user_id: userId,
+    });
+    if (error) {
+      if (error.message.includes("waiver_exceeds_balance")) throw new Error("Waiver exceeds the outstanding balance.");
+      if (error.message.includes("due_not_waivable")) throw new Error("This due can no longer be waived.");
+      if (error.message.includes("pending_adjustment_exists")) throw new Error("A waiver request for this due is already awaiting approval.");
+      throw new Error(error.message);
+    }
+    revalidatePath("/finance/dues");
+    return { id: String(data) };
+  });
+}
+
+export async function decideFinanceAdjustmentAction(input: {
+  requestId: string;
+  decision: "APPROVED" | "REJECTED";
+  notes?: string;
+}): Promise<ActionResult<{ id: string }>> {
+  return wrapAction(async () => {
+    const { supabase, userId, societyId, wingId } = await getServerContext();
+    const context=await resolveUserContext(societyId,wingId);
+    if(context.isPlatformAdmin||context.roleName!=="Society Admin"||context.wingId) throw new Error("A society-wide Society Admin for this society must decide finance adjustments.");
+    requirePermission(context, PERMISSIONS.FINANCE_ADJUSTMENT_APPROVE);
+    if (input.decision === "REJECTED" && !input.notes?.trim()) throw new Error("A rejection reason is required.");
+    const { data, error } = await supabase.rpc("decide_finance_adjustment", {
+      p_society_id: societyId,
+      p_request_id: input.requestId,
+      p_decision: input.decision,
+      p_notes: input.notes?.trim() ?? "",
+      p_actor_user_id: userId,
+    });
+    if (error) {
+      if (error.message.includes("self_approval_not_allowed")) throw new Error("The requester cannot approve their own adjustment. A second authorized user must decide it.");
+      if (error.message.includes("adjustment_already_decided")) throw new Error("This adjustment has already been decided.");
+      throw new Error(error.message);
+    }
+    revalidatePath("/finance/payments");
+    revalidatePath("/finance/dues");
+    return { id: String(data) };
   });
 }

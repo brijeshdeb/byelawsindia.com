@@ -19,9 +19,10 @@ interface Props {
   userEmail: string;
   /** Short label shown under the user's name. Defaults to "Society Admin". */
   roleLabel?: string;
+  unreadNotifications?: number;
 }
 
-export function Topbar({ userName, userEmail, roleLabel = "Society Admin" }: Props) {
+export function Topbar({ userName, userEmail, roleLabel = "Society Admin", unreadNotifications = 0 }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const initials = getInitials(userName) || userEmail.slice(0, 2).toUpperCase();
@@ -77,7 +78,7 @@ export function Topbar({ userName, userEmail, roleLabel = "Society Admin" }: Pro
         </div>
 
         {/* Search */}
-        <div
+        <form action="/search" method="get"
           className="hidden lg:flex items-center rounded-full px-4 py-1.5 ml-4 transition-colors"
           style={{ backgroundColor: "#161616", border: "1px solid #333333", width: "256px" }}
           onFocusCapture={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "#10B981"; }}
@@ -86,36 +87,36 @@ export function Topbar({ userName, userEmail, roleLabel = "Society Admin" }: Pro
           <span className="material-symbols-outlined mr-2" style={{ fontSize: "18px", color: "#9CA3AF" }} aria-hidden="true">
             search
           </span>
-          <input
+          <input name="q"
             className="bg-transparent border-none text-sm focus:ring-0 focus:outline-none w-full"
             style={{ color: "#FFFFFF" }}
             placeholder="Search societies, members…"
             type="text"
           />
-        </div>
+        </form>
       </div>
 
       {/* Right: actions */}
       <div className="flex items-center gap-6">
 
         {/* Notification bell */}
-        <button
-          type="button"
+        <Link
+          href="/notifications"
           className="relative transition-colors"
           style={{ color: "#9CA3AF" }}
-          onMouseOver={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#10B981"; }}
-          onMouseOut={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#9CA3AF"; }}
-          aria-label="Notifications (coming soon)"
+          onMouseOver={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#10B981"; }}
+          onMouseOut={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#9CA3AF"; }}
+          aria-label={`${unreadNotifications} unread notifications`}
         >
           <span className="material-symbols-outlined" style={{ fontSize: "22px" }} aria-hidden="true">
             notifications
           </span>
           {/* Unread indicator */}
-          <span
+          {unreadNotifications>0&&<span
             className="absolute top-0 right-0 w-2 h-2 rounded-full"
             style={{ backgroundColor: "#EF4444" }}
-          />
-        </button>
+          />}
+        </Link>
 
         {/* Help */}
         <button

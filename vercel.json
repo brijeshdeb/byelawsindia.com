@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/notification-deliveries",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/contract-expiry",
+      "schedule": "15 0 * * *"
+    }
+  ]
+}

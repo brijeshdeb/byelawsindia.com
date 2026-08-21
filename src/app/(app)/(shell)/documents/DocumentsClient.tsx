@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { UploadDocumentModal } from "@/components/modals/UploadDocumentModal";
+import { reviewDocumentAction } from "@/app/actions/documents";
 
 interface Doc {
   id: string;
@@ -14,6 +15,12 @@ interface Doc {
   metadata: unknown;
   is_verified: boolean;
   created_at: string;
+  document_number: string;
+  status: string;
+  version: number;
+  expires_on: string | null;
+  classification: string;
+  rejection_reason: string | null;
 }
 
 const catColor: Record<string, { bg: string; text: string; border: string }> = {
@@ -43,8 +50,10 @@ function getDocNumber(doc: Doc): string {
   return doc.id.slice(-8).toUpperCase();
 }
 
-export function DocumentsClient({ docs, societyId }: { docs: Doc[]; societyId: string }) {
+export function DocumentsClient({ docs, societyId, canUpload, canReview }: { docs: Doc[]; societyId: string; canUpload:boolean; canReview:boolean }) {
   const [modalOpen, setModalOpen] = useState(false);
+  const[replacement,setReplacement]=useState<Doc|null>(null);const[message,setMessage]=useState("");const[pending,startTransition]=useTransition();
+  function review(id:string,decision:"VERIFIED"|"REJECTED"|"ARCHIVED"){const reason=decision==="REJECTED"?window.prompt("Reason for rejection")??"":"";if(decision==="REJECTED"&&!reason.trim())return;startTransition(async()=>{const result=await reviewDocumentAction({documentId:id,decision,reason});setMessage(result.success?`Document ${label(decision)}.`:result.error);});}
 
   return (
     <>
@@ -58,15 +67,17 @@ export function DocumentsClient({ docs, societyId }: { docs: Doc[]; societyId: s
               Society document library: minutes, notices, circulars, and compliance records
             </p>
           </div>
-          <button
+          {canUpload&&<button
             onClick={() => setModalOpen(true)}
             className="flex items-center gap-2 px-4 py-2 rounded text-sm font-medium"
             style={{ backgroundColor: "#10B981", color: "#fff" }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>upload_file</span>
             Upload Document
-          </button>
+          </button>}
         </div>
+
+        {message&&<p role="status" className="mb-4 rounded border border-[#333] bg-[#1c1b1b] px-4 py-3 text-sm text-[#D1D5DB]">{message}</p>}
 
         <div className="queue-section">
           {docs.length === 0 ? (
@@ -74,20 +85,20 @@ export function DocumentsClient({ docs, societyId }: { docs: Doc[]; societyId: s
               <span className="material-symbols-outlined mb-3" style={{ fontSize: "48px" }}>folder_open</span>
               <p className="text-sm font-medium mb-1" style={{ color: "#9CA3AF" }}>No documents yet</p>
               <p className="text-xs mb-4" style={{ color: "#6B7280" }}>Upload minutes, notices, circulars, and compliance records here.</p>
-              <button
+              {canUpload&&<button
                 onClick={() => setModalOpen(true)}
                 className="flex items-center gap-2 px-4 py-2 rounded text-sm font-medium"
                 style={{ backgroundColor: "#10B981", color: "#fff" }}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>upload_file</span>
                 Upload First Document
-              </button>
+              </button>}
             </div>
           ) : (
             <table className="w-full" style={{ borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ backgroundColor: "#1c1b1b", borderBottom: "1px solid #333333" }}>
-                  {["Doc no.", "Title", "Category", "Size", "Verified", "Date"].map((h) => (
+                  {["Doc no.", "Title", "Category", "Size", "Status", "Expiry", "Actions"].map((h) => (
                     <th key={h} className="font-label-md text-label-md text-left px-4 py-3" style={{ color: "#6B7280" }}>{h}</th>
                   ))}
                 </tr>
@@ -98,7 +109,7 @@ export function DocumentsClient({ docs, societyId }: { docs: Doc[]; societyId: s
                   return (
                     <tr key={doc.id} style={{ borderBottom: i < docs.length - 1 ? "1px solid #2a2a2a" : "none" }}>
                       <td className="px-4 py-3 font-mono" style={{ fontSize: "13px", color: "#10B981" }}>
-                        {getDocNumber(doc)}
+                        {doc.document_number||getDocNumber(doc)} <span className="text-[#6B7280]">v{doc.version}</span>
                       </td>
                       <td className="px-4 py-3">
                         <p className="font-body-sm text-body-sm text-text-primary">{doc.title}</p>
@@ -113,13 +124,12 @@ export function DocumentsClient({ docs, societyId }: { docs: Doc[]; societyId: s
                         {doc.file_size_bytes != null ? formatBytes(doc.file_size_bytes) : "—"}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="material-symbols-outlined" style={{ fontSize: "16px", color: doc.is_verified ? "#10B981" : "#6B7280" }}>
-                          {doc.is_verified ? "verified" : "pending"}
-                        </span>
+                        <span className="text-xs" style={{color:doc.status==="VERIFIED"?"#10B981":doc.status==="REJECTED"?"#EF4444":"#F59E0B"}}>{label(doc.status)}</span><p className="text-[11px] text-[#6B7280]">{label(doc.classification)}</p>
                       </td>
                       <td className="px-4 py-3 font-body-sm text-body-sm" style={{ color: "#9CA3AF" }}>
-                        {new Date(doc.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                        {doc.expires_on?new Date(doc.expires_on).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }):"No expiry"}
                       </td>
+                      <td className="px-4 py-3"><div className="flex flex-wrap gap-2"><a href={`/api/documents/${doc.id}`} target="_blank" className="text-xs text-[#10B981] underline">Preview</a><a href={`/api/documents/${doc.id}?download=1`} className="text-xs text-[#10B981] underline">Download</a>{canUpload&&!["REPLACED","ARCHIVED"].includes(doc.status)&&<button disabled={pending} onClick={()=>{setReplacement(doc);setModalOpen(true);}} className="text-xs text-[#38BDF8] underline">Replace</button>}{canReview&&doc.status==="UPLOADED"&&<><button disabled={pending} onClick={()=>review(doc.id,"VERIFIED")} className="text-xs text-[#10B981] underline">Verify</button><button disabled={pending} onClick={()=>review(doc.id,"REJECTED")} className="text-xs text-[#EF4444] underline">Reject</button></>}{canReview&&!["ARCHIVED","REPLACED"].includes(doc.status)&&<button disabled={pending} onClick={()=>review(doc.id,"ARCHIVED")} className="text-xs text-[#9CA3AF] underline">Archive</button>}</div></td>
                     </tr>
                   );
                 })}
@@ -136,7 +146,7 @@ export function DocumentsClient({ docs, societyId }: { docs: Doc[]; societyId: s
         </div>
       </div>
 
-      <UploadDocumentModal open={modalOpen} onClose={() => setModalOpen(false)} societyId={societyId} />
+      <UploadDocumentModal open={modalOpen} onClose={() => {setModalOpen(false);setReplacement(null);}} societyId={societyId} replacement={replacement?{id:replacement.id,title:replacement.title}:null} />
     </>
   );
 }

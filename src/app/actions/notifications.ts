@@ -1,0 +1,4 @@
+"use server";
+import{getServerContext,wrapAction,type ActionResult}from"@/lib/context";import{revalidatePath}from"next/cache";
+export async function markNotificationReadAction(input:{notificationId:string}):Promise<ActionResult>{return wrapAction(async()=>{const{supabase,userId}=await getServerContext();const{error}=await supabase.from("notifications").update({read_at:new Date().toISOString()}).eq("id",input.notificationId).eq("user_id",userId);if(error)throw new Error(error.message);revalidatePath("/notifications");});}
+export async function markAllNotificationsReadAction():Promise<ActionResult>{return wrapAction(async()=>{const{supabase,userId}=await getServerContext();const{error}=await supabase.from("notifications").update({read_at:new Date().toISOString()}).eq("user_id",userId).is("read_at",null);if(error)throw new Error(error.message);revalidatePath("/notifications");});}

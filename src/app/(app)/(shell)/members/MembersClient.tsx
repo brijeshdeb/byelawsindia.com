@@ -7,8 +7,21 @@ interface Member {
   id: string;
   member_number: string;
   full_name: string;
+  father_spouse_name: string | null;
   email: string | null;
   phone: string | null;
+  date_of_birth: string | null;
+  pan: string | null;
+  identity_type: string | null;
+  identity_number_masked: string | null;
+  correspondence_address: string | null;
+  permanent_address: string | null;
+  ownership_type: string | null;
+  ownership_document_number: string | null;
+  ownership_date: string | null;
+  share_certificate_number: string | null;
+  shares_held: number | null;
+  joint_member_count: number;
   member_type: string;
   status: string;
   effective_from: string | null;
@@ -129,9 +142,11 @@ export function MembersClient({ members, units }: { members: Member[]; units: Un
                       <td className="px-4 py-3">
                         <p className="font-body-sm text-body-sm text-text-primary">{row.full_name}</p>
                         {row.email && <p className="text-xs" style={{ color: "#6B7280" }}>{row.email}</p>}
+                        {(row.pan || row.identity_number_masked) && <p className="text-xs" style={{ color: "#6B7280" }}>{row.pan ? `PAN ${row.pan}` : ""}{row.pan && row.identity_number_masked ? " · " : ""}{row.identity_number_masked ?? ""}</p>}
                       </td>
                       <td className="px-4 py-3 font-body-sm text-body-sm" style={{ color: "#9CA3AF" }}>
                         {row.unit_number ? `${row.wing_name ?? ""} ${row.unit_number}` : "—"}
+                        {row.ownership_type && <p className="text-xs text-[#6B7280]">{label(row.ownership_type)}{row.joint_member_count ? ` · ${row.joint_member_count} joint` : ""}</p>}
                       </td>
                       <td className="px-4 py-3">
                         <span className="font-label-md text-label-md px-2 py-0.5 rounded" style={{ backgroundColor: tc.bg, color: tc.text, border: `1px solid ${tc.border}` }}>
