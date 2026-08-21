@@ -9,6 +9,12 @@
  */
 import { z } from "zod";
 
+const optionalEnv = <T extends z.ZodTypeAny>(schema: T) =>
+  z.preprocess(
+    (value) => typeof value === "string" && value.trim() === "" ? undefined : value,
+    schema.optional(),
+  );
+
 // ── Server-only environment schema ───────────────────────────────────────────
 // These values must never reach the browser bundle.
 const serverSchema = z.object({
@@ -16,11 +22,11 @@ const serverSchema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, "Supabase service role key is required"),
 
   // Email — optional until Resend is configured in production
-  RESEND_API_KEY: z.string().min(1).optional(),
-  EMAIL_FROM: z.string().email().optional(),
+  RESEND_API_KEY: optionalEnv(z.string().min(1)),
+  EMAIL_FROM: optionalEnv(z.string().email()),
   EMAIL_FROM_NAME: z.string().min(1).default("Byelawsindia Portal"),
-  RESEND_WEBHOOK_SECRET: z.string().min(1).optional(),
-  CRON_SECRET: z.string().min(16).optional(),
+  RESEND_WEBHOOK_SECRET: optionalEnv(z.string().min(1)),
+  CRON_SECRET: optionalEnv(z.string().min(16)),
 
   // Storage
   STORAGE_BUCKET_DOCUMENTS: z.string().default("society-documents"),
