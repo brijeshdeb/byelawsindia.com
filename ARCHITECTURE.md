@@ -1,6 +1,6 @@
 # ByelawsIndia Portal — Architecture & Feature Reference
 
-> Status as of: 18 August 2026
+> Status as of: 21 August 2026
 > Supabase project: `aowyyuflapyvknndqxth` (eu-west-1)
 > Deployed: Vercel
 
@@ -21,7 +21,7 @@
 | Data fetching | TanStack Query (client components) |
 | Table | TanStack Table |
 | Forms | React Hook Form + Zod |
-| Email | Resend (placeholder key — emails not working yet) |
+| Email | Supabase Auth email and Resend integration; production delivery requires verification |
 | Hosting | Vercel |
 
 ---
@@ -76,6 +76,7 @@ hold both flags.
 |---|---|
 | `/dashboard` | Society dashboard — key metrics and recent activity |
 | `/members` | Member directory |
+| `/members/statutory-registers` | Form I and Form J registers, Excel exports, and immutable snapshots |
 | `/units` | Unit (flat/shop) registry |
 | `/applications` | Member application queue and approval workflow |
 | `/documents` | Society document repository |
@@ -93,6 +94,8 @@ hold both flags.
 | `/admin/settings` | Society configuration |
 | `/admin/users` | Society user and role management |
 | `/admin/wings` | Wing management |
+| `/profile` | Authenticated self-service password change for every account type |
+| `/reset-password` | Public password recovery request and secure recovery completion |
 
 ---
 
@@ -330,44 +333,40 @@ Vendor codes use a different format generated in application code:
 
 ## 11. Feature Status
 
-### Platform Admin — Working
+### Implemented foundations
 
-- System overview console (society count, member count, vendor count, recent audit)
-- Society directory with search and Switch to Society
-- Register New Society form
-- Vendor directory with search, type/status filters, Verify/Unverify action
-- Add Vendor form (with vendor code generation)
-- Cross-tenant contracts list with expiry colour coding
-- Platform user management (invite, deactivate)
-- Audit log viewer (filter by action, entity, limit)
-- Platform settings and support / FAQ page
+- Multi-society and multi-wing data model with RLS-based isolation.
+- Platform and society authentication, scoped RBAC and context switching.
+- Mandatory Society Admin during registration and protection against removing the final administrator.
+- Platform society directory, society registration, user access assignment and vendor directory.
+- Society dashboard, member/unit registers, manual dues/payment recording and audit views.
+- Form I and Form J Excel export with immutable snapshots.
+- Responsive desktop/mobile shells and navigation.
+- Self-service password change and email-based password recovery for every account type.
 
-### Society / Tenant Shell — Working
+### Partially implemented modules
 
-- Society dashboard (key metrics)
-- Member directory and member registration
-- Unit registry (flats/shops by wing)
-- Member application submission and multi-level approval workflow
-- Document repository with upload, verification, and archiving
-- Finance dues tracking and payment recording
-- Maintenance complaints and work order management
-- RFQ creation, vendor quotation management, evaluation
-- Procurement work orders
-- Contract management (create, status tracking)
-- Society-scoped vendor directory
-- Reports hub and audit log
-- Society admin: settings, user/role management, wing configuration
+- Member applications, document management, nominations, vendors, RFQs, work orders and contracts have data models or screens but not every required lifecycle action.
+- Audit coverage includes authentication, finance, access, society registration and statutory exports; full mutation coverage and actor-name resolution remain.
+- Local search and filters exist on several directories; global search is not implemented.
+- Platform and society dashboards are live; authority and vendor dashboards remain.
 
-### Known Limitations / Not Yet Built
+### Waiting modules
 
-| Item | Reason |
+| Item | Dependency |
 |---|---|
-| Online payment collection | Out of scope — spec Section 45: Future Enhancement |
-| Email notifications | `RESEND_API_KEY` is placeholder `re_your_key_here` — all emails silently fail |
-| Society deactivation action | No admin UI — must use Supabase Studio to flip `is_active` |
-| Vendor quotation portal | Vendor-facing submission portal not yet built |
-| Two-factor authentication (MFA) | `mfa_enabled` column exists in profiles, UI not wired |
-| Push / in-app notifications | Not in scope |
+| Three-level approval workflow | Configurable workflow engine and complete decision actions |
+| Society service letters and remaining forms | Template management plus PDF/DOCX generation |
+| Associate membership | Application, documents, fees, approval and register |
+| Vendor portal and quotation submission | Vendor authentication, documents and submission workflow |
+| Quotation comparison and selection approval | Submitted quotation data and approval workflow |
+| Contract renewal automation | Reminder engine, vendor quotation and approval workflow |
+| Reports and MIS generation | Report builders and PDF/Excel/CSV/print outputs |
+| Master data and email template management | Administrator configuration interfaces |
+| Online payments and reconciliation | Gateway, webhooks, refunds, settlements and merchant model |
+| Society deactivation workflow | Confirmation, session revocation, audit and recovery path |
+| MFA | Enrollment, challenge and recovery user interfaces |
+| Central notifications | Verified delivery provider, templates, logs and reminder engine |
 
 ---
 
@@ -380,8 +379,64 @@ Vendor codes use a different format generated in application code:
 | `NEXT_PUBLIC_SUPABASE_URL` | All Supabase clients (browser + server) |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Browser and SSR Supabase client |
 | `SUPABASE_SERVICE_ROLE_KEY` | `createAdminClient()` — server only, never public |
-| `RESEND_API_KEY` | Email sending via Resend — currently placeholder |
+| `RESEND_API_KEY` | Application notifications via Resend; production delivery must be verified |
 | `NEXT_PUBLIC_APP_URL` | Redirect URLs in auth callbacks |
+
+---
+
+## 13. Requirements Implementation Matrix
+
+Status assessed against **ByelawsIndia Requirements**, 21 August 2026.
+
+| No. | Requirement | Status | Reason / dependency |
+|---:|---|---|---|
+| 1 | Project overview and multi-society platform | Implemented | Multi-society, multi-wing Next.js and PostgreSQL foundation is live with tenant isolation. |
+| 2 | User roles | Partial | Core platform, society, staff, authority and member roles exist; vendor portal roles and fully configurable authorities are incomplete. |
+| 3 | Society/client registration | Partial | Basic registration and mandatory first administrator are implemented; committee, logo, signatory, document and template configuration remain. |
+| 4 | Wing/branch management | Partial | Wings, units and scoped access exist; complete wing-specific workflows across every module are not finished. |
+| 5 | Authentication and RBAC | Partial | Login, activation, deactivation, sessions, password change/reset, roles and scope checks exist; MFA and full denial regression remain. |
+| 6 | Member registration | Partial | Core member and statutory fields are supported; joint/associate members, identity documents and complete application lifecycle remain. |
+| 7 | Member document checklist | Partial | Application/document foundations exist; configurable checklist, blank-form, signed upload and replacement workflow remain. |
+| 8 | Document management system | Partial | Repository and protected data model exist; full upload, preview, versioning, expiry and access-history workflow remain. |
+| 9 | Three-level approval workflow | Waiting | Roles and statuses exist, but the complete three-authority decision workflow and configurable engine are not implemented. |
+| 10 | Application tracking | Partial | Application records and statuses exist; complete timeline, member tracking and status notifications remain. |
+| 11 | Society service requests | Waiting | Dedicated service-request types, approval history and generated service letters are not implemented. |
+| 12 | Society letter and form generation | Partial | Form I and Form J Excel generation is live; remaining letters, PDF/DOCX output, signatures and template administration remain. |
+| 13 | Form I and Form J management | Partial | Manual member data, Excel export and immutable history are implemented; Excel import, PDF generation and direct printing remain. |
+| 14 | Nomination management | Partial | A single nominee and nomination date are captured for Form I; multiple nominees, shares, uploads, approval and history remain. |
+| 15 | Associate membership management | Waiting | Dedicated applications, documents, fees, approval workflow and associate register are not implemented. |
+| 16 | Vendor management | Partial | Central vendor directory and basic registration exist; full profile, category, bank, licence and lifecycle management remain. |
+| 17 | Vendor document management | Waiting | Dedicated vendor-document upload, verification, expiry and reminder workflow is not implemented. |
+| 18 | Vendor portal | Waiting | Separate vendor authentication, dashboard, RFQs, quotations, contracts and communications are not implemented. |
+| 19 | Contract/AMC management | Partial | Contract schema and listings exist; complete create/edit, approval, documents, SLA and status lifecycle remain. |
+| 20 | Contract renewal management | Partial | Expiry dates and presentation exist; configurable reminder engine and escalation are not implemented. |
+| 21 | Contract renewal intimation | Waiting | Recipient rules, generated intimation, delivery and notification history depend on the notification engine. |
+| 22 | Renewal quotation | Waiting | Vendor portal, renewal request, quotation submission and approval workflow are dependencies. |
+| 23 | RFQ/quotation management | Partial | RFQ data model and screens exist; complete creation-to-submission workflow and attachments remain. |
+| 24 | Vendor selection for RFQ | Partial | Vendor directory filtering exists; RFQ-linked multi-vendor selection and experience/preference scoring remain. |
+| 25 | Email quotation invitation | Waiting | Requires production email delivery, templates, vendor portal links and delivery tracking. |
+| 26 | Vendor quotation submission | Waiting | Requires the vendor portal, draft quotations, document uploads and submission controls. |
+| 27 | Quotation comparison | Waiting | Requires submitted quotation data, evaluation controls and comparison-report generation. |
+| 28 | Vendor selection and approval | Waiting | Depends on quotation evaluation and the configurable multi-level approval engine. |
+| 29 | Work order management | Partial | Work-order records and screens exist; generation from selection, approvals, documents and contract linkage remain. |
+| 30 | Vendor performance management | Waiting | Rating criteria, history, UI and RFQ-selection integration are not implemented. |
+| 31 | Notification and email management | Partial | Authentication recovery emails are supported; centralized templates, portal notifications, reminders, delivery logs, SMS and WhatsApp remain. |
+| 32 | Dashboards | Partial | Platform and society dashboards show live metrics; authority and vendor dashboards and complete operational metrics remain. |
+| 33 | Search and filtering | Partial | Several directories have local search/filters; global cross-module search is not implemented. |
+| 34 | Reports and MIS | Waiting | Report catalogue is visible but generation buttons are disabled; PDF, Excel, CSV and print outputs remain. |
+| 35 | Audit trail | Partial | Authentication, finance, access, society and statutory exports are logged; full mutation coverage and actor-name resolution remain. |
+| 36 | Security requirements | Partial | HTTPS, RBAC, RLS, CSP, token security and audit foundations exist; MFA, malware scanning, backup restore, DR and complete security tests remain. |
+| 37 | Recommended database structure | Partial | Core identity, tenant, member, application, vendor, contract, RFQ, finance and audit tables exist; several workflow entities remain. |
+| 38 | Recommended application architecture | Partial | Next.js, TypeScript, PostgreSQL, private server access and Vercel deployment exist; verified staging, backups, monitoring and email operations remain. |
+| 39 | End-to-end member workflow | Waiting | Registration exists, but checklist, three-level approval, notifications and complete document/form lifecycle are dependencies. |
+| 40 | End-to-end vendor procurement workflow | Waiting | Vendor portal, quotation submission/comparison, approvals, selection and renewal are dependencies. |
+| 41 | Contract renewal workflow | Waiting | Reminder engine, vendor renewal quotation and approval automation are not implemented. |
+| 42 | Master data management | Waiting | Configurable types, statuses, reasons, approval levels and template administration are not implemented. |
+| 43 | Email template management | Waiting | Requires a template editor, dynamic-field validation, delivery provider and email logs. |
+| 44 | Mobile and responsive requirements | Partial | Responsive shells and mobile navigation are live; all tables, uploads and unfinished vendor/RFQ flows need device regression. |
+| 45 | Future enhancements | Waiting | Items are roadmap scope; complaint tracking and manual finance exist, but gateway, accounting, voting, facilities and other integrations remain. |
+| 46 | Final module structure | Partial | Administration, member, finance, maintenance and foundation procurement modules exist; several complete workflows remain. |
+| 47 | Overall system flow | Partial | Society registration, scoped access, member register and basic operational modules work; complete approval, procurement, renewal and notification flows remain. |
 
 ### Build Commands
 
@@ -396,16 +451,18 @@ npm run test:e2e     # Playwright end-to-end tests
 
 ---
 
-## 13. File Structure (abbreviated)
+## 14. File Structure (abbreviated)
 
 ```
 src/
 ├── app/
 │   ├── (auth)/
 │   │   ├── login/           page + form + server action
-│   │   └── register/        page + form + server action
+│   │   ├── register/        page + form + server action
+│   │   └── reset-password/  recovery request + secure password update
 │   ├── (app)/
 │   │   ├── layout.tsx       session validation
+│   │   ├── profile/         self-service password change
 │   │   ├── select-context/  context picker after login
 │   │   ├── (platform)/
 │   │   │   ├── layout.tsx   is_platform_admin check
@@ -421,6 +478,7 @@ src/
 │   │       ├── layout.tsx   context cookie + permission resolution
 │   │       ├── dashboard/
 │   │       ├── members/
+│   │       │   └── statutory-registers/ Form I + Form J exports and history
 │   │       ├── units/
 │   │       ├── applications/
 │   │       ├── documents/
@@ -450,5 +508,5 @@ src/
 │   └── index.ts             PERMISSIONS const, AppError, UserContext, AccessOption
 └── middleware.ts             edge routing + session refresh
 supabase/
-└── migrations/              000 – 010 SQL migrations
+└── migrations/              versioned schema, RLS, domain, finance and statutory migrations
 ```
